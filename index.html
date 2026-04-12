@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>VLSI Final Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="./content.js"></script>
+<style>
+:root{
+  --bg:#f3f1eb;
+  --bg-warm:#faf7f1;
+  --surface:#ffffff;
+  --surface-soft:#fbf9f5;
+  --border:#e2ded4;
+  --border-strong:#d0cbc0;
+  --fg:#2a261e;
+  --fg-muted:#6b665c;
+  --accent:#c2563a;
+  --accent-dim:#a84830;
+  --accent-light:#f7ebe6;
+  --green:#1d5c48;
+  --green-soft:#e8f4ef;
+  --red:#b91c1c;
+  --red-soft:#fef2f2;
+  --purple:#5b4a9e;
+  --shadow-sm:0 1px 3px rgba(42,38,30,.06);
+  --shadow-md:0 8px 30px rgba(42,38,30,.08);
+  --shadow-card:0 2px 14px rgba(42,38,30,.07);
+  --r-sm:10px;
+  --r:14px;
+  --r-lg:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);
+  background-image:radial-gradient(ellipse 120% 80% at 50% -20%,#ebe4d8 0%,transparent 55%);
+  color:var(--fg);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+  min-height:100dvh;
+}
+button{font:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.45}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mono{font-family:'DM Mono',ui-monospace,monospace}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fi2{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.fi{animation:fi .45s cubic-bezier(.22,1,.36,1) both}
+.fi2{animation:fi2 .45s cubic-bezier(.22,1,.36,1) .08s both}
+.pop{animation:pop .35s cubic-bezier(.34,1.2,.64,1) both}
+svg text{font-family:'DM Mono',monospace}
+
+.app-shell{max-width:440px;margin:0 auto;padding:20px 18px 32px;min-height:100dvh}
+
+/* —— Hero & home —— */
+.hero-block{
+  text-align:center;
+  padding:26px 18px 22px;
+  margin-bottom:18px;
+  background:linear-gradient(165deg,var(--surface) 0%,var(--surface-soft) 55%,var(--bg-warm) 100%);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-card);
+}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+.pill{
+  font-size:11px;font-weight:600;
+  padding:6px 12px;border-radius:999px;
+  background:var(--surface-soft);
+  border:1px solid var(--border);
+  color:var(--fg-muted);
+}
+.pill.muted{font-weight:500;opacity:.9}
+.hero-title{
+  margin-top:14px;
+  font-size:clamp(1.65rem,5.5vw,2rem);
+  font-weight:800;
+  letter-spacing:-.035em;
+  line-height:1.08;
+  color:var(--fg);
+}
+.hero-sub{font-size:14px;color:var(--fg-muted);margin-top:8px;line-height:1.45}
+.footer-meta{text-align:center;margin-top:22px;font-size:11px;color:var(--fg-muted);opacity:.85}
+
+/* —— Topic grid —— */
+.topic-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.topic-card{
+  width:100%;text-align:left;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:16px 14px;
+  display:flex;flex-direction:column;gap:8px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.topic-card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-md);
+  border-color:var(--border-strong);
+}
+.topic-card-head{display:flex;justify-content:space-between;align-items:center}
+.topic-card-title{font-weight:700;font-size:15px;letter-spacing:-.02em;line-height:1.25}
+.topic-card-sub{font-size:12px;color:var(--fg-muted);line-height:1.4}
+.topic-card-meta{font-size:10px;color:var(--accent);font-weight:500;margin-top:2px}
+
+/* —— Chips —— */
+.chip{
+  display:inline-flex;align-items:center;
+  padding:5px 10px;border-radius:999px;
+  font-size:10px;font-weight:600;
+  background:#ebe8e0;
+  color:var(--fg-muted);
+  border:1px solid transparent;
+}
+.chip.accent{background:var(--accent-light);color:var(--accent);border-color:rgba(194,86,58,.18)}
+.chip.green{background:var(--green-soft);color:var(--green);border-color:rgba(29,92,72,.15)}
+
+/* —— Buttons —— */
+.btn{
+  padding:11px 20px;border-radius:var(--r-sm);
+  border:1px solid var(--border-strong);
+  background:var(--surface-soft);
+  color:var(--fg);
+  font-weight:600;font-size:13px;
+  transition:background .15s,border-color .15s,transform .1s,box-shadow .15s;
+  box-shadow:var(--shadow-sm);
+}
+.btn:hover:not(:disabled){background:var(--surface);border-color:#c4bfb3}
+.btn:active:not(:disabled){transform:scale(.98)}
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent-dim);
+  color:#fff;
+  box-shadow:0 4px 14px rgba(194,86,58,.32);
+}
+.btn.primary:hover:not(:disabled){background:var(--accent-dim);filter:brightness(1.02)}
+.btn.muted{background:transparent;border-color:var(--border);box-shadow:none;color:var(--fg-muted)}
+.btn.muted:hover:not(:disabled){background:var(--surface-soft);color:var(--fg)}
+.btn.success{
+  background:var(--green);
+  border-color:#164a3a;
+  color:#fff;
+  box-shadow:0 4px 14px rgba(29,92,72,.28);
+}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 4px;margin-bottom:4px;
+  background:none;border:none;
+  color:var(--fg-muted);
+  font-weight:600;font-size:13px;
+  transition:color .15s;
+}
+.back-btn:hover{color:var(--accent)}
+
+/* —— Panels (learn / problem / mock) —— */
+.progress-head{display:flex;justify-content:space-between;align-items:baseline;margin:10px 0 8px;gap:12px}
+.progress-title{font-weight:700;font-size:15px;letter-spacing:-.02em;line-height:1.3;flex:1;min-width:0}
+.progress-count{font-size:12px;color:var(--fg-muted);flex-shrink:0}
+.progress-track{width:100%;height:6px;background:#e5e1d9;border-radius:99px;overflow:hidden;margin-bottom:14px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#d4785c);border-radius:99px;transition:width .45s cubic-bezier(.22,1,.36,1)}
+.diagram-panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow-sm);
+}
+.question-panel{
+  background:var(--surface-soft);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:14px 16px;
+  font-size:14px;
+  line-height:1.55;
+  color:var(--fg);
+  white-space:pre-line;
+  margin-bottom:14px;
+}
+.step-stack{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.step-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:12px 14px;
+  box-shadow:var(--shadow-sm);
+}
+.step-row{display:flex;gap:12px;align-items:flex-start}
+.step-badge{
+  flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#fff;
+  line-height:1;
+}
+.step-text{font-size:14px;line-height:1.55;color:var(--fg)}
+.step-src{
+  margin-top:8px;font-size:10px;color:var(--fg-muted);
+  background:var(--surface-soft);
+  padding:4px 9px;border-radius:6px;
+  display:inline-block;border:1px solid var(--border);
+}
+.action-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* —— Topic detail shell —— */
+.sheet{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:20px 18px;
+  box-shadow:var(--shadow-card);
+  margin-top:8px;
+}
+.sheet-title-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.sheet-h1{font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.15}
+.sheet-sub{font-size:13px;color:var(--fg-muted);margin-top:6px;line-height:1.45}
+.sheet-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--fg-muted);margin-bottom:10px}
+.concept-row{display:flex;gap:12px;align-items:flex-start}
+.concept-row+.concept-row{margin-top:10px}
+.segmented{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.segmented button{
+  border-radius:var(--r-sm);
+  padding:12px 14px;
+  font-weight:700;font-size:14px;
+  cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,box-shadow .15s;
+}
+.segmented button[aria-pressed="true"]{
+  background:var(--accent-light);
+  border:1px solid rgba(194,86,58,.35);
+  color:var(--accent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
+}
+.segmented button[aria-pressed="false"]{
+  background:var(--surface-soft);
+  border:1px solid var(--border);
+  color:var(--fg-muted);
+}
+.segmented button[aria-pressed="false"]:hover{background:var(--surface);color:var(--fg)}
+
+/* —— Practice list cards —— */
+.problem-card{
+  width:100%;text-align:left;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:16px;
+  display:flex;justify-content:space-between;align-items:center;gap:14px;
+  box-shadow:var(--shadow-sm);
+  cursor:pointer;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+.problem-card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+  border-color:var(--border-strong);
+}
+.problem-row{display:flex;justify-content:space-between;align-items:center;gap:14px;width:100%}
+.preview-title{font-weight:700;font-size:15px;letter-spacing:-.02em;line-height:1.25;color:var(--fg)}
+.problem-copy{font-size:13px;color:var(--fg-muted);line-height:1.45;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.problem-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chevron{color:var(--accent);font-size:22px;font-weight:300;line-height:1;opacity:.75}
+
+/* —— Topic / problem screens (panel layout) —— */
+.panel-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:20px 18px;
+  box-shadow:var(--shadow-card);
+  margin-top:10px;
+}
+.topic-summary{margin-top:6px}
+.topic-heading{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.topic-title{font-size:23px;font-weight:800;letter-spacing:-.035em;line-height:1.12;color:var(--fg)}
+.topic-sub{font-size:14px;color:var(--fg-muted);margin-top:6px;line-height:1.45}
+.stats-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.concepts-card{
+  margin-top:18px;
+  padding:16px;
+  background:var(--surface-soft);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+}
+.concept-list{display:flex;flex-direction:column;gap:12px}
+.concept-item{display:flex;gap:12px;align-items:flex-start}
+.segmented .segment-btn{
+  border-radius:var(--r-sm);
+  padding:12px 14px;
+  font-weight:700;font-size:14px;
+  cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,box-shadow .15s;
+  background:var(--surface-soft);
+  border:1px solid var(--border);
+  color:var(--fg-muted);
+}
+.segmented .segment-btn:hover{background:var(--surface);color:var(--fg)}
+.segmented .segment-btn.active{
+  background:var(--accent-light);
+  border-color:rgba(194,86,58,.38);
+  color:var(--accent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+}
+.preview-card{margin-top:14px}
+.preview-card .preview-title{font-size:17px}
+.preview-meta{font-size:11px;color:var(--fg-muted);margin-top:8px;line-height:1.4}
+.preview-copy{font-size:14px;color:var(--fg-muted);margin-top:14px;line-height:1.55}
+.preview-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:18px}
+.practice-list{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.problem-title{font-weight:700;font-size:18px;letter-spacing:-.03em;margin-top:6px;line-height:1.2;color:var(--fg)}
+.question-block{
+  background:linear-gradient(180deg,var(--surface-soft) 0%,#f5f2eb 100%);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:16px 18px;
+  margin-bottom:14px;
+  font-size:14px;
+  line-height:1.55;
+  color:var(--fg);
+  white-space:pre-line;
+}
+.question-label{
+  font-size:10px;font-weight:700;letter-spacing:.1em;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+
+/* —— Mock CTA on home —— */
+.mock-cta{
+  margin-bottom:14px;
+  background:linear-gradient(135deg,var(--accent-light) 0%,var(--surface) 50%)!important;
+  border-color:rgba(194,86,58,.28)!important;
+  box-shadow:0 4px 20px rgba(194,86,58,.14)!important;
+}
+.mock-cta .preview-title{font-size:17px}
+
+/* —— Mock exam hub —— */
+.mock-page-title{font-size:24px;font-weight:800;letter-spacing:-.03em;margin:8px 0 6px;line-height:1.15}
+.mock-lede{font-size:14px;color:var(--fg-muted);line-height:1.5;margin-bottom:16px}
+.mock-section{margin-top:26px}
+.mock-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--fg-muted);margin-bottom:12px}
+.mock-empty{font-size:14px;color:var(--fg-muted);padding:12px 0}
+.mock-row-list{display:flex;flex-direction:column;gap:10px}
+.mock-session-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:14px 16px;
+  display:flex;flex-wrap:wrap;gap:12px;
+  align-items:center;justify-content:space-between;
+  box-shadow:var(--shadow-sm);
+}
+.mock-session-meta .mono{font-size:11px;color:var(--fg-muted)}
+.mock-session-title{font-weight:600;font-size:15px;margin-top:4px;letter-spacing:-.02em}
+.mock-session-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn-danger{
+  padding:10px 16px;border-radius:var(--r-sm);
+  border:1px solid #e8c4c4;
+  background:var(--surface);
+  color:var(--red);
+  font-weight:600;font-size:13px;
+  transition:background .15s;
+}
+.btn-danger:hover{background:var(--red-soft)}
+.mock-done-btn{
+  width:100%;text-align:left;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:14px 16px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  box-shadow:var(--shadow-sm);
+  cursor:pointer;
+  transition:transform .15s,box-shadow .15s,border-color .15s;
+}
+.mock-done-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+  border-color:rgba(194,86,58,.25);
+}
+
+/* —— Review —— */
+.review-block{
+  padding-bottom:22px;
+  margin-bottom:22px;
+  border-bottom:1px solid var(--border);
+}
+.review-block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.review-solution-label{font-size:12px;font-weight:700;color:var(--fg-muted);text-transform:uppercase;letter-spacing:.05em;margin:4px 0 10px}
+
+@media (max-width:520px){
+  .app-shell{padding:16px 14px 28px}
+  .topic-grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useCallback,useMemo,useEffect}=React;
+const FILLS={accent:{s:'#c96442',f:'#f5e6df',t:'#c96442'},green:{s:'#2d6a4f',f:'#d1fae5',t:'#2d6a4f'},blue:{s:'#1d4e89',f:'#dbeafe',t:'#1d4e89'},purple:{s:'#5b4a9e',f:'#ede9fe',t:'#5b4a9e'},amber:{s:'#92400e',f:'#fef3c7',t:'#92400e'},red:{s:'#c0392b',f:'#fee2e2',t:'#c0392b'},fg:{s:'#3d3929',f:'#f0efe9',t:'#3d3929'}};
+const gc=c=>FILLS[c]||FILLS.accent;
+
+/* SVG primitives */
+const Nm=({x,y,w,label,step,show})=>{if(show!==undefined&&step<show)return null;return<g className="fi"style={{animationDelay:show?show*.08+'s':'0s'}}><rect x={x-18}y={y-14}width={36}height={28}rx={4}fill="#dbeafe"stroke="#1d4e89"strokeWidth={1.5}/><text x={x}y={y+4}textAnchor="middle"fontSize={11}fill="#1d4e89"fontWeight={600}>{w||'N'}</text>{label&&<text x={x}y={y-20}textAnchor="middle"fontSize={9}fill="#83827d"fontWeight={500}>{label}</text>}</g>};
+const Pm=({x,y,w,label,step,show})=>{if(show!==undefined&&step<show)return null;return<g className="fi"style={{animationDelay:show?show*.08+'s':'0s'}}><rect x={x-18}y={y-14}width={36}height={28}rx={4}fill="#fef3c7"stroke="#92400e"strokeWidth={1.5}/><circle cx={x-22}cy={y}r={4}fill="none"stroke="#92400e"strokeWidth={1.5}/><text x={x}y={y+4}textAnchor="middle"fontSize={11}fill="#92400e"fontWeight={600}>{w||'P'}</text>{label&&<text x={x}y={y-20}textAnchor="middle"fontSize={9}fill="#83827d"fontWeight={500}>{label}</text>}</g>};
+const VD=({x,y})=><g className="fi"><line x1={x}y1={y}x2={x}y2={y+10}stroke="#c0392b"strokeWidth={1.5}/><line x1={x-12}y1={y}x2={x+12}y2={y}stroke="#c0392b"strokeWidth={2}/><text x={x}y={y-5}textAnchor="middle"fontSize={9}fill="#c0392b"fontWeight={600}>VDD</text></g>;
+const GD=({x,y})=><g className="fi"><line x1={x}y1={y}x2={x}y2={y-10}stroke="#2d6a4f"strokeWidth={1.5}/><line x1={x-10}y1={y}x2={x+10}y2={y}stroke="#2d6a4f"strokeWidth={2}/><line x1={x-6}y1={y+4}x2={x+6}y2={y+4}stroke="#2d6a4f"strokeWidth={1.5}/><line x1={x-3}y1={y+8}x2={x+3}y2={y+8}stroke="#2d6a4f"strokeWidth={1}/></g>;
+const B=({x,y,w,h,theme,text:t,step,show,fontSize:fs})=>{if(show!==undefined&&step<show)return null;const c=gc(theme||'accent'),bw=w||120,bh=h||32,lines=t?t.split('\n'):[],lh=(fs||11)+4,sy=y+bh/2-((lines.length-1)*lh)/2+4;return<g className="fi2"style={{animationDelay:show?show*.1+'s':'0s'}}><rect x={x}y={y}width={bw}height={bh}rx={6}fill={c.f}stroke={c.s}strokeWidth={1.5}strokeDasharray="4 2"/>{lines.map((l,i)=><text key={i}x={x+bw/2}y={sy+i*lh}textAnchor="middle"fontSize={fs||11}fill={c.t}fontWeight={600}>{l}</text>)}</g>};
+const Gx=({x,y,w,h,label,sub,step,show,theme})=>{if(show!==undefined&&step<show)return null;const c=gc(theme||'fg');return<g className="fi"style={{animationDelay:show?show*.08+'s':'0s'}}><rect x={x}y={y}width={w||60}height={h||36}rx={5}fill="#fff"stroke={c.s}strokeWidth={1.5}/><text x={x+(w||60)/2}y={y+(h||36)/2+(sub?-1:4)}textAnchor="middle"fontSize={11}fill={c.t}fontWeight={600}>{label}</text>{sub&&<text x={x+(w||60)/2}y={y+(h||36)/2+12}textAnchor="middle"fontSize={9}fill="#83827d">{sub}</text>}</g>};
+const Ar=({x1,y1,x2,y2,theme,step,show,dashed})=>{if(show!==undefined&&step<show)return null;return<line x1={x1}y1={y1}x2={x2}y2={y2}stroke={theme?gc(theme).s:'#83827d'}strokeWidth={1.2}markerEnd="url(#ah)"strokeDasharray={dashed?"4 3":""}className="fi"/>};
+const Wi=({x1,y1,x2,y2,color,step,show,dashed})=>{if(show!==undefined&&step<show)return null;return<line x1={x1}y1={y1}x2={x2}y2={y2}stroke={color||'#83827d'}strokeWidth={1}strokeDasharray={dashed?"3 2":""}className="fi"/>};
+const Df=()=><defs><marker id="ah"markerWidth="8"markerHeight="6"refX="8"refY="3"orient="auto"><path d="M0,0 L8,3 L0,6Z"fill="#83827d"/></marker></defs>;
+
+/* DIAGRAMS */
+const DiagNAND2=({step})=><svg viewBox="0 0 320 260"style={{width:'100%',maxHeight:220}}><Df/>
+  {step>=0&&<><text x={160}y={18}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>NAND2 Gate Structure</text><VD x={160}y={32}/><Pm x={120}y={72}w="2"label="A"/><Pm x={200}y={72}w="2"label="B"/><Wi x1={120}y1={58}x2={120}y2={42}color="#92400e"/><Wi x1={200}y1={58}x2={200}y2={42}color="#92400e"/><Wi x1={120}y1={42}x2={160}y2={42}color="#c0392b"/><Wi x1={200}y1={42}x2={160}y2={42}color="#c0392b"/></>}
+  {step>=1&&<><Nm x={160}y={130}w="1"label="A"/><Nm x={160}y={175}w="1"label="B"/><Wi x1={160}y1={144}x2={160}y2={161}color="#1d4e89"/><Wi x1={120}y1={86}x2={160}y2={105}dashed/><Wi x1={200}y1={86}x2={160}y2={105}dashed/><Wi x1={160}y1={116}x2={160}y2={105}/><text x={230}y={110}fontSize={10}fill="#83827d">Output Y</text><Wi x1={215}y1={108}x2={160}y2={108}dashed/><GD x={160}y={200}/><Wi x1={160}y1={189}x2={160}y2={200}color="#2d6a4f"/></>}
+  {step>=2&&<><B x={20}y={215}w={130}h={35}theme="blue"text="nMOS series example"step={step}show={2}/><B x={170}y={215}w={130}h={35}theme="amber"text="pMOS parallel example"step={step}show={2}/></>}
+  {step>=3&&<B x={60}y={105}w={200}h={28}theme="accent"text="Normalized table value: g = 4/3"step={step}show={3}fontSize={12}/>}
+</svg>;
+
+const DiagNOR3=({step})=><svg viewBox="0 0 320 270"style={{width:'100%',maxHeight:230}}><Df/>
+  <text x={160}y={18}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>NOR3 Gate Structure</text>
+  {step>=0&&<><VD x={160}y={32}/><Pm x={160}y={65}w="3"label="A"/><Pm x={160}y={105}w="3"label="B"/><Pm x={160}y={145}w="3"label="C"/><Wi x1={160}y1={42}x2={160}y2={51}color="#92400e"/><Wi x1={160}y1={79}x2={160}y2={91}color="#92400e"/><Wi x1={160}y1={119}x2={160}y2={131}color="#92400e"/></>}
+  {step>=1&&<><Nm x={100}y={195}w="1"label="A"/><Nm x={160}y={195}w="1"label="B"/><Nm x={220}y={195}w="1"label="C"/><Wi x1={160}y1={159}x2={160}y2={175}/><Wi x1={100}y1={175}x2={220}y2={175}/><GD x={160}y={235}/><Wi x1={100}y1={209}x2={100}y2={225}color="#2d6a4f"/><Wi x1={160}y1={209}x2={160}y2={225}color="#2d6a4f"/><Wi x1={220}y1={209}x2={220}y2={225}color="#2d6a4f"/><Wi x1={100}y1={225}x2={220}y2={225}color="#2d6a4f"/></>}
+  {step>=2&&<><B x={10}y={245}w={145}h={24}theme="amber"text="pMOS stack example"step={step}show={2}fontSize={10}/><B x={165}y={245}w={145}h={24}theme="blue"text="nMOS parallel example"step={step}show={2}fontSize={10}/></>}
+  {step>=3&&<B x={60}y={168}w={200}h={28}theme="accent"text="Normalized table value: g = 5/3"step={step}show={3}fontSize={12}/>}
+</svg>;
+
+const DiagMultiStageLE=({step})=><svg viewBox="0 0 340 200"style={{width:'100%',maxHeight:180}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Multi-Stage NAND2 Chain</text>
+  {step>=0&&<><Gx x={20}y={35}w={70}h={34}label="NAND2"sub="g=4/3"/><Gx x={110}y={35}w={70}h={34}label="NAND2"sub="g=4/3"/><Gx x={200}y={35}w={70}h={34}label="NAND2"sub="g=4/3"/><Ar x1={90}y1={52}x2={110}y2={52}/><Ar x1={180}y1={52}x2={200}y2={52}/><Ar x1={270}y1={52}x2={290}y2={52}/><text x={10}y={56}fontSize={9}fill="#83827d">In</text><rect x={290}y={42}width={40}height={20}rx={3}fill="#dbeafe"stroke="#1d4e89"strokeWidth={1}/><text x={310}y={55}textAnchor="middle"fontSize={8}fill="#1d4e89">64C</text></>}
+  {step>=1&&<B x={30}y={82}w={260}h={26}theme="accent"text={"G = (4/3)\u00B3 = 64/27 \u2248 2.37"}step={step}show={1}fontSize={12}/>}
+  {step>=2&&<B x={30}y={116}w={260}h={26}theme="blue"text="H = C_out / C_in = 64"step={step}show={2}fontSize={12}/>}
+  {step>=3&&<B x={30}y={150}w={260}h={36}theme="green"text={"F = G\u00B7B\u00B7H = 2.37 \u00D7 1 \u00D7 64 \u2248 151.7"}step={step}show={3}fontSize={12}/>}
+</svg>;
+
+const DiagPath=({step})=><svg viewBox="0 0 340 240"style={{width:'100%',maxHeight:210}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Path Delay Comparison</text>
+  {step>=0&&<><text x={14}y={58}fontSize={10}fill="#c96442"fontWeight={600}>Path A</text><Gx x={40}y={38}w={55}h={34}label="INV"sub="g=1"/><Gx x={110}y={38}w={55}h={34}label="NAND2"sub="g=4/3"/><Gx x={180}y={38}w={55}h={34}label="NAND2"sub="g=4/3"/><Gx x={250}y={38}w={55}h={34}label="INV"sub="g=1"/><Ar x1={95}y1={55}x2={110}y2={55}/><Ar x1={165}y1={55}x2={180}y2={55}/><Ar x1={235}y1={55}x2={250}y2={55}/></>}
+  {step>=1&&<><text x={14}y={118}fontSize={10}fill="#5b4a9e"fontWeight={600}>Path B</text><Gx x={40}y={98}w={55}h={34}label="NOR2"sub="g=5/3"theme="purple"/><Gx x={110}y={98}w={55}h={34}label="NOR2"sub="g=5/3"theme="purple"/><Gx x={180}y={98}w={55}h={34}label="INV"sub="g=1"theme="purple"/><Ar x1={95}y1={115}x2={110}y2={115}theme="purple"/><Ar x1={165}y1={115}x2={180}y2={115}theme="purple"/></>}
+  {step>=2&&<><B x={20}y={148}w={145}h={28}theme="accent"text="G_A = 16/9 \u2248 1.78"step={step}show={2}/><B x={175}y={148}w={145}h={28}theme="purple"text="G_B = 25/9 \u2248 2.78"step={step}show={2}/></>}
+  {step>=3&&<><B x={20}y={182}w={145}h={28}theme="accent"text="P_A = 1+2+2+1 = 6"step={step}show={3}/><B x={175}y={182}w={145}h={28}theme="purple"text="P_B = 2+2+1 = 5"step={step}show={3}/></>}
+  {step>=4&&<B x={60}y={212}w={220}h={26}theme="green"text="Path A: lower G wins for large H"step={step}show={4}/>}
+</svg>;
+
+const DiagOptStages=({step})=><svg viewBox="0 0 340 180"style={{width:'100%',maxHeight:165}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Optimal Number of Stages</text>
+  {step>=0&&<><Gx x={20}y={38}w={50}h={30}label="NAND"sub="g=4/3"/><Gx x={85}y={38}w={50}h={30}label="NAND"sub="g=4/3"/><Gx x={150}y={38}w={50}h={30}label="NAND"sub="g=4/3"/><text x={215}y={57}fontSize={14}fill="#83827d">...</text><Gx x={240}y={38}w={50}h={30}label="NAND"sub="g=4/3"/><Ar x1={70}y1={53}x2={85}y2={53}/><Ar x1={135}y1={53}x2={150}y2={53}/><Ar x1={200}y1={53}x2={210}y2={53}/><Ar x1={225}y1={53}x2={240}y2={53}/><text x={305}y={57}fontSize={9}fill="#83827d">1000C</text></>}
+  {step>=1&&<B x={40}y={82}w={260}h={30}theme="accent"text={"Optimal f\u0302 \u2248 3.6 (the magic number)"}step={step}show={1}fontSize={12}/>}
+  {step>=2&&<B x={40}y={122}w={260}h={40}theme="green"text={"N = ln(F) / ln(3.6)\nSolve for F = (4/3)^N \u00D7 1000"}step={step}show={2}fontSize={11}/>}
+</svg>;
+
+const DiagCircFam=({step})=><svg viewBox="0 0 340 240"style={{width:'100%',maxHeight:210}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Circuit Families Overview</text>
+  {step>=0&&<><Gx x={10}y={35}w={145}h={34}label="Static CMOS"sub="Full complementary"/><Gx x={185}y={35}w={145}h={34}label="Pseudo-nMOS"sub="Always-on pMOS"/></>}
+  {step>=1&&<><Gx x={10}y={85}w={145}h={34}label="Dynamic"sub="Precharge + eval"theme="purple"/><Gx x={185}y={85}w={145}h={34}label="Domino"sub="Dynamic + INV"theme="blue"/></>}
+  {step>=2&&<><B x={10}y={135}w={145}h={45}theme="green"text={"Static: robust, 0 static pwr\nPseudo: compact, ratioed"}step={step}show={2}fontSize={9}/><B x={185}y={135}w={145}h={45}theme="purple"text={"Dynamic: fast, charge share\nDomino: monotonic, fast"}step={step}show={2}fontSize={9}/></>}
+  {step>=3&&<B x={40}y={195}w={260}h={32}theme="accent"text="Trade-off: speed vs power vs robustness"step={step}show={3}fontSize={11}/>}
+</svg>;
+
+const DiagStatPseudo=({step})=><svg viewBox="0 0 340 220"style={{width:'100%',maxHeight:195}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>4-Input AND: Static vs Pseudo</text>
+  {step>=0&&<><text x={85}y={38}textAnchor="middle"fontSize={10}fill="#2d6a4f"fontWeight={600}>Static CMOS</text><VD x={85}y={48}/><Pm x={55}y={78}w="P"/><Pm x={85}y={78}w="P"/><Pm x={115}y={78}w="P"/><text x={85}y={102}textAnchor="middle"fontSize={8}fill="#83827d">4 parallel pMOS</text><Nm x={85}y={120}w="N"/><Nm x={85}y={148}w="N"/><text x={85}y={170}textAnchor="middle"fontSize={8}fill="#83827d">4 series nMOS</text><GD x={85}y={182}/><rect x={130}y={106}width={30}height={20}rx={3}fill="#fff"stroke="#3d3929"strokeWidth={1}/><text x={145}y={119}textAnchor="middle"fontSize={8}fill="#3d3929">INV</text></>}
+  {step>=1&&<><text x={255}y={38}textAnchor="middle"fontSize={10}fill="#5b4a9e"fontWeight={600}>Pseudo-nMOS</text><VD x={255}y={48}/><Pm x={255}y={78}w="ON"/><text x={255}y={102}textAnchor="middle"fontSize={8}fill="#83827d">1 always-on pMOS</text><Nm x={255}y={120}w="N"/><Nm x={255}y={148}w="N"/><text x={255}y={170}textAnchor="middle"fontSize={8}fill="#83827d">4 series nMOS</text><GD x={255}y={182}/></>}
+  {step>=2&&<><B x={10}y={192}w={145}h={24}theme="green"text="10 transistors total"step={step}show={2}fontSize={10}/><B x={185}y={192}w={145}h={24}theme="purple"text="7 transistors total"step={step}show={2}fontSize={10}/></>}
+</svg>;
+
+const DiagDynamic=({step})=><svg viewBox="0 0 340 210"style={{width:'100%',maxHeight:190}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Dynamic Logic Issues</text>
+  {step>=0&&<><text x={85}y={38}textAnchor="middle"fontSize={10}fill="#5b4a9e"fontWeight={600}>Precharge Phase</text><VD x={85}y={48}/><Pm x={85}y={74}w="CLK"/><rect x={65}y={92}width={40}height={20}rx={3}fill="#ede9fe"stroke="#5b4a9e"strokeWidth={1}/><text x={85}y={105}textAnchor="middle"fontSize={8}fill="#5b4a9e">Out=1</text></>}
+  {step>=1&&<><text x={255}y={38}textAnchor="middle"fontSize={10}fill="#c96442"fontWeight={600}>Evaluate Phase</text><rect x={235}y={48}width={40}height={20}rx={3}fill="#f5e6df"stroke="#c96442"strokeWidth={1}/><text x={255}y={61}textAnchor="middle"fontSize={8}fill="#c96442">Out?</text><Nm x={255}y={92}w="PDN"/><GD x={255}y={120}/><Wi x1={255}y1={106}x2={255}y2={120}color="#2d6a4f"/></>}
+  {step>=2&&<><B x={10}y={132}w={100}h={30}theme="red"text="Charge sharing"step={step}show={2}fontSize={10}/><B x={120}y={132}w={90}h={30}theme="red"text="Leakage"step={step}show={2}fontSize={10}/><B x={220}y={132}w={110}h={30}theme="red"text="Can't cascade"step={step}show={2}fontSize={10}/></>}
+  {step>=3&&<B x={40}y={172}w={260}h={30}theme="green"text={"Domino: add INV \u2192 monotonic output"}step={step}show={3}fontSize={11}/>}
+</svg>;
+
+const DiagTG=({step})=><svg viewBox="0 0 340 180"style={{width:'100%',maxHeight:165}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Pass Transistor vs Transmission Gate</text>
+  {step>=0&&<><text x={85}y={40}textAnchor="middle"fontSize={10}fill="#c96442"fontWeight={600}>nMOS Pass Only</text><Nm x={85}y={65}w="N"/><text x={40}y={69}fontSize={9}fill="#83827d">In</text><text x={120}y={69}fontSize={9}fill="#83827d">Out</text><Ar x1={50}y1={65}x2={67}y2={65}/><Ar x1={103}y1={65}x2={115}y2={65}/><B x={25}y={85}w={120}h={28}theme="red"text={"Pass 0: strong \u2713\nPass 1: weak (VDD-Vt)"}fontSize={8}/></>}
+  {step>=1&&<><text x={255}y={40}textAnchor="middle"fontSize={10}fill="#2d6a4f"fontWeight={600}>Transmission Gate</text><Nm x={255}y={58}w="N"/><Pm x={255}y={80}w="P"/><text x={210}y={69}fontSize={9}fill="#83827d">In</text><text x={290}y={69}fontSize={9}fill="#83827d">Out</text><B x={195}y={100}w={120}h={28}theme="green"text={"N passes good 0\nP passes good 1"}fontSize={8}/></>}
+  {step>=2&&<B x={50}y={140}w={240}h={28}theme="green"text="TG: full rail-to-rail swing"step={step}show={2}fontSize={10}/>}
+</svg>;
+
+const DiagTiming=({step})=><svg viewBox="0 0 340 220"style={{width:'100%',maxHeight:200}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>{"Sequencing: Setup & Hold"}</text>
+  {step>=0&&<><text x={14}y={48}fontSize={10}fill="#83827d">CLK</text><polyline points="40,55 40,35 120,35 120,55 200,55 200,35 280,35 280,55"fill="none"stroke="#3d3929"strokeWidth={2}/></>}
+  {step>=1&&<><text x={14}y={95}fontSize={10}fill="#1d4e89">D</text><polyline points="40,100 60,100 60,80 170,80 170,100 280,100"fill="none"stroke="#1d4e89"strokeWidth={1.5}/><rect x={90}y={65}width={30}height={18}rx={3}fill="#f5e6df"stroke="#c96442"strokeWidth={1}/><text x={105}y={77}textAnchor="middle"fontSize={8}fill="#c96442"fontWeight={600}>t_setup</text></>}
+  {step>=2&&<><rect x={120}y={65}width={26}height={18}rx={3}fill="#dbeafe"stroke="#1d4e89"strokeWidth={1}/><text x={133}y={77}textAnchor="middle"fontSize={8}fill="#1d4e89"fontWeight={600}>t_hold</text></>}
+  {step>=3&&<><text x={14}y={142}fontSize={10}fill="#2d6a4f">Q</text><polyline points="40,145 130,145 130,125 280,125"fill="none"stroke="#2d6a4f"strokeWidth={1.5}/><rect x={120}y={150}width={30}height={16}rx={3}fill="#d1fae5"stroke="#2d6a4f"strokeWidth={1}/><text x={135}y={161}textAnchor="middle"fontSize={8}fill="#2d6a4f"fontWeight={600}>t_pcq</text></>}
+  {step>=4&&<B x={20}y={178}w={300}h={32}theme="accent"text={"T_c \u2265 t_pcq + t_pd + t_setup"}step={step}show={4}fontSize={12}/>}
+</svg>;
+
+const DiagHold=({step})=><svg viewBox="0 0 340 210"style={{width:'100%',maxHeight:190}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Hold Time Analysis</text>
+  {step>=0&&<><text x={14}y={45}fontSize={10}fill="#83827d">CLK</text><polyline points="40,50 40,32 140,32 140,50 240,50 240,32 320,32"fill="none"stroke="#3d3929"strokeWidth={2}/><text x={14}y={85}fontSize={10}fill="#1d4e89">D</text><polyline points="40,88 80,88 80,70 200,70 200,88 320,88"fill="none"stroke="#1d4e89"strokeWidth={1.5}/></>}
+  {step>=1&&<><rect x={140}y={54}width={36}height={16}rx={3}fill="#dbeafe"stroke="#1d4e89"strokeWidth={1.2}/><text x={158}y={65}textAnchor="middle"fontSize={8}fill="#1d4e89"fontWeight={600}>t_hold</text><rect x={140}y={92}width={44}height={16}rx={3}fill="#d1fae5"stroke="#2d6a4f"strokeWidth={1.2}/><text x={162}y={103}textAnchor="middle"fontSize={8}fill="#2d6a4f"fontWeight={600}>t_ccq+t_cd</text></>}
+  {step>=2&&<B x={20}y={118}w={300}h={28}theme="green"text={"t_ccq + t_cd \u2265 t_hold \u2192 0.13 \u2265 0.1 \u2713"}step={step}show={2}fontSize={11}/>}
+  {step>=3&&<B x={20}y={154}w={300}h={28}theme="red"text={"Corner: 0.08+0.01 = 0.09 < 0.1 \u2192 VIOLATION!"}step={step}show={3}fontSize={11}/>}
+  {step>=4&&<B x={40}y={188}w={260}h={22}theme="accent"text="Hold violations are frequency-independent!"step={step}show={4}fontSize={10}/>}
+</svg>;
+
+const DiagBorrow=({step})=><svg viewBox="0 0 340 200"style={{width:'100%',maxHeight:180}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Time Borrowing</text>
+  {step>=0&&<><text x={20}y={46}fontSize={9}fill="#83827d">Phase 1</text><rect x={50}y={35}width={100}height={20}rx={4}fill="#f5e6df"stroke="#c96442"strokeWidth={1}/><text x={100}y={49}textAnchor="middle"fontSize={9}fill="#c96442">Latch open</text><text x={170}y={46}fontSize={9}fill="#83827d">Phase 2</text><rect x={190}y={35}width={100}height={20}rx={4}fill="#dbeafe"stroke="#1d4e89"strokeWidth={1}/><text x={240}y={49}textAnchor="middle"fontSize={9}fill="#1d4e89">Latch open</text></>}
+  {step>=1&&<><Gx x={30}y={72}w={80}h={30}label="Stage 1"sub="Logic"/><Gx x={130}y={72}w={80}h={30}label="Stage 2"sub="Logic"/><Gx x={230}y={72}w={80}h={30}label="Stage 3"sub="Logic"/><Ar x1={110}y1={87}x2={130}y2={87}/><Ar x1={210}y1={87}x2={230}y2={87}/></>}
+  {step>=2&&<><line x1={110}y1={115}x2={165}y2={115}stroke="#c96442"strokeWidth={3}strokeLinecap="round"/><text x={138}y={130}textAnchor="middle"fontSize={9}fill="#c96442"fontWeight={600}>Borrowed time</text><Wi x1={150}y1={56}x2={165}y2={115}color="#c96442"dashed/></>}
+  {step>=3&&<B x={30}y={140}w={280}h={28}theme="green"text={"Borrow \u2264 T/2 \u2212 t_setup \u2212 t_nonoverlap"}step={step}show={3}fontSize={11}/>}
+  {step>=4&&<B x={30}y={175}w={280}h={22}theme="accent"text="Borrow cascades: stage 2 loses what stage 1 takes"step={step}show={4}fontSize={10}/>}
+</svg>;
+
+const DiagAdder=({step})=><svg viewBox="0 0 340 210"style={{width:'100%',maxHeight:190}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Adder Architectures</text>
+  {step>=0&&<><text x={85}y={38}textAnchor="middle"fontSize={10}fill="#c96442"fontWeight={600}>Ripple Carry</text><Gx x={15}y={48}w={40}h={28}label="FA"sub="0"/><Gx x={60}y={48}w={40}h={28}label="FA"sub="1"/><Gx x={105}y={48}w={40}h={28}label="FA"sub="2"/><Gx x={150}y={48}w={40}h={28}label="FA"sub="3"/><Ar x1={55}y1={62}x2={60}y2={62}/><Ar x1={100}y1={62}x2={105}y2={62}/><Ar x1={145}y1={62}x2={150}y2={62}/></>}
+  {step>=1&&<B x={15}y={85}w={175}h={24}theme="accent"text="Delay = O(N) per bit"step={step}show={1}/>}
+  {step>=2&&<><text x={255}y={38}textAnchor="middle"fontSize={10}fill="#2d6a4f"fontWeight={600}>CLA / Prefix</text><Gx x={205}y={48}w={30}h={28}label="PG"theme="green"/><Gx x={240}y={48}w={30}h={28}label="PG"theme="green"/><Gx x={275}y={48}w={30}h={28}label="PG"theme="green"/><Gx x={225}y={90}w={60}h={28}label="Prefix"sub="tree"theme="green"/><Wi x1={220}y1={76}x2={240}y2={90}color="#2d6a4f"/><Wi x1={255}y1={76}x2={255}y2={90}color="#2d6a4f"/><Wi x1={290}y1={76}x2={270}y2={90}color="#2d6a4f"/></>}
+  {step>=3&&<B x={195}y={125}w={135}h={24}theme="green"text="Delay = O(log N)"step={step}show={3}/>}
+  {step>=4&&<><B x={20}y={158}w={145}h={40}theme="blue"text={"Kogge-Stone:\nfast, O(N log N) area"}step={step}show={4}fontSize={9}/><B x={175}y={158}w={145}h={40}theme="purple"text={"Brent-Kung:\nO(N) area, 2logN delay"}step={step}show={4}fontSize={9}/></>}
+</svg>;
+
+const DiagPrefix=({step})=><svg viewBox="0 0 340 190"style={{width:'100%',maxHeight:175}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Prefix Adder Trade-offs</text>
+  {step>=0&&<><text x={95}y={40}textAnchor="middle"fontSize={10}fill="#1d4e89"fontWeight={600}>Kogge-Stone</text><Gx x={30}y={50}w={30}h={22}label="PG"theme="blue"/><Gx x={65}y={50}w={30}h={22}label="PG"theme="blue"/><Gx x={100}y={50}w={30}h={22}label="PG"theme="blue"/><Gx x={135}y={50}w={30}h={22}label="PG"theme="blue"/><Gx x={40}y={80}w={25}h={18}label={"\u25CF"}theme="blue"/><Gx x={75}y={80}w={25}h={18}label={"\u25CF"}theme="blue"/><Gx x={110}y={80}w={25}h={18}label={"\u25CF"}theme="blue"/><Gx x={55}y={104}w={25}h={18}label={"\u25CF"}theme="blue"/><Gx x={110}y={104}w={25}h={18}label={"\u25CF"}theme="blue"/></>}
+  {step>=1&&<><text x={260}y={40}textAnchor="middle"fontSize={10}fill="#5b4a9e"fontWeight={600}>Brent-Kung</text><Gx x={200}y={50}w={30}h={22}label="PG"theme="purple"/><Gx x={235}y={50}w={30}h={22}label="PG"theme="purple"/><Gx x={270}y={50}w={30}h={22}label="PG"theme="purple"/><Gx x={305}y={50}w={25}h={22}label="PG"theme="purple"/><Gx x={225}y={80}w={25}h={18}label={"\u25CF"}theme="purple"/><Gx x={260}y={104}w={25}h={18}label={"\u25CF"}theme="purple"/></>}
+  {step>=2&&<><B x={10}y={132}w={155}h={24}theme="blue"text="O(N log N) cells, O(log N)"step={step}show={2}fontSize={9}/><B x={175}y={132}w={155}h={24}theme="purple"text="O(N) cells, O(2 log N)"step={step}show={2}fontSize={9}/></>}
+  {step>=3&&<B x={40}y={164}w={260}h={24}theme="green"text="Choose BK when area/wiring matters more"step={step}show={3}fontSize={10}/>}
+</svg>;
+
+const DiagPower=({step})=><svg viewBox="0 0 340 180"style={{width:'100%',maxHeight:165}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Power Dissipation</text>
+  {step>=0&&<><B x={20}y={32}w={290}h={32}theme="accent"text={"P_total = P_dynamic + P_static + P_short"}fontSize={12}/><B x={20}y={76}w={140}h={28}theme="blue"text={"\u03B1\u00B7C\u00B7V\u00B2\u00B7f"}fontSize={10}/><B x={170}y={76}w={140}h={28}theme="purple"text={"I_leak \u00B7 V_DD"}fontSize={10}/></>}
+  {step>=1&&<B x={20}y={116}w={290}h={48}theme="green"text={"Reduce: lower V_DD (quadratic!), clock gate,\nmulti-Vt, power gating, smaller C"}step={step}show={1}fontSize={10}/>}
+</svg>;
+
+const DiagDynPwr=({step})=><svg viewBox="0 0 340 190"style={{width:'100%',maxHeight:175}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Dynamic Power Calculation</text>
+  {step>=0&&<><B x={30}y={32}w={280}h={30}theme="blue"text={"P_dyn = \u03B1 \u00D7 C \u00D7 V_DD\u00B2 \u00D7 f"}fontSize={13}/><Gx x={30}y={75}w={60}h={26}label={"\u03B1=0.15"}theme="accent"/><Gx x={100}y={75}w={60}h={26}label="C=50fF"theme="blue"/><Gx x={170}y={75}w={60}h={26}label="V=1.2V"theme="purple"/><Gx x={240}y={75}w={60}h={26}label="f=1GHz"theme="green"/></>}
+  {step>=1&&<B x={30}y={115}w={280}h={28}theme="accent"text={"= 0.15 \u00D7 50e-15 \u00D7 1.44 \u00D7 1e9"}step={step}show={1}fontSize={11}/>}
+  {step>=2&&<B x={70}y={152}w={200}h={30}theme="green"text={"P_dyn = 10.8 \u03BCW"}step={step}show={2}fontSize={14}/>}
+</svg>;
+
+const DiagVScale=({step})=><svg viewBox="0 0 340 200"style={{width:'100%',maxHeight:185}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>Voltage Scaling Effects</text>
+  {step>=0&&<><Gx x={20}y={35}w={130}h={32}label="V_DD = 1.2V"theme="blue"/><text x={195}y={55}fontSize={16}fill="#83827d">{"\u2192"}</text><Gx x={220}y={35}w={100}h={32}label="V_DD = 0.9V"theme="purple"/></>}
+  {step>=1&&<B x={20}y={80}w={300}h={28}theme="green"text={"Power: (0.9/1.2)\u00B2 = 0.5625 \u2192 56%"}step={step}show={1}fontSize={11}/>}
+  {step>=2&&<B x={20}y={118}w={300}h={28}theme="red"text={"Delay \u221D V / (V\u2212Vt)\u00B2, Vt = 0.4V"}step={step}show={2}fontSize={11}/>}
+  {step>=3&&<><B x={20}y={155}w={140}h={36}theme="blue"text={"1.2V: delay \u221D 1.875"}step={step}show={3}fontSize={10}/><B x={170}y={155}w={150}h={36}theme="purple"text={"0.9V: delay \u221D 3.6\n\u2248 2\u00D7 slower!"}step={step}show={3}fontSize={10}/></>}
+</svg>;
+
+const DiagLeak=({step})=><svg viewBox="0 0 340 200"style={{width:'100%',maxHeight:185}}><Df/>
+  <text x={170}y={16}textAnchor="middle"fontSize={12}fill="#3d3929"fontWeight={700}>{"Leakage & Multi-Vt"}</text>
+  {step>=0&&<B x={20}y={32}w={300}h={30}theme="accent"text={"I_sub \u221D exp((Vgs \u2212 Vt) / nVT)"}fontSize={12}/>}
+  {step>=1&&<><Gx x={20}y={78}w={130}h={34}label="Low Vt"sub="Fast, leaky"theme="red"/><Gx x={190}y={78}w={130}h={34}label="High Vt"sub="Slow, low leak"theme="green"/><text x={170}y={100}textAnchor="middle"fontSize={14}fill="#83827d">{"\u2194"}</text></>}
+  {step>=2&&<><B x={20}y={128}w={130}h={30}theme="red"text="Critical paths"step={step}show={2}fontSize={10}/><B x={190}y={128}w={130}h={30}theme="green"text="Non-critical paths"step={step}show={2}fontSize={10}/></>}
+  {step>=3&&<B x={40}y={168}w={260}h={28}theme="green"text={"Multi-Vt: best of both worlds"}step={step}show={3}fontSize={12}/>}
+</svg>;
+
+const APP_META = window.VLSI_CONTENT.meta;
+
+const DIAGRAM_REGISTRY = {
+  nand2_sizing: {Component: DiagNAND2},
+  nor3_sizing: {Component: DiagNOR3},
+  multi_stage_effort: {Component: DiagMultiStageLE},
+  path_compare: {Component: DiagPath},
+  optimal_stages: {Component: DiagOptStages},
+  circuit_families: {Component: DiagCircFam},
+  static_vs_pseudo: {Component: DiagStatPseudo},
+  dynamic_logic_issues: {Component: DiagDynamic},
+  transmission_gate: {Component: DiagTG},
+  timing_setup_hold: {Component: DiagTiming},
+  hold_analysis: {Component: DiagHold},
+  time_borrowing: {Component: DiagBorrow},
+  adder_architectures: {Component: DiagAdder},
+  prefix_compare: {Component: DiagPrefix},
+  power_overview: {Component: DiagPower},
+  dynamic_power_calc: {Component: DiagDynPwr},
+  voltage_scaling: {Component: DiagVScale},
+  leakage_multivt: {Component: DiagLeak},
+};
+
+const TOPICS = window.VLSI_CONTENT.topics.map((topic) => ({
+  ...topic,
+  learnWalkthrough: {
+    ...topic.learnWalkthrough,
+    diagram: DIAGRAM_REGISTRY[topic.learnWalkthrough.diagramType] || {Component: DiagPower},
+  },
+  problems: topic.problems.map((problem) => ({
+    ...problem,
+    diagram: DIAGRAM_REGISTRY[problem.diagramType] || {Component: DiagPower},
+    steps: problem.solution.steps,
+  })),
+}));
+
+const MOCK_STORAGE_KEY = 'vlsi-prep-mock-exams';
+const MOCK_MAX_COMPLETED = 20;
+const MOCK_EXAM_QUESTION_COUNT = Math.min(10, TOPICS.reduce((a, t) => a + t.problems.length, 0));
+const MOCK_DIAG_REVIEW_STEP = 50;
+
+const trimMockSessions = (list) => {
+  const inProg = list.filter((s) => s.status === 'in_progress');
+  const done = list
+    .filter((s) => s.status === 'completed')
+    .sort((a, b) => (b.completedAt || 0) - (a.completedAt || 0))
+    .slice(0, MOCK_MAX_COMPLETED);
+  return [...inProg, ...done];
+};
+
+const loadMockSessions = () => {
+  try {
+    const v = JSON.parse(localStorage.getItem(MOCK_STORAGE_KEY) || '[]');
+    return Array.isArray(v) ? trimMockSessions(v) : [];
+  } catch {
+    return [];
+  }
+};
+
+const persistMockSessions = (list) => {
+  const trimmed = trimMockSessions(list);
+  try {
+    localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(trimmed));
+  } catch {}
+  return trimmed;
+};
+
+const flatProblemPool = () => {
+  const r = [];
+  for (const topic of TOPICS) {
+    topic.problems.forEach((_, probIndex) => {
+      r.push({ topicId: topic.id, probIndex });
+    });
+  }
+  return r;
+};
+
+const shuffleArr = (a) => {
+  const arr = a.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = (Math.random() * (i + 1)) | 0;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+const newMockSession = (n) => {
+  const pool = shuffleArr(flatProblemPool());
+  const items = pool.slice(0, Math.min(n, pool.length)).map(({ topicId, probIndex }) => ({ topicId, probIndex }));
+  return {
+    id:
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    createdAt: Date.now(),
+    completedAt: null,
+    status: 'in_progress',
+    currentIndex: 0,
+    items,
+  };
+};
+
+const resolveProblemRef = (topicId, probIndex) => {
+  const topic = TOPICS.find((t) => t.id === topicId);
+  if (!topic) return null;
+  const prob = topic.problems[probIndex];
+  if (!prob) return null;
+  return { topic, prob };
+};
+
+const fmtMockDate = (ts) => {
+  if (!ts) return '';
+  try {
+    return new Date(ts).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+  } catch {
+    return String(ts);
+  }
+};
+
+const Badge=({n,size=20,color='var(--accent)'})=><div className="step-badge" style={{width:size,height:size,background:color,fontSize:size*.48}}>{n}</div>;
+const Chip=({children,accent,green})=><span className={`chip mono${accent?' accent':''}${green?' green':''}`}>{children}</span>;
+const PBar=({cur,tot})=>{const p=tot>0?(cur/tot)*100:0;return<div className="progress-track"><div className="progress-fill" style={{width:p+'%'}}/></div>};
+const StepCard=({n,text,src,vis})=>{if(!vis)return null;return<div className="step-card fi"><div className="step-row"><Badge n={n}/><div style={{flex:1,minWidth:0}}><div className="step-text">{text}</div>{src&&<div className="step-src mono">{src}</div>}</div></div></div>};
+const NavBtn=({label,onClick,disabled,accent,success,muted})=><button type="button" onClick={onClick} disabled={disabled} className={`btn${accent?' primary':''}${success?' success':''}${muted?' muted':''}`}>{label}</button>;
+const BackBtn=({onClick,label})=><button type="button" onClick={onClick} className="back-btn">{'\u2190'} {label||'Back'}</button>;
+
+const TopicCard=({topic,i,onClick})=><button type="button" onClick={onClick} className="topic-card pop" style={{animationDelay:i*.05+'s'}}><div className="topic-card-head"><span style={{fontSize:24}}>{topic.icon}</span><Chip>{topic.chapter}</Chip></div><div className="topic-card-title">{topic.title}</div><div className="topic-card-sub">{topic.subtitle}</div><div className="topic-card-meta mono">{topic.problems.length} problems {'\u00B7'} {topic.learnWalkthrough.steps.length} learn steps</div></button>;
+
+const Home=({onSelect,onOpenMock})=><div className="fi"><header className="hero-block"><div className="pill-row"><span className="pill mono">{APP_META.course.replace('*','\u00B7')}</span><span className="pill muted mono">{APP_META.semester}</span></div><div className="hero-title">VLSI Final Prep</div><div className="hero-sub">{TOPICS.length} topics {'\u00B7'} visual step-by-step prep</div><div className="pill-row" style={{marginTop:10,marginBottom:0}}><Chip accent>{APP_META.examChapters}</Chip><Chip>{APP_META.instructor}</Chip></div></header><button type="button" onClick={onOpenMock} className="problem-card pop mock-cta"><div className="problem-row"><div><div className="preview-title" style={{color:'var(--accent)'}}>Mock exams</div><div className="problem-copy">Random papers, then full solutions</div></div><span className="chevron">{'\u203A'}</span></div></button><div className="topic-grid">{TOPICS.map((t,i)=><TopicCard key={t.id} topic={t} i={i} onClick={()=>onSelect(t.id)}/>)}</div><div className="footer-meta mono">{TOPICS.reduce((a,t)=>a+t.problems.length,0)} problems {'\u00B7'} {TOPICS.reduce((a,t)=>a+t.problems.reduce((b,p)=>b+p.steps.length,0),0)} solution steps</div></div>;
+
+const LearnView=({topic,onBack,onJumpToPractice})=>{const[step,setStep]=useState(0);useEffect(()=>setStep(0),[topic.id]);const learn=topic.learnWalkthrough,Dia=learn.diagram.Component,total=learn.steps.length,last=step===total-1;return<div className="fi"><BackBtn onClick={onBack} label={topic.title}/><div className="progress-head"><div className="progress-title">{learn.title}</div><div className="progress-count mono">{step+1}/{total}</div></div><PBar cur={step+1} tot={total}/><div className="diagram-panel"><Dia step={step}/></div><div className="step-stack">{learn.steps.map((item,i)=>i<=step&&<StepCard key={i} n={i+1} text={item.text} src={item.source} vis/>)}</div><div className="action-row" style={{justifyContent:'space-between'}}><NavBtn label="Prev" onClick={()=>setStep(s=>s-1)} disabled={step===0} muted/><NavBtn label="Reset" onClick={()=>setStep(0)} disabled={step===0} muted/><NavBtn label="All" onClick={()=>setStep(total-1)} disabled={last} muted/>{!last?<NavBtn label="Next" onClick={()=>setStep(s=>s+1)} accent/>:<NavBtn label="Practice \u2192" onClick={onJumpToPractice} accent/>}</div></div>};
+
+const TopicView=({topic,mode,onModeChange,onBack,onStartLearn,onSelectProblem})=><div className="fi"><BackBtn onClick={onBack} label="Home"/><div className="topic-summary panel-card"><div className="topic-heading"><span style={{fontSize:26}}>{topic.icon}</span><div><div className="topic-title">{topic.title}</div><div className="topic-sub">{topic.subtitle}</div></div></div><div className="stats-row"><Chip accent>{topic.learnWalkthrough.steps.length} learn steps</Chip><Chip>{topic.problems.length} practice problems</Chip><Chip>{topic.chapter}</Chip></div><div className="concepts-card"><div className="section-label" style={{color:'var(--purple)'}}>Key Concepts</div><div className="concept-list">{topic.keyConcepts.map((concept,index)=><div key={concept} className="concept-item"><Badge n={index+1} size={18}/><div className="step-text">{concept}</div></div>)}</div></div><div className="segmented"><button type="button" onClick={()=>onModeChange('learn')} aria-pressed={mode==='learn'} className={`segment-btn${mode==='learn'?' active':''}`}>Learn</button><button type="button" onClick={()=>onModeChange('practice')} aria-pressed={mode==='practice'} className={`segment-btn${mode==='practice'?' active':''}`}>Practice</button></div></div>{mode==='learn'?<div className="preview-card panel-card"><div className="preview-title">{topic.learnWalkthrough.title}</div><div className="preview-meta mono">{topic.learnWalkthrough.steps.length} synced steps {'\u00B7'} {topic.learnWalkthrough.diagramType}</div><div className="preview-copy">{topic.learnWalkthrough.steps[0].text}</div><div className="preview-actions"><Chip accent>{topic.learnWalkthrough.steps[0].source}</Chip><NavBtn label="Start Walkthrough" onClick={onStartLearn} accent/></div></div>:<div className="practice-list">{topic.problems.map((problem,index)=><button key={problem.id} type="button" onClick={()=>onSelectProblem(index)} className="problem-card pop" style={{animationDelay:index*.04+'s'}}><div className="problem-row"><div style={{flex:1,minWidth:0}}><div className="topic-card-title">{problem.title}</div><div className="problem-copy">{problem.question}</div><div className="stats-row" style={{marginTop:8}}><Chip>{problem.steps.length} steps</Chip><Chip accent>{problem.source}</Chip></div></div><span className="chevron">{'\u203A'}</span></div></button>)}</div>}</div>;
+
+const ProblemView=({topic,probIdx,onNext,onPrev,onBack,totalProbs})=>{const prob=topic.problems[probIdx],Dia=prob.diagram.Component,[revealed,setRevealed]=useState(0);useEffect(()=>setRevealed(0),[topic.id,probIdx]);const isLast=probIdx===totalProbs-1;return<div className="fi"><BackBtn onClick={onBack} label={topic.title}/><div className="problem-title">{prob.title}</div><div className="preview-meta mono" style={{marginBottom:10}}>{topic.title} {'\u00B7'} Problem {probIdx+1}/{totalProbs}</div><div className="stats-row" style={{marginTop:0,marginBottom:10}}><Chip accent>{prob.source}</Chip><Chip>{prob.diagramType}</Chip></div><div className="question-block"><div className="question-label mono">QUESTION</div>{prob.question}</div><div className="diagram-panel"><Dia step={Math.max(revealed-1,0)}/></div><div className="action-row" style={{marginBottom:12}}><NavBtn label={revealed<prob.steps.length?`Step ${revealed+1}/${prob.steps.length}`:`${prob.steps.length}/${prob.steps.length}`} onClick={()=>setRevealed(r=>Math.min(r+1,prob.steps.length))} disabled={revealed>=prob.steps.length} accent/><NavBtn label="All" onClick={()=>setRevealed(prob.steps.length)} muted/><NavBtn label="Reset" onClick={()=>setRevealed(0)} muted/></div><div className="step-stack">{prob.steps.map((step,i)=><StepCard key={i} n={i+1} text={step.text} src={step.source} vis={i<revealed}/>)}</div><div className="action-row" style={{justifyContent:'space-between'}}><NavBtn label="Prev" onClick={()=>{setRevealed(0);onPrev();}} disabled={probIdx===0} muted/>{isLast?<NavBtn label="Done" onClick={onBack} success/>:<NavBtn label="Next" onClick={()=>{setRevealed(0);onNext();}} accent/>}</div></div>};
+
+const MockExamHub=({sessions,examSize,onBack,onGenerate,onContinue,onReview,onDiscard})=>{
+  const inProg=sessions.filter(s=>s.status==='in_progress');
+  const done=sessions.filter(s=>s.status==='completed').sort((a,b)=>(b.completedAt||0)-(a.completedAt||0));
+  return(
+    <div className="fi">
+      <BackBtn onClick={onBack} label="Home"/>
+      <div className="mock-page-title">Mock exams</div>
+      <p className="mock-lede">Each run pulls {examSize} random problems. No peeking at steps until you submit the full paper.</p>
+      <NavBtn label={examSize<1?'No problems available':`New exam (${examSize} questions)`} onClick={onGenerate} disabled={examSize<1} accent/>
+      <div className="mock-section">
+        <div className="mock-section-title">In progress</div>
+        {inProg.length===0
+          ? <div className="mock-empty">None right now.</div>
+          : <div className="mock-row-list">
+              {inProg.map(s=>(
+                <div key={s.id} className="mock-session-card">
+                  <div className="mock-session-meta">
+                    <div className="mono">{fmtMockDate(s.createdAt)}</div>
+                    <div className="mock-session-title">{s.items.length} questions {'\u00B7'} Q{(s.currentIndex??0)+1}</div>
+                  </div>
+                  <div className="mock-session-actions">
+                    <NavBtn label="Continue" onClick={()=>onContinue(s)} accent/>
+                    <button type="button" className="btn-danger" onClick={()=>onDiscard(s.id)}>Discard</button>
+                  </div>
+                </div>
+              ))}
+            </div>}
+      </div>
+      <div className="mock-section">
+        <div className="mock-section-title">Completed (solutions)</div>
+        {done.length===0
+          ? <div className="mock-empty">Submit an exam to save it here with full worked solutions.</div>
+          : <div className="mock-row-list">
+              {done.map(s=>(
+                <button key={s.id} type="button" onClick={()=>onReview(s)} className="mock-done-btn pop">
+                  <div className="mock-session-meta">
+                    <div className="mono">{fmtMockDate(s.completedAt)}</div>
+                    <div className="mock-session-title">{s.items.length} questions</div>
+                  </div>
+                  <span className="chevron">{'\u203A'}</span>
+                </button>
+              ))}
+            </div>}
+      </div>
+    </div>
+  );
+};
+
+const MockExamRunner=({session,onBackHub,onSetIndex,onSubmit})=>{
+  const idx=session.currentIndex??0;
+  const item=session.items[idx];
+  const ref=item?resolveProblemRef(item.topicId,item.probIndex):null;
+  const total=session.items.length;
+  const isLast=idx>=total-1;
+  if(!item||!ref)return<div className="fi"><BackBtn onClick={onBackHub} label="Mock exams"/><p className="mock-empty" style={{color:'var(--red)',marginTop:12}}>This exam references content that is no longer in the app.</p></div>;
+  const{topic,prob}=ref,Dia=prob.diagram.Component;
+  return<div className="fi" key={session.id+'-'+idx}><BackBtn onClick={onBackHub} label="Mock exams"/><div className="progress-head" style={{marginTop:8}}><div className="progress-title">Mock exam</div><div className="progress-count mono">{idx+1}/{total}</div></div><PBar cur={idx+1} tot={total}/><div className="problem-title">{prob.title}</div><div className="preview-meta mono" style={{marginBottom:10}}>{topic.title} {'\u00B7'} Problem {idx+1}/{total}</div><div className="stats-row" style={{marginBottom:12}}><Chip accent>{prob.source}</Chip><Chip>{prob.diagramType}</Chip></div><div className="question-panel">{prob.question}</div><div className="diagram-panel" style={{marginBottom:16}}><Dia step={0}/></div><div className="action-row" style={{justifyContent:'space-between',alignItems:'center'}}><NavBtn label="Prev" muted onClick={()=>onSetIndex(Math.max(0,idx-1))} disabled={idx===0}/><div className="action-row">{!isLast&&<NavBtn label="Next" onClick={()=>onSetIndex(Math.min(total-1,idx+1))} accent/>}{isLast&&<NavBtn label="Submit exam" onClick={onSubmit} success/>}</div></div></div>;
+};
+
+const MockExamReview=({session,onBackHub})=>{
+  if(session.status!=='completed')return<div className="fi"><BackBtn onClick={onBackHub} label="Mock exams"/><p className="mock-empty" style={{marginTop:12}}>Finish an exam to unlock solutions.</p></div>;
+  return<div className="fi"><BackBtn onClick={onBackHub} label="Mock exams"/><div className="mock-page-title" style={{fontSize:22}}>Solutions</div><div className="preview-meta mono" style={{marginBottom:18}}>{fmtMockDate(session.completedAt)} {'\u00B7'} {session.items.length} problems</div><div className="mock-row-list" style={{gap:0}}>{session.items.map((item,globalIdx)=>{const r=resolveProblemRef(item.topicId,item.probIndex);if(!r)return<div key={globalIdx} className="review-block mock-empty" style={{color:'var(--red)'}}>Problem unavailable</div>;const{topic,prob}=r,Dia=prob.diagram.Component;return<div key={globalIdx} className="review-block"><div className="problem-title" style={{fontSize:17}}>{prob.title}</div><div className="preview-meta mono" style={{marginBottom:10}}>{topic.title} {'\u00B7'} {globalIdx+1}/{session.items.length}</div><div className="stats-row" style={{marginBottom:10}}><Chip accent>{prob.source}</Chip><Chip>{prob.diagramType}</Chip></div><div className="question-panel">{prob.question}</div><div className="diagram-panel"><Dia step={MOCK_DIAG_REVIEW_STEP}/></div><div className="review-solution-label">Solution steps</div><div className="step-stack" style={{marginBottom:0}}>{prob.steps.map((step,i)=><StepCard key={i} n={i+1} text={step.text} src={step.source} vis/>)}</div></div>;})}</div></div>;
+};
+
+const App=()=>{const[view,setView]=useState('home'),[topicId,setTopicId]=useState(null),[topicMode,setTopicMode]=useState('learn'),[probIdx,setProbIdx]=useState(0),[mockSessions,setMockSessions]=useState([]),[activeMockId,setActiveMockId]=useState(null);const topic=useMemo(()=>TOPICS.find(t=>t.id===topicId),[topicId]);const activeMock=useMemo(()=>mockSessions.find(s=>s.id===activeMockId)||null,[mockSessions,activeMockId]);useEffect(()=>{setMockSessions(loadMockSessions());},[]);const applyMockSessions=useCallback((next)=>{setMockSessions(prev=>persistMockSessions(typeof next==='function'?next(prev):next));},[]);const goHome=useCallback(()=>{setView('home');setTopicId(null);setTopicMode('learn');setProbIdx(0);setActiveMockId(null);},[]);const openTopic=useCallback(id=>{setTopicId(id);setTopicMode('learn');setProbIdx(0);setView('topic');},[]);const openProblem=useCallback(i=>{setProbIdx(i);setView('problem');},[]);const backToTopic=useCallback((mode='practice')=>{setTopicMode(mode);setView('topic');},[]);const openMockHub=useCallback(()=>{setMockSessions(loadMockSessions());setView('mockHub');setActiveMockId(null);},[]);const startNewMock=useCallback(()=>{if(MOCK_EXAM_QUESTION_COUNT<1)return;const s=newMockSession(MOCK_EXAM_QUESTION_COUNT);applyMockSessions(prev=>[...prev,s]);setActiveMockId(s.id);setView('mockRun');},[applyMockSessions]);const continueMock=useCallback(sess=>{setActiveMockId(sess.id);setView('mockRun');},[]);const reviewMock=useCallback(sess=>{setActiveMockId(sess.id);setView('mockReview');},[]);const patchMock=useCallback((id,patch)=>{applyMockSessions(prev=>prev.map(x=>x.id===id?{...x,...patch}:x));},[applyMockSessions]);const submitMock=useCallback(()=>{if(!activeMockId)return;applyMockSessions(prev=>prev.map(x=>x.id===activeMockId?{...x,status:'completed',completedAt:Date.now()}:x));setView('mockReview');},[activeMockId,applyMockSessions]);const discardMock=useCallback(id=>{if(!confirm('Discard this mock exam? Progress will be lost.'))return;applyMockSessions(prev=>prev.filter(x=>x.id!==id));if(activeMockId===id){setActiveMockId(null);setView('mockHub');}},[activeMockId,applyMockSessions]);const backMockHub=useCallback(()=>{setMockSessions(loadMockSessions());setActiveMockId(null);setView('mockHub');},[]);let content;if(view==='home')content=<Home onSelect={openTopic} onOpenMock={openMockHub}/>;else if(view==='mockHub')content=<MockExamHub sessions={mockSessions} examSize={MOCK_EXAM_QUESTION_COUNT} onBack={goHome} onGenerate={startNewMock} onContinue={continueMock} onReview={reviewMock} onDiscard={discardMock}/>;else if(view==='mockRun'&&activeMock)content=<MockExamRunner session={activeMock} onBackHub={backMockHub} onSetIndex={i=>patchMock(activeMock.id,{currentIndex:i})} onSubmit={submitMock}/>;else if(view==='mockReview'&&activeMock)content=<MockExamReview session={activeMock} onBackHub={backMockHub}/>;else if(view==='topic'&&topic)content=<TopicView topic={topic} mode={topicMode} onModeChange={setTopicMode} onBack={goHome} onStartLearn={()=>setView('learn')} onSelectProblem={openProblem}/>;else if(view==='learn'&&topic)content=<LearnView topic={topic} onBack={()=>backToTopic('learn')} onJumpToPractice={()=>backToTopic('practice')}/>;else if(view==='problem'&&topic)content=<ProblemView topic={topic} probIdx={probIdx} totalProbs={topic.problems.length} onNext={()=>setProbIdx(i=>i+1)} onPrev={()=>setProbIdx(i=>i-1)} onBack={()=>backToTopic('practice')}/>;else content=<Home onSelect={openTopic} onOpenMock={openMockHub}/>;return<div className="app-shell">{content}</div>};
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

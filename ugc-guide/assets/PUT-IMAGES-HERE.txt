@@ -1,0 +1,5 @@
+Drop these three files here, exact names:
+
+views-grid.png   (page 2)
+payments.png     (page 7 — blur payer names first)
+discord.png      (page 9, optional)

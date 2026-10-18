@@ -1,0 +1,28 @@
+AI JOB SEARCH  /  teleprompter draft v0  /  DO NOT RECORD YET
+Beats are provisional until the reference reel is broken down.
+
+[0-2s HOOK]
+69 applications. 20 interviews. 1 job. And an AI wrote every single one.
+
+[2-8s PROOF]
+This guy's a geophysicist. His job got cut in late 2025.
+So he built a Claude Code agent to run his whole job search.
+
+[8-19s WHAT IT DOES]
+It scores every job post against your profile.
+Tailors your CV and cover letter to each one.
+Then preps you for the interview. Mock round and all.
+
+[19-23s CTA]
+Comment JOBS and I'll send you the repo.
+
+[23-35s DETAILS]
+It's open source. MIT license. Runs on your own machine.
+Heads up, you need a Claude plan or API credits.
+The built-in job boards are Danish, but the LinkedIn search works anywhere.
+
+[35-40s PAYOFF]
+And it worked. He started as an AI engineer in June 2026.
+
+[40-43s TEASER]
+Next one? A free voice studio that runs on your laptop.

@@ -1,0 +1,9 @@
+.venv/
+tools/
+node_modules/
+renders/*.mp4
+refs/*/
+assets/voice/*
+!assets/voice/.gitkeep
+assets/character/photos/
+smoke-test/.hyperframes/

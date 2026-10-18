@@ -21,11 +21,8 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RIG = os.path.join(ROOT, "assets", "character", "rig")
-POSES = ["front", "explain", "skeptic"]
-BLINKS = {"front", "explain"}     # skeptic's eye area is too shadowed to fake lids cleanly
+PIX = os.path.join(ROOT, "assets", "character", "pixel")    # build_pixel.py
 SHAPES = "XABCDEFGH"
-CHAR_W = 660                      # on-screen width of the character
 FPS = 30
 
 NUM_WORDS = {"69": "sixtynine", "20": "twenty", "1": "one", "2025": "twentytwentyfive", "2026": "twentytwentysix"}
@@ -158,7 +155,7 @@ def card_html(i, c, beats):
         return (f'<div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i>'
                 f'{CLAUDE_MARK}<b>Claude Code</b></div><div class="body">{body}</div></div>')
     if t == "stats":
-        cols = "".join(f'<div class="stat reveal"><div class="num" data-to="{E(n)}">0</div><div class="lab">{E(l)}</div></div>'
+        cols = "".join(f'<div class="stat reveal"><div class="num" data-to="{E(n)}">{E(n) if int(n) < 10 else 0}</div><div class="lab">{E(l)}</div></div>'
                        for n, l in c["items"])
         return f'<div class="card stats"><div class="row">{cols}</div><div class="src">{E(c["source"])}</div></div>'
     if t == "docs":
@@ -266,12 +263,11 @@ mark { background: #fff8c5; color: #1f2328; padding: 0 6px; border-radius: 6px; 
   font-size: 72px; flex: none; }
 .bh { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; }
 .bb { font-size: 32px; color: #57606a; margin-top: 8px; }
-#char { position: absolute; left: 72px; bottom: 0; width: 660px; height: 800px; }
-.pose { position: absolute; left: 0; bottom: 0; width: 660px; }
-.pose img.base, .pose img.blink { position: absolute; left: 0; top: 0; width: 100%; }
-.pose img.mouth { position: absolute; opacity: 0; }
-.pose img.blink { opacity: 0; }
-#gridmeter { position: absolute; left: 748px; top: 1712px; display: grid; grid-template-columns: repeat(13, 18px);
+#char { position: absolute; left: 40px; bottom: 0; width: 800px; height: 768px; }
+#sprite { position: absolute; left: 0; bottom: 0; }
+#sprite img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+#sprite img.ov, #sprite img.g { opacity: 0; }
+#gridmeter { position: absolute; left: 748px; top: 1800px; display: grid; grid-template-columns: repeat(13, 18px);
   grid-auto-rows: 18px; gap: 2px; }
 .gcell i { display: block; width: 18px; height: 18px; background: #ebedf0; border-radius: 3px; }
 """
@@ -340,33 +336,35 @@ def build(slug):
     # assets
     for f in ("Inter.woff2", "JetBrainsMono.woff2"):
         shutil.copy(os.path.join(ROOT, "assets", "fonts", f), os.path.join(proj, "assets", "fonts", f))
-    metas = {}
-    for p in POSES:
-        d = os.path.join(proj, "assets", "rig", p)
-        os.makedirs(d, exist_ok=True)
-        for f in os.listdir(os.path.join(RIG, p)):
-            shutil.copy(os.path.join(RIG, p, f), d)
-        metas[p] = json.load(open(os.path.join(RIG, p, "meta.json")))
+    pix = json.load(open(os.path.join(PIX, "meta.json")))
+    gestures = pix["gestures"]
+    os.makedirs(os.path.join(proj, "assets", "pixel"), exist_ok=True)
+    for f in os.listdir(PIX):
+        shutil.copy(os.path.join(PIX, f), os.path.join(proj, "assets", "pixel", f))
     from PIL import Image
-    fb = Image.open(os.path.join(RIG, "front", "base.png"))
-    m = metas["front"]["head"]
-    fb.crop((int(m["cx"] - 190), int(m["cy"] - 190), int(m["cx"] + 190), int(m["cy"] + 190))).resize((144, 144)).save(
-        os.path.join(proj, "assets", "avatar.png"))
+    mx, my = pix["mouth"]
+    Image.open(os.path.join(PIX, "rest.png")).crop((mx - 200, my - 330, mx + 200, my + 70)).resize(
+        (144, 144), Image.NEAREST).save(os.path.join(proj, "assets", "avatar.png"))
 
-    # DOM
-    k = CHAR_W / 1000
-    pose_html = []
-    for p in POSES:
-        mm = metas[p]
-        mo = mm["mouth"]
-        w, h = mo["w"] * k, mo["h"] * k
-        mouths = "".join(
-            f'<img class="mouth m-{s}" src="assets/rig/{p}/mouth_{s}.png" alt="" style="left:{mo["cx"] * k - w / 2:.1f}px;'
-            f'top:{mo["cy"] * k - h / 2:.1f}px;width:{w:.1f}px;height:{h:.1f}px;transform:rotate({mo["rot"]}deg)">'
-            for s in SHAPES)
-        blink = f'<img class="blink" src="assets/rig/{p}/blink.png" alt="">' if p in BLINKS else ""
-        pose_html.append(f'<div class="pose" id="pose-{p}" style="height:{mm["height"] * k:.1f}px">'
-                         f'<img class="base" src="assets/rig/{p}/base.png" alt="">{blink}{mouths}</div>')
+    # DOM: one sprite, a layer per gesture, shared blink + mouth overlays (the head is identical in every gesture)
+    sw, sh = pix["size"]
+    sprite = (f'<div id="sprite" style="width:{sw}px;height:{sh}px">'
+              + "".join(f'<img class="g" id="g-{g}" src="assets/pixel/{g}.png" alt="">' for g in gestures)
+              + '<img class="ov blink" src="assets/pixel/blink.png" alt="">'
+              + "".join(f'<img class="ov mouth m-{x}" src="assets/pixel/mouth_{x}.png" alt="">' for x in SHAPES)
+              + "</div>")
+
+    # sound: chiptune bed + retro hits where things appear (never two within 0.8 s)
+    hits, last = [(0.0, "power")], 0.0
+    for i, st in enumerate(steps):
+        t = starts[i] + 0.06
+        on = next((w["start"] for w in words if w["step"] == i and norm(w["text"]) == norm(st["card"].get("on", "~"))), None)
+        kind, t = ("coin", on) if on is not None else ("power" if i == len(steps) - 1 else "blip", t)
+        if t - last >= 0.8:
+            hits.append((round(t, 3), kind)); last = t
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    import chiptune
+    chiptune.render(total, hits, os.path.join(proj, "assets", "bed.wav"), mode == "voice")
 
     step_html = []
     for i, st in enumerate(steps):
@@ -379,8 +377,11 @@ def build(slug):
             f'<div class="title">{lines}</div><div class="cardwrap">{card_html(i, st["card"], beats)}</div></section>')
 
     cells = "".join('<span class="gcell"><i></i></span>' for _ in range(65))
-    audio = (f'<audio id="vo" src="assets/vo.wav" data-start="0" data-duration="{total}" data-track-index="3" '
-             f'data-volume="1"></audio>') if mode == "voice" else ""
+    audio = (f'<audio id="bed" src="assets/bed.wav" data-start="0" data-duration="{total}" data-track-index="4" '
+             f'data-volume="1"></audio>')
+    if mode == "voice":
+        audio += (f'<audio id="vo" src="assets/vo.wav" data-start="0" data-duration="{total}" data-track-index="3" '
+                  f'data-volume="1"></audio>')
     data = {"total": total, "steps": [{"start": s, "end": e, "pose": st["pose"], "card": st["card"]["type"],
                                        "on": next((w["start"] for w in words if w["step"] == i
                                                    and norm(w["text"]) == norm(st["card"].get("on", "~"))), None)}
@@ -402,7 +403,7 @@ def build(slug):
   <div class="path">{E(beats["repo_owner"])} / <b>{E(beats["repo_name"])}</b></div>
   <div class="rule"></div>
   {"".join(step_html)}
-  <div id="char">{"".join(pose_html)}</div>
+  <div id="char">{sprite}</div>
   <div id="gridmeter">{cells}</div>
   {audio}
 </div>
@@ -440,7 +441,7 @@ function build() {{
     const gap = Math.min(0.4, (dur * 0.6) / Math.max(1, rev.length));
     rev.forEach((el, k) => tl.fromTo(el, {{ opacity: 0, x: -18 }}, {{ opacity: 1, x: 0, duration: 0.25, ease: "power2.out" }}, st.start + 0.3 + k * gap));
     s.querySelectorAll(".num").forEach((el, k) => {{
-      const to = parseInt(el.dataset.to, 10), o = {{ v: 0 }};
+      const to = parseInt(el.dataset.to, 10), o = {{ v: to < 10 ? to : 0 }};
       tl.to(o, {{ v: to, duration: 0.7, ease: "power2.out", onUpdate: () => (el.textContent = Math.round(o.v)) }}, st.start + 0.3 + k * gap);
     }});
     const docs = s.querySelectorAll(".doc");
@@ -449,7 +450,7 @@ function build() {{
     const t0 = st.on != null ? st.on : st.start + 0.6;
     chars.forEach((el, c) => tl.fromTo(el, {{ opacity: 0 }}, {{ opacity: 1, duration: 0.01 }}, t0 + c * 0.07));
     // pose for this step
-    ["front", "explain", "skeptic"].forEach((p) => tl.set("#pose-" + p, {{ opacity: p === st.pose ? 1 : 0 }}, st.start));
+    document.querySelectorAll("#sprite .g").forEach((g) => tl.set(g, {{ opacity: g.id === "g-" + st.pose ? 1 : 0 }}, st.start));
     if (i === 0 || DATA.steps[i - 1].pose !== st.pose)
       tl.fromTo("#char", {{ scale: 0.95, y: 14 }}, {{ scale: 1, y: 0, duration: 0.3, ease: "back.out(2.5)", transformOrigin: "50% 100%" }}, st.start);
     // contribution-grid progress, 5 cells per step
@@ -473,13 +474,12 @@ function build() {{
   }});
 
   // idle life: breathing bob + blinks every ~3s
-  tl.fromTo("#char .pose", {{ y: 0 }}, {{ y: -7, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: Math.floor(T / 1.4) }}, 0);
+  // 8 px steps keep the bob on the pixel grid
+  tl.fromTo("#sprite", {{ y: 0 }}, {{ y: -8, duration: 0.7, ease: "steps(1)", yoyo: true, repeat: Math.floor(T / 0.7) }}, 0);
   for (let t = 1.7, n = 0; t < T - 0.3; t += 2.6 + rnd(n++) * 1.6) {{
     tl.set(".blink", {{ opacity: 1 }}, t);
     tl.set(".blink", {{ opacity: 0 }}, t + 0.12);
   }}
-  // talking emphasis: a small nod at each sentence start
-  DATA.steps.forEach((st) => tl.fromTo("#char .pose", {{ rotation: 0 }}, {{ rotation: 0.6, duration: 0.18, yoyo: true, repeat: 1, transformOrigin: "50% 70%" }}, st.start + 0.1));
 
   window.__timelines["main"] = tl;
 }}
@@ -493,7 +493,7 @@ document.fonts.ready.then(build);
               open(os.path.join(work, "timing.json"), "w"), indent=1)
     print(f"{slug}: {mode}, {total:.2f}s, {len(steps)} steps, {len(cues)} mouth cues")
     for i, s in enumerate(data["steps"]):
-        print(f"  {i + 1:02d} {s['start']:6.2f}-{s['end']:6.2f}  {steps[i]['pose']:8s} {steps[i]['say']}")
+        print(f"  {i + 1:02d} {s['start']:6.2f}-{s['end']:6.2f}  {steps[i]['pose']:6s} {steps[i]['say']}")
 
 
 if __name__ == "__main__":

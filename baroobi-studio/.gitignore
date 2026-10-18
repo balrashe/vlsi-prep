@@ -18,3 +18,4 @@ projects/*/work/
 projects/*/.hyperframes/
 projects/*/renders/
 __pycache__/
+assets/character/pixel/

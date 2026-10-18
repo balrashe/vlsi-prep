@@ -1,0 +1,16 @@
+69 applications. 20 interviews. 1 signed contract.
+
+Mads Lorentzen's job got cut in late 2025, so he built an open-source Claude Code agent to run his whole job search. It scores job posts against your profile, tailors your CV and cover letter to each one, and preps you for the interview.
+
+He started as an AI engineer in June 2026.
+
+Heads up: you need a Claude plan or API credits to run it. The built-in job boards are Danish, but the LinkedIn search works anywhere.
+
+Comment JOBS and I'll DM you the repo.
+
+#claudecode #ai #jobsearch #opensource #buildinpublic
+
+---
+DM to send on JOBS:
+Here you go: https://github.com/MadsLorentzen/ai-job-search
+Fork it, run /setup with your CV, then /scrape and /apply. Needs a Claude plan or API credits.

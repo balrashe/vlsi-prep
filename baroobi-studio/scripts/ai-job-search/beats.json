@@ -1,0 +1,92 @@
+{
+  "slug": "ai-job-search",
+  "repo_owner": "MadsLorentzen",
+  "repo_name": "ai-job-search",
+  "steps": [
+    {
+      "say": "69 applications. 20 interviews. 1 job.",
+      "title": ["69 applications.", "20 interviews. 1 job."],
+      "pose": "front",
+      "card": {"type": "stats", "items": [["69", "applications"], ["20", "first interviews"], ["1", "signed contract"]],
+               "source": "from the repo README"}
+    },
+    {
+      "say": "And an AI wrote every single one.",
+      "title": ["An AI wrote", "every single one."],
+      "pose": "front",
+      "card": {"type": "docs", "count": 69, "label": "69 tailored applications"}
+    },
+    {
+      "say": "This guy's a geophysicist. His job got cut in late 2025.",
+      "title": ["A geophysicist.", "Job cut in late 2025."],
+      "pose": "explain",
+      "card": {"type": "quote", "file": "README.md",
+               "text": "I'm a [geophysicist] by training. When my position was [cut in late 2025], I built this framework to run my own job search."}
+    },
+    {
+      "say": "So he built a Claude Code agent to run his whole job search.",
+      "title": ["So he built", "a Claude Code agent."],
+      "pose": "explain",
+      "card": {"type": "repo", "desc": "The job search that runs on your machine.",
+               "chips": ["/scrape", "/rank", "/apply", "/interview"]}
+    },
+    {
+      "say": "It scores every job post against your profile.",
+      "title": ["It scores", "every job post."],
+      "pose": "explain",
+      "card": {"type": "terminal", "lines": [["cmd", "/scrape"], ["dim", "Searching job portals for your profile"],
+                                             ["cmd", "/rank"], ["ok", "Scored against your fit framework"]]}
+    },
+    {
+      "say": "Tailors your CV and cover letter to each one.",
+      "title": ["Tailors your", "CV and cover letter."],
+      "pose": "explain",
+      "card": {"type": "terminal", "lines": [["cmd", "/apply <job url>"], ["ok", "CV tailored"],
+                                             ["ok", "Cover letter drafted"], ["ok", "ATS check on the PDF"]]}
+    },
+    {
+      "say": "Then preps you for the interview. Mock round and all.",
+      "title": ["Preps you for", "the interview."],
+      "pose": "front",
+      "card": {"type": "terminal", "lines": [["cmd", "/interview"], ["ok", "Prep pack built"],
+                                             ["ok", "Likely questions mapped"], ["ok", "Mock interview ready"]]}
+    },
+    {
+      "say": "Comment JOBS and I'll send you the repo.",
+      "title": ["Comment", "JOBS"],
+      "pose": "front",
+      "card": {"type": "comment", "handle": "baroobi.inc", "text": "JOBS", "on": "JOBS"}
+    },
+    {
+      "say": "It's open source. MIT license. Runs on your own machine.",
+      "title": ["Open source.", "MIT license."],
+      "pose": "explain",
+      "card": {"type": "repo", "desc": "Open source. MIT license.", "checks": ["Runs on your own machine", "Fork it, fill in your profile"]}
+    },
+    {
+      "say": "Heads up, you need a Claude plan or API credits.",
+      "title": ["Heads up:", "Claude plan or API credits."],
+      "pose": "skeptic",
+      "card": {"type": "note", "head": "Claude Code has no free tier", "body": "Pro, Max or Team plan, or pay-per-token API credits."}
+    },
+    {
+      "say": "The built-in job boards are Danish, but the LinkedIn search works anywhere.",
+      "title": ["Job boards: Danish.", "LinkedIn: anywhere."],
+      "pose": "skeptic",
+      "card": {"type": "terminal", "lines": [["dim", "jobindex-search      DK"], ["dim", "jobnet-search        DK"],
+                                             ["cmd", "linkedin-search -l \"Toronto, Canada\""], ["ok", "Works in any market"]]}
+    },
+    {
+      "say": "And it worked. He started as an AI engineer in June 2026.",
+      "title": ["And it worked.", "AI engineer, June 2026."],
+      "pose": "front",
+      "card": {"type": "badge", "head": "1 signed contract", "body": "Started as an AI engineer, June 2026"}
+    },
+    {
+      "say": "Next one? A free voice studio that runs on your laptop.",
+      "title": ["Next one?", "A free voice studio."],
+      "pose": "front",
+      "card": {"type": "teaser", "owner": "debpalash", "desc": "Open source. Runs on your laptop."}
+    }
+  ]
+}

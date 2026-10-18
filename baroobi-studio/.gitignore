@@ -7,3 +7,14 @@ assets/voice/*
 !assets/voice/.gitkeep
 assets/character/photos/
 smoke-test/.hyperframes/
+# personal likeness: never commit (public repo)
+assets/character/norm/
+assets/character/cut/
+assets/character/rig/
+assets/character/*.png
+assets/character/photo_ids.txt
+projects/*/assets/
+projects/*/work/
+projects/*/.hyperframes/
+projects/*/renders/
+__pycache__/

@@ -7,7 +7,12 @@
 - Rhubarb Lip Sync 1.9.1 (tools/rhubarb). Remotion 4.0.536 (remotion/). faster-whisper 1.2.1 (.venv, av<16 pin).
 - Container is ephemeral: run ./setup.sh in a new session.
 
-## ai-job-search  (blocked)
+## Voice
+- Owner approved cloning his own voice (2026-10-18). VoiceStudio 0.5.7 backend from source, CPU, http://127.0.0.1:3900.
+- Engine VoxCPM2 (Apache-2.0, 5.0 GB). OmniVoice skipped: CC-BY-NC, reels are commercial.
+- ~7x slower than real time on this CPU. Run: scripts/voice_reel.sh <slug> <sample>
+
+## ai-job-search  (waiting on voice sample)
 - [ ] photos -> assets/character/photos/
 - [ ] KREA/OpenArt cartoon output -> assets/character/
 - [ ] reference reel URL

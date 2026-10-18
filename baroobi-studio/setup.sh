@@ -12,3 +12,9 @@ command -v yt-dlp >/dev/null || pip3 install --break-system-packages -q yt-dlp
 [[ -e ~/.claude/skills/hypit ]] || npx -y skills add hypit-ai/hypit -g -y
 # HyperFrames: claude plugin marketplace add heygen-com/hyperframes && claude plugin install hyperframes@hyperframes
 tools/rhubarb/rhubarb --version && npx -y hyperframes@0.8.172 --version
+# VoiceStudio backend (voice clone). Engine: VoxCPM2 (Apache-2.0). Never OmniVoice (CC-BY-NC).
+if [[ ! -d tools/VoiceStudio ]]; then
+  git clone -q --depth 1 https://github.com/debpalash/VoiceStudio.git tools/VoiceStudio
+  (cd tools/VoiceStudio && OMNIVOICE_ANALYTICS_DISABLED=1 node scripts/setup-api.mjs)
+fi
+# then start it, POST /models/install {"repo_id":"openbmb/VoxCPM2"} and POST /engines/sidecar/voxcpm2/install

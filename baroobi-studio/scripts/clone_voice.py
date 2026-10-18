@@ -2,6 +2,7 @@
 
   clone_voice.py profile <sample.(wav|m4a|mp3)>   build/refresh the "baroobi" voice profile from a clean sample
   clone_voice.py speak <slug>                      voice scripts/<slug>/beats.json -> assets/voice/<slug>.wav
+  clone_voice.py redo <slug> <n[,n]>               regenerate beats n (Whisper-checked), keep the rest
 
 The backend must be running (tools/VoiceStudio: `bun scripts/dev-backend.mjs`, http://127.0.0.1:3900).
 OmniVoice, VoiceStudio's default engine, is CC-BY-NC, so it is never used here: these reels are commercial.
@@ -18,8 +19,11 @@ API = os.environ.get("VOICESTUDIO_URL", "http://127.0.0.1:3900")
 ENGINE = "voxcpm2"
 PROFILE_NAME = os.environ.get("VOICE_PROFILE_NAME", "baroobi")
 STATE = os.environ.get("VOICE_PROFILE_STATE", os.path.join(ROOT, "assets", "voice", "profile.json"))
-REF_SECONDS = 25          # VoxCPM2 caps references at 30 s
+REF_SECONDS = float(os.environ.get("VOICE_REF_SECONDS", 25))   # VoxCPM2 caps at 30 s; longer = slower on CPU
 GAP = 0.16                # silence between beats
+
+# Whisper mishearings of his own sample, fixed so the reference transcript matches what he said
+HEARD = [(r"\bMaroobie\b|\bBaroobie\b|\bbaroobie\b", "baroobi"), (r"\bcloud code\b", "Claude Code")]
 
 # spoken forms so the clone never guesses at digits or acronyms
 SAY = [(r"\b69\b", "sixty-nine"), (r"\b20\b", "twenty"), (r"\b1 job\b", "one job"),
@@ -76,6 +80,8 @@ def build_profile(sample):
     ref = os.path.join(work, "ref.wav")
     ffmpeg("-i", clean, "-ss", f"{t0:.3f}", "-to", f"{t1:.3f}", ref)
     ref_text = " ".join(w["word"] for w in words[bi:bj + 1])
+    for pat, rep in HEARD:
+        ref_text = re.sub(pat, rep, ref_text, flags=re.I)
     old = json.load(open(STATE)) if os.path.exists(STATE) else {}
     if old.get("profile_id"):
         try:
@@ -91,7 +97,20 @@ def build_profile(sample):
     print(f'  "{ref_text}"')
 
 
-def speak(slug):
+def heard(path):
+    out = path + ".json"
+    subprocess.run([os.path.join(ROOT, ".venv", "bin", "python"), os.path.join(ROOT, "scripts", "transcribe.py"),
+                    path, out, "small.en"], check=True, capture_output=True)
+    return json.load(open(out))["text"]
+
+
+def norm_words(t):
+    return re.sub(r"[^a-z0-9 ]", "", t.lower().replace("-", " ")).split()
+
+
+def speak(slug, redo=None):
+    """redo: 1-based beat numbers to regenerate (others are reused). Redone beats retry seeds until Whisper
+    hears >= 85% of the line's words in order, so "And it worked" never ships as "It ain't work"."""
     prof = json.load(open(STATE))
     beats = json.load(open(os.path.join(ROOT, "scripts", slug, "beats.json")))
     work = os.path.join(ROOT, "assets", "voice", "work", slug)
@@ -102,13 +121,25 @@ def speak(slug):
         for pat, rep in SAY:
             text = re.sub(pat, rep, text)
         out = os.path.join(work, f"beat{i + 1:02d}.wav")
-        audio = call("/generate", {"text": text, "profile_id": prof["profile_id"], "engine": ENGINE,
-                                   "language": "English", "seed": 7})
-        raw = out.replace(".wav", ".raw.wav")
-        open(raw, "wb").write(audio)
-        trim = "silenceremove=start_periods=1:start_threshold=-45dB"
-        ffmpeg("-i", raw, "-af", f"{trim},areverse,{trim},areverse", out)    # trim both ends of the beat
-        d = duration(out)                       # proves it decoded as audio, not an error body
+        if redo is not None and (i + 1) not in redo and os.path.exists(out):
+            parts.append(out)
+            continue
+        for seed in ((7,) if redo is None else (11, 23, 42, 77, 101)):
+            audio = call("/generate", {"text": text, "profile_id": prof["profile_id"], "engine": ENGINE,
+                                       "language": "English", "seed": seed})
+            raw = out.replace(".wav", ".raw.wav")
+            open(raw, "wb").write(audio)
+            trim = "silenceremove=start_periods=1:start_threshold=-45dB"
+            ffmpeg("-i", raw, "-af", f"{trim},areverse,{trim},areverse", out)    # trim both ends of the beat
+            d = duration(out)                   # proves it decoded as audio, not an error body
+            if redo is None:
+                break
+            got = heard(out)
+            want = norm_words(re.sub(r"\d+", lambda m: m.group(), st["say"]))
+            ok = __import__("difflib").SequenceMatcher(None, want, norm_words(got)).ratio() >= 0.85
+            print(f"     seed {seed}: heard \"{got}\" {'OK' if ok else 'retry'}")
+            if ok:
+                break
         print(f"  {i + 1:02d} {d:5.2f}s  {text}")
         parts.append(out)
     gap = os.path.join(work, "gap.wav")
@@ -128,4 +159,5 @@ def speak(slug):
 
 
 if __name__ == "__main__":
-    {"profile": lambda: build_profile(sys.argv[2]), "speak": lambda: speak(sys.argv[2])}[sys.argv[1]]()
+    {"profile": lambda: build_profile(sys.argv[2]), "speak": lambda: speak(sys.argv[2]),
+     "redo": lambda: speak(sys.argv[2], {int(x) for x in sys.argv[3].split(",")})}[sys.argv[1]]()

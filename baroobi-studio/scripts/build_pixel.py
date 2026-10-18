@@ -216,7 +216,7 @@ def mouths():
 def blink():
     L = Layer()
     for ex in (CX - 9, CX + 8):
-        L.ell((ex - 4, 30, ex + 4, 37), "skin")
+        L.d.rounded_rectangle((ex - 5, 30, ex + 5, 38), radius=2, fill=C["skin"] + (255,))   # covers whites + catch light
         L.px([(ex - 4 + k, 34) for k in range(9)], "line")
         L.px([(ex - 3 + k, 35) for k in range(7)], "skin_lo")
     return L

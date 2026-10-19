@@ -21,7 +21,7 @@ ENGINE = "voxcpm2"
 PROFILE_NAME = os.environ.get("VOICE_PROFILE_NAME", "baroobi")
 STATE = os.environ.get("VOICE_PROFILE_STATE", os.path.join(ROOT, "assets", "voice", "profile.json"))
 REF_SECONDS = float(os.environ.get("VOICE_REF_SECONDS", 25))   # VoxCPM2 caps at 30 s; longer = slower on CPU
-GAP = 0.12                # between sentences: tight, but a real breath so lines do not run together
+GAP = 0.06                # between sentences: v2 at 0.12 still read loose to him
 
 # Whisper mishearings of his own sample, fixed so the reference transcript matches what he said
 HEARD = [(r"\bMaroobie\b|\bBaroobie\b|\bbaroobie\b", "baroobi"), (r"\bcloud code\b", "Claude Code")]
@@ -224,8 +224,8 @@ def join(slug, parts, prof):
                 f.write(f"file '{gap}'\n")
     dest = os.path.join(ROOT, "assets", "voice", f"{slug}.wav")
     ffmpeg("-f", "concat", "-safe", "0", "-i", lst, "-ar", "48000", "-ac", "1",
-           # any pause over 0.2 s shrinks to 0.12 s: no dead air, but sentences still breathe
-           "-af", "silenceremove=stop_periods=-1:stop_duration=0.2:stop_threshold=-40dB:stop_silence=0.12,"
+           # any pause over 0.12 s shrinks to 0.07 s (his edits leave ~0.09 s)
+           "-af", "silenceremove=stop_periods=-1:stop_duration=0.12:stop_threshold=-40dB:stop_silence=0.07,"
                   "loudnorm=I=-16:TP=-1.5", dest)
     json.dump({"source": "voice clone", "engine": ENGINE, "profile": prof["profile_id"]},
               open(os.path.join(ROOT, "assets", "voice", f"{slug}.meta.json"), "w"))

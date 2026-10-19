@@ -191,7 +191,9 @@
         "dm": "here you go -> github.com/MadsLorentzen/ai-job-search",
         "on": "JOBS"
       }
-    },
+    }
+  ],
+  "dropped_after_cta": [
     {
       "say": "It's open source. MIT license. Runs on your own machine.",
       "title": [

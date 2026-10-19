@@ -356,7 +356,7 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c120
 .dmrow { margin-top: 26px; padding: 18px 20px; border-radius: 20px; background: #f3f0ff; }
 .ava { width: 70px; height: 70px; border-radius: 50%; image-rendering: pixelated; background: #3a2416; flex: none; }
 .dmlab { margin-left: 10px; color: #8c959f; font-size: 24px; }
-.dmtext { font-size: 28px; color: #0969da; margin-top: 4px; white-space: pre-wrap; font-family: "JetBrains Mono", monospace; }
+.dmtext { font-size: 23px; color: #0969da; margin-top: 4px; white-space: pre; font-family: "JetBrains Mono", monospace; }
 /* note */
 .note { background: #fff8c5; padding: 34px 34px; }
 .nh { font-size: 42px; font-weight: 800; display: flex; gap: 16px; align-items: center; color: #7d4e00; }
@@ -425,11 +425,12 @@ function build() {
       }
       if (el.dataset.off) tl.set(el, { opacity: 0 }, at(parseFloat(el.dataset.off)));
     });
-    for (let c = 0; c < 5; c++) {
-      const idx = i * 5 + c;
+    const per = Math.ceil(65 / DATA.steps.length);      // grid fills completely by the last beat
+    for (let c = 0; c < per; c++) {
+      const idx = i * per + c;
       if (idx >= 65) break;
       const cell = cells[(idx % 5) * 13 + Math.floor(idx / 5)];
-      tl.set(cell.querySelector("i"), { backgroundColor: GREENS[Math.floor(rnd(idx) * 4)] }, st.start + c * 0.05);
+      tl.set(cell.querySelector("i"), { backgroundColor: GREENS[Math.floor(rnd(idx) * 4)] }, st.start + c * 0.03);
     }
   });
   window.__timelines["main"] = tl;

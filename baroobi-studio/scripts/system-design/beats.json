@@ -1,0 +1,147 @@
+{
+  "repo_owner": "donnemartin",
+  "repo_name": "system-design-primer",
+  "keyword": "SYSTEM",
+  "steps": [
+    {
+      "say": "People pay 148 dollars for system design courses.",
+      "title": [
+        "People pay $148",
+        "for system design."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "versus",
+        "left": {
+          "label": "Popular paid course",
+          "value": "$148",
+          "sub": "one-time"
+        },
+        "right": {
+          "label": "system-design-primer",
+          "value": "$0",
+          "sub": "free on GitHub"
+        },
+        "source": "designgurus.io course page, Oct 19 2026"
+      }
+    },
+    {
+      "say": "The best one I've found is a free GitHub repo with 370 thousand stars.",
+      "title": [
+        "The best one is free.",
+        "370K+ stars."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "stats",
+        "items": [
+          [
+            "370K+",
+            "GitHub stars"
+          ],
+          [
+            "$0",
+            "to learn"
+          ]
+        ],
+        "source": "github.com/donnemartin/system-design-primer"
+      }
+    },
+    {
+      "say": "Every topic they ask you. Caching, load balancers, sharding, CAP theorem.",
+      "title": [
+        "Every topic.",
+        "Every trade-off."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "repo",
+        "desc": "Everything is a trade-off.",
+        "chips": [
+          "Caching",
+          "Load balancer",
+          "Sharding",
+          "CAP theorem",
+          "CDN",
+          "Microservices"
+        ]
+      }
+    },
+    {
+      "say": "Real interview questions with full solutions.",
+      "title": [
+        "Real questions.",
+        "Full solutions."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "ok",
+            "Design the Twitter timeline and search"
+          ],
+          [
+            "ok",
+            "Design Pastebin.com (or Bit.ly)"
+          ],
+          [
+            "ok",
+            "Design a parking lot"
+          ],
+          [
+            "ok",
+            "Design a least recently used cache"
+          ]
+        ],
+        "head": "system-design-primer"
+      }
+    },
+    {
+      "say": "Plus Anki flashcards so it actually sticks.",
+      "title": [
+        "Plus Anki",
+        "flashcards."
+      ],
+      "pose": "wave",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "dim",
+            "System design deck"
+          ],
+          [
+            "dim",
+            "System design exercises deck"
+          ],
+          [
+            "dim",
+            "Object oriented design exercises deck"
+          ],
+          [
+            "ok",
+            "Spaced repetition built in"
+          ]
+        ],
+        "head": "Anki decks"
+      }
+    },
+    {
+      "say": "Comment SYSTEM and I'll send you the repo.",
+      "title": [
+        "Comment",
+        "SYSTEM"
+      ],
+      "pose": "point",
+      "card": {
+        "type": "dm",
+        "word": "SYSTEM",
+        "handle": "baroobi.inc",
+        "dm": "here you go -> github.com/donnemartin/system-design-primer",
+        "on": "SYSTEM"
+      }
+    }
+  ],
+  "slug": "system-design"
+}

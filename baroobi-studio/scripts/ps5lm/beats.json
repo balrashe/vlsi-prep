@@ -1,0 +1,147 @@
+{
+  "repo_owner": "cobanov",
+  "repo_name": "PS5LM",
+  "keyword": "PS5",
+  "steps": [
+    {
+      "say": "Someone turned a PS5 into an AI computer.",
+      "title": [
+        "Someone turned a PS5",
+        "into an AI computer."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "shot",
+        "img": "home.jpg",
+        "credit": "PS5LM app on a PS5 Slim \u00b7 github.com/cobanov/PS5LM"
+      }
+    },
+    {
+      "say": "It runs a language model right on the console's GPU.",
+      "title": [
+        "A language model",
+        "on the console's GPU."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "stats",
+        "items": [
+          [
+            "11.4 GB",
+            "memory for the model"
+          ],
+          [
+            "RDNA 2",
+            "console GPU"
+          ]
+        ],
+        "source": "llama.cpp Vulkan backend \u00b7 PS5LM README"
+      }
+    },
+    {
+      "say": "The 9B model does 55 tokens a second.",
+      "title": [
+        "The 9B model:",
+        "55 tokens a second."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "rank",
+        "rows": [
+          [
+            "Qwen 3.5 0.8B",
+            100,
+            "hi",
+            "207 tok/s"
+          ],
+          [
+            "Qwen 3.5 9B",
+            27,
+            "mid",
+            "55 tok/s"
+          ],
+          [
+            "Qwen 3.8 27B",
+            10,
+            "lo",
+            "~20 tok/s"
+          ]
+        ],
+        "head": "PS5 Slim benchmarks",
+        "cmd": "PS5LM README"
+      }
+    },
+    {
+      "say": "Every device on your network can use it. Even Claude Code.",
+      "title": [
+        "Your whole network",
+        "uses it."
+      ],
+      "pose": "wave",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "cmd",
+            "ANTHROPIC_BASE_URL=http://<console>:8081"
+          ],
+          [
+            "ok",
+            "OpenAI /v1/chat/completions"
+          ],
+          [
+            "ok",
+            "Anthropic /v1/messages"
+          ]
+        ],
+        "head": "Terminal"
+      }
+    },
+    {
+      "say": "No PC, no cloud, no account.",
+      "title": [
+        "No PC. No cloud.",
+        "No account."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "repo",
+        "desc": "Your PS5 runs the language model.",
+        "checks": [
+          "No PC while it runs",
+          "No cloud, no account",
+          "GPL-3.0, not affiliated with Sony"
+        ]
+      }
+    },
+    {
+      "say": "Heads up, it needs a jailbroken PS5 on firmware 13.60 or lower.",
+      "title": [
+        "Heads up:",
+        "jailbroken PS5 only."
+      ],
+      "pose": "shrug",
+      "card": {
+        "type": "note",
+        "head": "Firmware 7.00 to 13.60, jailbroken",
+        "body": "Firmware 14.00 closes it, and it has to be re-run after every reboot."
+      }
+    },
+    {
+      "say": "Comment PS5 and I'll send you the repo.",
+      "title": [
+        "Comment",
+        "PS5"
+      ],
+      "pose": "point",
+      "card": {
+        "type": "dm",
+        "word": "PS5",
+        "handle": "baroobi.inc",
+        "dm": "here you go -> github.com/cobanov/PS5LM",
+        "on": "PS5"
+      }
+    }
+  ],
+  "slug": "ps5lm"
+}

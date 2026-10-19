@@ -1,0 +1,149 @@
+{
+  "repo_owner": "hypit-ai",
+  "repo_name": "hypit",
+  "keyword": "CLONE",
+  "steps": [
+    {
+      "say": "This repo clones any viral reel.",
+      "title": [
+        "This repo clones",
+        "any viral reel."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "repo",
+        "desc": "Clone any viral video with AI agents.",
+        "chips": [
+          "Claude Code",
+          "Codex",
+          "1 command"
+        ]
+      }
+    },
+    {
+      "say": "Not the script. The whole edit. Footage, captions, B-roll, effects.",
+      "title": [
+        "Not the script.",
+        "The whole edit."
+      ],
+      "pose": "shrug",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "cmd",
+            "/hypit Clone this video: viral.mp4"
+          ],
+          [
+            "ok",
+            "Footage"
+          ],
+          [
+            "ok",
+            "Captions"
+          ],
+          [
+            "ok",
+            "B-roll and effects"
+          ]
+        ]
+      }
+    },
+    {
+      "say": "Their football tier list cost a dollar fifteen to make.",
+      "title": [
+        "A full reel",
+        "for $1.15."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "stats",
+        "items": [
+          [
+            "$1.15",
+            "GOAT DEBATE"
+          ],
+          [
+            "$1.07",
+            "DAILY CREATINE"
+          ],
+          [
+            "$1.09",
+            "NICE RIDE"
+          ]
+        ],
+        "source": "example costs from the Hypit README"
+      }
+    },
+    {
+      "say": "Install it with one command, then just ask your agent.",
+      "title": [
+        "One command.",
+        "Then ask your agent."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "cmd",
+            "npx skills add hypit-ai/hypit -g"
+          ],
+          [
+            "cmd",
+            "/hypit Make a ranking video"
+          ],
+          [
+            "ok",
+            "Captions anchored to words, not seconds"
+          ]
+        ]
+      }
+    },
+    {
+      "say": "Heads up, Hypit is free, but the AI models for new footage cost money.",
+      "title": [
+        "Hypit is free.",
+        "The models aren't."
+      ],
+      "pose": "shrug",
+      "card": {
+        "type": "note",
+        "head": "Generated footage uses paid models",
+        "body": "About $1 per reel in their examples. Captions and motion graphics can render without them."
+      }
+    },
+    {
+      "say": "And you own every video you make.",
+      "title": [
+        "You own",
+        "every video."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "repo",
+        "desc": "Apache-2.0 with conditions.",
+        "checks": [
+          "No seat pricing or per-render fees",
+          "No added watermark"
+        ]
+      }
+    },
+    {
+      "say": "Comment CLONE and I'll send you the repo.",
+      "title": [
+        "Comment",
+        "CLONE"
+      ],
+      "pose": "point",
+      "card": {
+        "type": "dm",
+        "word": "CLONE",
+        "handle": "baroobi.inc",
+        "dm": "here you go -> github.com/hypit-ai/hypit",
+        "on": "CLONE"
+      }
+    }
+  ],
+  "slug": "hypit"
+}

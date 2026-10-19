@@ -15,6 +15,9 @@ import subprocess
 import sys
 import urllib.request
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import numwords  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API = os.environ.get("VOICESTUDIO_URL", "http://127.0.0.1:3900")
 ENGINE = "voxcpm2"
@@ -29,7 +32,9 @@ HEARD = [(r"\bMaroobie\b|\bBaroobie\b|\bbaroobie\b", "baroobi"), (r"\bcloud code
 # spoken forms so the clone never guesses at digits or acronyms
 SAY = [(r"\b69\b", "sixty-nine"), (r"\b20\b", "twenty"), (r"\b1 job\b", "one job"),
        (r"\b2025\b", "twenty twenty-five"), (r"\b2026\b", "twenty twenty-six"),
-       (r"\bMIT\b", "M.I.T."), (r"\bAPI\b", "A.P.I."), (r"\bCV\b", "C.V.")]
+       (r"\bMIT\b", "M.I.T."), (r"\bAPI\b", "A.P.I."), (r"\bCV\b", "C.V."),
+       (r"\bPS5\b", "P.S. five"), (r"\bGPU\b", "G.P.U."), (r"\b9B\b", "nine B"), (r"\b13\.60\b", "thirteen sixty"),
+       (r"\bECC\b", "E. C. C."), (r"\bTDD\b", "T.D.D."), (r"\bCAP\b", "cap"), (r"\bAnki\b", "Anky")]
 
 
 def call(path, fields=None, files=None, method="POST"):
@@ -159,7 +164,16 @@ def tighten(raw, out):
 
 
 def norm_words(t):
-    return re.sub(r"[^a-z0-9 ]", "", t.lower().replace("-", " ")).split()
+    """Lowercase words; spelled-out letters ("E. C. C.", "e c c") collapse back to one word ("ecc")."""
+    out, run = [], False
+    for w in re.sub(r"[^a-z0-9 ]", " ", t.lower().replace("'", "")).split():
+        letter = len(w) == 1 and w.isalpha() and w not in "ai"
+        if letter and run:
+            out[-1] += w
+        else:
+            out.append(w)
+        run = letter
+    return out
 
 
 def speak(slug, redo=None):
@@ -174,6 +188,7 @@ def speak(slug, redo=None):
         text = st["say"]
         for pat, rep in SAY:
             text = re.sub(pat, rep, text)
+        text = numwords.say_numbers(text)             # any digits left: 311 -> three hundred eleven
         out = os.path.join(work, f"beat{i + 1:02d}.wav")
         if redo is not None and (i + 1) not in redo and os.path.exists(out):
             parts.append(out)
@@ -191,6 +206,8 @@ def speak(slug, redo=None):
             got = heard(out)
             want = norm_words(re.sub(r"\d+", lambda m: m.group(), st["say"]))
             ok = __import__("difflib").SequenceMatcher(None, want, norm_words(got)).ratio() >= 0.85
+            kw = beats.get("keyword", "").lower()
+            ok = ok and (kw not in want or kw in norm_words(got))   # the CTA word must land exactly
             print(f"     seed {seed}: heard \"{got}\" {'OK' if ok else 'retry'}")
             if ok:
                 break

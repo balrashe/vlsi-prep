@@ -1,0 +1,13 @@
+Comment CLONE and I'll send you the repo 👇
+
+This repo clones a viral reel's whole edit. Not the script: footage, captions, B-roll and effects.
+
+Hypit works with Claude Code and Codex. Their football tier list example cost $1.15 to make.
+
+Heads up: Hypit is free, but generating new footage uses paid AI models (about $1 per reel in their examples). License is Apache-2.0 with conditions, and you own what you make.
+
+Voiceover: AI clone of my own voice.
+
+#ai #claudecode #contentcreation #opensource #baroobi
+---
+DM on CLONE: https://github.com/hypit-ai/hypit

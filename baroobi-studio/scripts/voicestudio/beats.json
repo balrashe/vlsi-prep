@@ -1,0 +1,147 @@
+{
+  "repo_owner": "debpalash",
+  "repo_name": "VoiceStudio",
+  "keyword": "VOICE",
+  "steps": [
+    {
+      "say": "ElevenLabs charges you every month to clone your voice.",
+      "title": [
+        "ElevenLabs charges",
+        "every month."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "versus",
+        "left": {
+          "label": "ElevenLabs cloning",
+          "value": "$6+/mo",
+          "sub": "Starter plan and up"
+        },
+        "right": {
+          "label": "VoiceStudio",
+          "value": "$0",
+          "sub": "runs on your machine"
+        },
+        "source": "elevenlabs.io/pricing, Oct 19 2026"
+      }
+    },
+    {
+      "say": "This does it on your laptop for free.",
+      "title": [
+        "This does it",
+        "on your laptop."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "repo",
+        "desc": "Open-source voice cloning, dubbing and transcription.",
+        "chips": [
+          "646 languages",
+          "Mac",
+          "Windows",
+          "Linux"
+        ]
+      }
+    },
+    {
+      "say": "The voice you're hearing right now? That's my clone. Made with this.",
+      "title": [
+        "This voice?",
+        "My clone."
+      ],
+      "pose": "shrug",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "cmd",
+            "Voice cloning"
+          ],
+          [
+            "dim",
+            "reference: my_voice.wav (22s)"
+          ],
+          [
+            "ok",
+            "Voice profile saved"
+          ],
+          [
+            "ok",
+            "Script voiced locally"
+          ]
+        ],
+        "head": "VoiceStudio"
+      }
+    },
+    {
+      "say": "Clone a voice, design a new one, dub videos, even transcribe.",
+      "title": [
+        "Clone. Design.",
+        "Dub. Transcribe."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "repo",
+        "desc": "Your voice. Your workflow.",
+        "chips": [
+          "Voice cloning",
+          "Voice design",
+          "Video dubbing",
+          "Transcription",
+          "Audiobooks"
+        ]
+      }
+    },
+    {
+      "say": "One command to install.",
+      "title": [
+        "One command",
+        "to install."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "cmd",
+            "curl -fsSL https://voicestudio.sh/install | sh"
+          ],
+          [
+            "ok",
+            "Local workflows run on your hardware"
+          ]
+        ],
+        "head": "Terminal"
+      }
+    },
+    {
+      "say": "Heads up, the default model is non-commercial. If you're getting paid, switch engines.",
+      "title": [
+        "Heads up:",
+        "default model is non-commercial."
+      ],
+      "pose": "shrug",
+      "card": {
+        "type": "note",
+        "head": "Default model: CC-BY-NC",
+        "body": "For paid content pick an Apache or MIT engine. I use VoxCPM2. Only clone voices you have permission to use."
+      }
+    },
+    {
+      "say": "Comment VOICE and I'll send you the repo.",
+      "title": [
+        "Comment",
+        "VOICE"
+      ],
+      "pose": "point",
+      "card": {
+        "type": "dm",
+        "word": "VOICE",
+        "handle": "baroobi.inc",
+        "dm": "here you go -> github.com/debpalash/VoiceStudio",
+        "on": "VOICE"
+      }
+    }
+  ],
+  "slug": "voicestudio"
+}

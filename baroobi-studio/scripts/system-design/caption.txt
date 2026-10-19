@@ -1,0 +1,13 @@
+Comment SYSTEM and I'll send you the repo 👇
+
+People pay $148 for a system design course. The best one I've found is free on GitHub.
+
+The System Design Primer has 370K+ stars. It covers caching, load balancing, sharding and the CAP theorem, with real interview questions, full solutions and Anki flashcards.
+
+Course price: designgurus.io, checked Oct 19, 2026. Repo by Donne Martin, CC BY 4.0.
+
+Voiceover: AI clone of my own voice.
+
+#systemdesign #coding #softwareengineering #interviewprep #baroobi
+---
+DM on SYSTEM: https://github.com/donnemartin/system-design-primer

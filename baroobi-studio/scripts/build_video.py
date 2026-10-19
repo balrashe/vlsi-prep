@@ -20,6 +20,9 @@ import shutil
 import subprocess
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import numwords  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VOX = os.path.join(ROOT, "assets", "character", "voxel")    # build_voxel.py
 SHAPES = "XABCDEFGH"
@@ -29,8 +32,11 @@ NUM_WORDS = {"69": "sixtynine", "20": "twenty", "1": "one", "2025": "twentytwent
 
 
 def norm(w):
+    """Compare script words and Whisper words: digits become words on both sides (311 == three hundred eleven)."""
     w = re.sub(r"[^a-z0-9]", "", w.lower())
-    return NUM_WORDS.get(w, w)
+    if w in NUM_WORDS:
+        return NUM_WORDS[w]
+    return re.sub(r"[^a-z]", "", numwords.spoken(w)) if w.isdigit() else w
 
 
 def script_words(steps):
@@ -190,8 +196,10 @@ def card_html(i, c, beats):
             f'<div class="rrow" {anim("slide", 0.06 + k * 0.1)}><span class="rjob">{E(j)}</span>'
             f'<span class="rtrack"><span class="rbar {lvl}" {anim("grow", 0.18 + k * 0.1)} style="width:{w}%"></span></span>'
             f'<span class="rlab {lvl}">{E(lab)}</span></div>' for k, (j, w, lvl, lab) in enumerate(c["rows"]))
-        return (f'<div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i>{CLAUDE_MARK}'
-                f'<b>Claude Code</b><span class="cmd2">/rank</span></div><div class="body">{rows}</div></div>')
+        head = c.get("head", "Claude Code")
+        return (f'<div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i>'
+                f'{CLAUDE_MARK if head == "Claude Code" else ""}<b>{E(head)}</b><span class="cmd2">{E(c.get("cmd", "/rank"))}</span></div>'
+                f'<div class="body">{rows}</div></div>')
     if t == "cvdiff":
         rows = "".join(f'<div class="dl {k}" {anim("slide", 0.08 + n * 0.14)}><span class="dk">{"-" if k == "del" else "+" if k == "add" else " "}</span>{E(x)}</div>'
                        for n, (k, x) in enumerate(c["lines"]))
@@ -219,8 +227,9 @@ def card_html(i, c, beats):
                 rows.append(f'<div class="tl ok" {a}>{icon("check")} {E(txt)}</div>')
             else:
                 rows.append(f'<div class="tl dim" {a}>{E(txt)}</div>')
+        head = c.get("head", "Claude Code")                # the window title says where this actually runs
         return (f'<div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i>'
-                f'{CLAUDE_MARK}<b>Claude Code</b></div><div class="body">{"".join(rows)}</div></div>')
+                f'{CLAUDE_MARK if head == "Claude Code" else ""}<b>{E(head)}</b></div><div class="body">{"".join(rows)}</div></div>')
     if t == "note":
         return (f'<div class="card note" {anim("shake", 0.05)}><div class="nh">{icon("warn")} {E(c["head"])}</div>'
                 f'<div class="nb" {anim("slide", 0.3)}>{E(c["body"])}</div></div>')
@@ -231,6 +240,17 @@ def card_html(i, c, beats):
                 f'<svg class="sig" viewBox="0 0 300 70"><path {anim("draw", 0.3)} d="M6 50 C 30 10, 52 10, 50 44 S 80 66, 96 30 '
                 f'S 128 8, 132 40 S 160 62, 176 34 S 206 14, 214 42 S 250 56, 294 24"/></svg>'
                 f'<div class="signed" {anim("stamp", 0.62)}>{icon("check")} Signed</div></div>')
+    if t == "versus":
+        a, b = c["left"], c["right"]
+        return (f'<div class="card versus"><div class="vs l" {anim("slide", 0.05)}><div class="vlab">{E(a["label"])}</div>'
+                f'<div class="vnum">{E(a["value"])}</div><div class="vsub">{E(a["sub"])}</div></div>'
+                f'<div class="vsx" {anim("stamp", 0.3)}>vs</div>'
+                f'<div class="vs r" {anim("stamp", 0.45)}><div class="vlab">{E(b["label"])}</div>'
+                f'<div class="vnum">{E(b["value"])}</div><div class="vsub">{E(b["sub"])}</div></div>'
+                f'<div class="src vsrc">{E(c["source"])}</div></div>')
+    if t == "shot":
+        return (f'<div class="card shot"><img src="assets/shots/{E(c["img"])}" alt="" {anim("pop", 0.02)}>'
+                f'<div class="src">{E(c["credit"])}</div></div>')
     if t == "teaser":
         bars = "".join(f'<i style="height:{18 + int(40 * abs(__import__("math").sin(k * 1.7)))}px" {anim("pop", round(0.1 + k * 0.012, 3))}></i>'
                        for k, _ in enumerate(range(40)))
@@ -354,9 +374,10 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c120
 .ctext { font-size: 40px; font-weight: 800; margin-top: 2px; }
 .kw { position: absolute; right: 30px; top: 22px; font-size: 92px; font-weight: 900; color: #0969da; letter-spacing: -0.04em; }
 .dmrow { margin-top: 26px; padding: 18px 20px; border-radius: 20px; background: #f3f0ff; }
+.dmrow > div { min-width: 0; flex: 1; }
 .ava { width: 70px; height: 70px; border-radius: 50%; image-rendering: pixelated; background: #3a2416; flex: none; }
 .dmlab { margin-left: 10px; color: #8c959f; font-size: 24px; }
-.dmtext { font-size: 23px; color: #0969da; margin-top: 4px; white-space: pre; font-family: "JetBrains Mono", monospace; }
+.dmtext { font-size: 23px; color: #0969da; margin-top: 4px; white-space: pre; overflow: hidden; font-family: "JetBrains Mono", monospace; }
 /* note */
 .note { background: #fff8c5; padding: 34px 34px; }
 .nh { font-size: 42px; font-weight: 800; display: flex; gap: 16px; align-items: center; color: #7d4e00; }
@@ -373,6 +394,20 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c120
 .sig path { fill: none; stroke: #0a3069; stroke-width: 5; stroke-linecap: round; }
 .signed { position: absolute; right: 34px; bottom: 34px; font-size: 38px; font-weight: 800; color: #1a7f37; border: 5px solid #1a7f37;
   border-radius: 12px; padding: 6px 18px; display: flex; gap: 10px; align-items: center; }
+/* versus */
+.versus { position: relative; display: flex; align-items: stretch; gap: 0; padding: 26px 26px 54px; }
+.vs { flex: 1; border-radius: 14px; padding: 18px 20px; text-align: center; }
+.vs.l { background: #fff1f0; } .vs.r { background: #e9fbef; }
+.vlab { font-size: 28px; font-weight: 700; color: #57606a; }
+.vnum { font-size: 96px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; margin-top: 6px; }
+.vs.l .vnum { color: #cf222e; } .vs.r .vnum { color: #1a7f37; }
+.vsub { font-size: 26px; color: #57606a; margin-top: 4px; }
+.vsx { align-self: center; font-size: 40px; font-weight: 900; color: #8c959f; margin: 0 16px; }
+.vsrc { position: absolute; left: 0; right: 0; bottom: 8px; padding: 0; }
+/* repo screenshot */
+.shot { padding: 0; }
+.shot img { display: block; width: 100%; }
+.shot .src { padding: 10px 0 12px; }
 /* teaser */
 .wave { display: flex; align-items: center; gap: 6px; height: 80px; margin-top: 18px; }
 .wave i { display: block; width: 14px; border-radius: 7px; background: #8250df; }
@@ -384,6 +419,19 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c120
 JS = """
 const GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
 function rnd(i) { const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
+function fitNums() {
+  document.querySelectorAll(".num, .vnum").forEach((el) => {
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.parentElement.clientWidth - 8 && fs > 40) { fs -= 4; el.style.fontSize = fs + "px"; }
+  });
+}
+function fitLines() {
+  // long commands and links shrink to fit their card instead of running off the edge
+  document.querySelectorAll(".tl, .dmtext, .rtitle").forEach((el) => {
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && fs > 16) { fs -= 1; el.style.fontSize = fs + "px"; }
+  });
+}
 function fitTitles() {
   document.querySelectorAll(".tline").forEach((el) => {
     let fs = 124;
@@ -393,6 +441,8 @@ function fitTitles() {
 }
 function build() {
   fitTitles();
+  fitNums();
+  fitLines();
   const tl = gsap.timeline({ paused: true });
   // headline words pop on the spoken word: these are the captions
   document.querySelectorAll(".tw").forEach((el) => {
@@ -502,7 +552,9 @@ def build(slug):
     # assets
     for f in ("Inter.woff2", "JetBrainsMono.woff2"):
         shutil.copy(os.path.join(ROOT, "assets", "fonts", f), os.path.join(proj, "assets", "fonts", f))
-    for sub, src in (("voxel", VOX), ("people", os.path.join(ROOT, "assets", "people"))):
+    shots = os.path.join(ROOT, "assets", "shots", slug)
+    os.makedirs(shots, exist_ok=True)
+    for sub, src in (("voxel", VOX), ("people", os.path.join(ROOT, "assets", "people")), ("shots", shots)):
         os.makedirs(os.path.join(proj, "assets", sub), exist_ok=True)
         for f in os.listdir(src):
             shutil.copy(os.path.join(src, f), os.path.join(proj, "assets", sub, f))

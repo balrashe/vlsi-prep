@@ -1,0 +1,158 @@
+{
+  "repo_owner": "affaan-m",
+  "repo_name": "ECC",
+  "keyword": "ECC",
+  "steps": [
+    {
+      "say": "This one repo gives Claude Code 311 skills and 71 agents.",
+      "title": [
+        "311 skills.",
+        "71 agents."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "stats",
+        "items": [
+          [
+            "311",
+            "skills"
+          ],
+          [
+            "71",
+            "agents"
+          ],
+          [
+            "97",
+            "commands"
+          ]
+        ],
+        "source": "ECC v2.2.3 README"
+      }
+    },
+    {
+      "say": "It's called Everything Claude Code.",
+      "title": [
+        "Everything",
+        "Claude Code."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "repo",
+        "desc": "Optimize the context window. Persist everything else.",
+        "chips": [
+          "Claude Code",
+          "Codex",
+          "Cursor",
+          "Gemini",
+          "MIT"
+        ]
+      }
+    },
+    {
+      "say": "Planner, architect, code reviewer. Each one is a subagent you can hand work to.",
+      "title": [
+        "A subagent",
+        "for every job."
+      ],
+      "pose": "point",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "dim",
+            "agents/planner.md"
+          ],
+          [
+            "dim",
+            "agents/architect.md"
+          ],
+          [
+            "dim",
+            "agents/code-reviewer.md"
+          ],
+          [
+            "dim",
+            "agents/build-error-resolver.md"
+          ],
+          [
+            "ok",
+            "71 agents"
+          ]
+        ],
+        "head": "affaan-m/ECC"
+      }
+    },
+    {
+      "say": "Skills for TDD, security reviews and research. They only load when you need them.",
+      "title": [
+        "Skills load",
+        "only when needed."
+      ],
+      "pose": "shrug",
+      "card": {
+        "type": "repo",
+        "desc": "311 reusable workflows, loaded on demand.",
+        "chips": [
+          "tdd-workflow",
+          "security-review",
+          "search-first"
+        ]
+      }
+    },
+    {
+      "say": "One command to install.",
+      "title": [
+        "One command",
+        "to install."
+      ],
+      "pose": "thumb",
+      "card": {
+        "type": "terminal",
+        "lines": [
+          [
+            "cmd",
+            "npx ecc-universal@2.2.3 setup"
+          ],
+          [
+            "ok",
+            "Agents, skills, hooks, rules, memory"
+          ]
+        ],
+        "head": "Terminal"
+      }
+    },
+    {
+      "say": "Built by an Anthropic hackathon winner.",
+      "title": [
+        "Built by a",
+        "hackathon winner."
+      ],
+      "pose": "wave",
+      "card": {
+        "type": "profile",
+        "avatar": "affaan.jpg",
+        "name": "Affaan Mustafa",
+        "handle": "affaan-m",
+        "role": "Author of ECC",
+        "stamp": "Hackathon winner \u00b7 Sep 2025",
+        "source": "from the ECC README"
+      }
+    },
+    {
+      "say": "Comment ECC and I'll send you the repo.",
+      "title": [
+        "Comment",
+        "ECC"
+      ],
+      "pose": "point",
+      "card": {
+        "type": "dm",
+        "word": "ECC",
+        "handle": "baroobi.inc",
+        "dm": "here you go -> github.com/affaan-m/ECC",
+        "on": "ECC"
+      }
+    }
+  ],
+  "slug": "ecc"
+}

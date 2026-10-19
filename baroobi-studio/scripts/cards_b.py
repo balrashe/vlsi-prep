@@ -46,7 +46,7 @@ def _screen(k, s, shots_dir, vh):
     zooms = s.get("zooms", [[0, 0, 0, 1]])
     show = anim("show", s.get("f", 0), f'data-off="{s["off"]}"' if "off" in s else "")
     label = f'<div class="scrlab">{E(s["label"])}</div>' if s.get("label") else ""
-    return (f'<div class="scr" {show if k else ""}><div class="zoom" data-zooms=\'{json.dumps(zooms)}\' '
+    return (f'<div class="scr" {show}><div class="zoom" data-zooms=\'{json.dumps(zooms)}\' '
             f'data-vw="{PANEL_W}" data-ih="{dh}" style="height:{dh}px">'
             f'<img src="assets/shots/{E(s["img"])}" alt="" style="width:{PANEL_W}px;height:{dh}px">{marks}</div>{label}</div>')
 

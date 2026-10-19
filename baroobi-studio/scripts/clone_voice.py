@@ -208,6 +208,7 @@ def speak(slug, redo=None):
             ok = __import__("difflib").SequenceMatcher(None, want, norm_words(got)).ratio() >= 0.85
             kw = beats.get("keyword", "").lower()
             ok = ok and (kw not in want or kw in norm_words(got))   # the CTA word must land exactly
+            ok = ok and all(m in norm_words(got) for m in st.get("must", []))   # words that carry the line
             print(f"     seed {seed}: heard \"{got}\" {'OK' if ok else 'retry'}")
             if ok:
                 break

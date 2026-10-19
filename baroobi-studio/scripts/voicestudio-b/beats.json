@@ -9,10 +9,10 @@
  "variant_of": "voicestudio",
  "steps": [
   {
-   "say": "You're not hearing me right now. This is a free clone of my voice.",
+   "say": "You're not hearing me right now. This is a free AI clone of my voice.",
    "title": [
-    "Not my voice.",
-    "A free clone."
+    "You're not hearing me.",
+    "A free AI clone."
    ],
    "pose": "shrug",
    "card": {
@@ -70,7 +70,10 @@
      ]
     ]
    },
-   "badge": "AI voice"
+   "badge": "AI voice",
+   "must": [
+    "clone"
+   ]
   },
   {
    "say": "ElevenLabs charges you every month to clone your voice.",

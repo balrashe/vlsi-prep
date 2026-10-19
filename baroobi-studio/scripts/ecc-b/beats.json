@@ -153,32 +153,32 @@
      {
       "id": "p",
       "t": "planner",
-      "sub": "agents/planner.md",
-      "x": 160,
-      "y": 300,
+      "sub": "planner.md",
+      "x": 175,
+      "y": 240,
       "f": 0.06
      },
      {
       "id": "r",
       "t": "architect",
-      "sub": "agents/architect.md",
+      "sub": "architect.md",
       "x": 420,
-      "y": 300,
+      "y": 360,
       "f": 0.16
      },
      {
       "id": "v",
       "t": "code-reviewer",
-      "sub": "agents/code-reviewer.md",
-      "x": 680,
-      "y": 300,
+      "sub": "code-reviewer.md",
+      "x": 665,
+      "y": 240,
       "f": 0.28
      },
      {
       "id": "m",
       "t": "+ 68 more",
       "x": 420,
-      "y": 470,
+      "y": 480,
       "f": 0.6,
       "cls": "hot"
      }

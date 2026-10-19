@@ -1,0 +1,11 @@
+Comment STUDIO and I'll send you how I built it 👇
+
+I built my own dashboard that picks which competitor reels to remake 📊
+
+Every day it pulls my posts and a watchlist of creators from Instagram, TikTok, YouTube and Facebook. Each creator is graded against the median of their own last 12 posts, and 3x that counts as an outlier. Sponsored posts stay out of the rankings.
+
+It transcribes the winners so I can read the hook and beats, and a decode page sorts every competitor video into 11 formats and flags what I should stop making. Scraping has a hard $19 a month cap.
+
+Voiceover: AI clone of my own voice.
+
+#ai #contentcreator #dashboard #claudecode #baroobi

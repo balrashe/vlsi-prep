@@ -1,0 +1,330 @@
+{
+ "repo_owner": "balrashe",
+ "repo_name": "baroobi-dashboard",
+ "keyword": "STUDIO",
+ "style": "b",
+ "accent": "#9fcaff",
+ "shots": "studio",
+ "head_on": 0.8,
+ "steps": [
+  {
+   "say": "I built a private dashboard that tells me which competitor reels to remake.",
+   "title": [
+    "My own dashboard.",
+    "It picks what to remake."
+   ],
+   "pose": "point",
+   "badge": "built by me",
+   "card": {
+    "type": "flow",
+    "h": 520,
+    "credit": "baroobi studio · private, single user",
+    "nodes": [
+     {
+      "id": "m",
+      "t": "my posts",
+      "x": 170,
+      "y": 80,
+      "f": 0.05
+     },
+     {
+      "id": "w",
+      "t": "watchlist",
+      "sub": "competitor creators",
+      "x": 670,
+      "y": 80,
+      "f": 0.12
+     },
+     {
+      "id": "s",
+      "t": "baroobi studio",
+      "sub": "my dashboard",
+      "x": 420,
+      "y": 270,
+      "f": 0.22,
+      "cls": "hub"
+     },
+     {
+      "id": "r",
+      "t": "remake queue",
+      "x": 420,
+      "y": 450,
+      "f": 0.6,
+      "cls": "hot"
+     }
+    ],
+    "edges": [
+     [
+      "m",
+      "s",
+      0.2
+     ],
+     [
+      "w",
+      "s",
+      0.24
+     ],
+     [
+      "s",
+      "r",
+      0.58
+     ]
+    ]
+   }
+  },
+  {
+   "say": "Every day it pulls my posts and a watchlist of creators from Instagram, TikTok, YouTube and Facebook.",
+   "title": [
+    "Four platforms.",
+    "Every day."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "flow",
+    "h": 540,
+    "credit": "daily collection · Apify saved tasks",
+    "nodes": [
+     {
+      "id": "i",
+      "t": "Instagram",
+      "x": 170,
+      "y": 80,
+      "f": 0.3
+     },
+     {
+      "id": "t",
+      "t": "TikTok",
+      "x": 670,
+      "y": 80,
+      "f": 0.4
+     },
+     {
+      "id": "y",
+      "t": "YouTube",
+      "x": 170,
+      "y": 460,
+      "f": 0.5
+     },
+     {
+      "id": "f",
+      "t": "Facebook",
+      "x": 670,
+      "y": 460,
+      "f": 0.6
+     },
+     {
+      "id": "s",
+      "t": "baroobi studio",
+      "sub": "daily sync",
+      "x": 420,
+      "y": 270,
+      "f": 0.05,
+      "cls": "hub"
+     }
+    ],
+    "edges": [
+     [
+      "i",
+      "s",
+      0.32
+     ],
+     [
+      "t",
+      "s",
+      0.42
+     ],
+     [
+      "y",
+      "s",
+      0.52
+     ],
+     [
+      "f",
+      "s",
+      0.62
+     ]
+    ]
+   }
+  },
+  {
+   "say": "It grades each creator against their own last twelve posts, and leaves sponsored posts out of the rankings.",
+   "title": [
+    "Graded against",
+    "their own posts."
+   ],
+   "pose": "shrug",
+   "card": {
+    "type": "xlist",
+    "head": "How an outlier is picked",
+    "items": [
+     [
+      0.06,
+      "ok",
+      "Baseline: median of their last 12"
+     ],
+     [
+      0.34,
+      "ok",
+      "Outlier: 3x that or more"
+     ],
+     [
+      0.62,
+      "no",
+      "Sponsored posts judged"
+     ]
+    ],
+    "credit": "missing data stays unknown, never zero"
+   }
+  },
+  {
+   "say": "Then it transcribes the winners, so I can read the hook and the beats behind each one.",
+   "title": [
+    "Read the hook.",
+    "Read the beats."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "tracks",
+    "title": "Transcript",
+    "tag": "per post",
+    "rows": [
+     {
+      "name": "Hook",
+      "f": 0.05,
+      "color": "#9fcaff",
+      "clips": [
+       [
+        0.1,
+        0,
+        18,
+        "hook"
+       ]
+      ]
+     },
+     {
+      "name": "Beats",
+      "f": 0.25,
+      "color": "#d2b5fa",
+      "clips": [
+       [
+        0.3,
+        18,
+        22,
+        "beat 1"
+       ],
+       [
+        0.42,
+        40,
+        22,
+        "beat 2"
+       ],
+       [
+        0.54,
+        62,
+        22,
+        "beat 3"
+       ]
+      ]
+     },
+     {
+      "name": "CTA",
+      "f": 0.62,
+      "color": "#8ce3af",
+      "clips": [
+       [
+        0.68,
+        84,
+        16,
+        "CTA"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "say": "A decode page sorts every competitor video into eleven formats, and tells me what to stop doing.",
+   "title": [
+    "Eleven formats.",
+    "What to stop doing."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "xlist",
+    "head": "Decode · 11 formats",
+    "items": [
+     [
+      0.08,
+      "ok",
+      "Step-by-step tool demo"
+     ],
+     [
+      0.2,
+      "ok",
+      "News reaction"
+     ],
+     [
+      0.32,
+      "ok",
+      "Same build, two models"
+     ],
+     [
+      0.62,
+      "no",
+      "Stop: under both medians"
+     ]
+    ],
+    "credit": "stop = a format I make 3+ times that loses to my median and the watchlist's"
+   }
+  },
+  {
+   "say": "And scraping has a hard cap of nineteen dollars a month, so it can't run up a bill.",
+   "title": [
+    "Hard cap:",
+    "$19 a month."
+   ],
+   "pose": "wave",
+   "card": {
+    "type": "receipt",
+    "head": "Scraping budget",
+    "sub": "Apify account · monthly",
+    "rows": [
+     [
+      0.1,
+      "Daily collection",
+      "saved tasks"
+     ],
+     [
+      0.28,
+      "Transcripts",
+      "≤ $0.05 a run"
+     ],
+     [
+      0.44,
+      "Refresh button",
+      "no paid scrape"
+     ]
+    ],
+    "total": [
+     0.62,
+     "Hard cap",
+     "$19 / mo"
+    ],
+    "credit": "from the project README"
+   }
+  },
+  {
+   "say": "Comment STUDIO and I'll send you how I built it.",
+   "title": [
+    "Comment",
+    "STUDIO"
+   ],
+   "pose": "point",
+   "card": {
+    "type": "cta2",
+    "word": "STUDIO",
+    "dm": "here's how I built it"
+   }
+  }
+ ]
+}

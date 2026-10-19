@@ -1,0 +1,15 @@
+Comment SYSTEM and I'll send you the repo 👇
+
+370K stars, and it's a free system design course 📚
+
+The System Design Primer has 370K+ stars. It covers caching, load balancing, sharding and the CAP theorem, with real interview questions, full solutions and Anki flashcards.
+
+Course price: designgurus.io, checked Oct 19, 2026. Repo by Donne Martin, CC BY 4.0.
+
+Voiceover: AI clone of my own voice.
+
+Diagrams: system-design-primer by donnemartin (CC BY 4.0).
+
+#systemdesign #coding #softwareengineering #interviewprep #baroobi
+---
+DM on SYSTEM: https://github.com/donnemartin/system-design-primer

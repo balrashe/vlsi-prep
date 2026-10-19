@@ -118,7 +118,7 @@ scene.add(fill);
 
 // ---- camera framings: hard cut per beat, slow push-in inside a beat --------
 const camera = new THREE.PerspectiveCamera(30, W / H, 0.5, 400);
-const HEAD_Y = 28, HEAD_ON_SCREEN = 0.76;     // head centre sits 76% down the frame, under the cards
+const HEAD_Y = 28, HEAD_ON_SCREEN = D.headOn || 0.76;   // head centre sits 76% down the frame, under the cards (v2 panels: lower)
 function frame(t, i, st) {
   const close = i % 2 === 1;
   const dist = close ? 104 : 124;

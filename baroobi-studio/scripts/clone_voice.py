@@ -24,7 +24,7 @@ ENGINE = "voxcpm2"
 PROFILE_NAME = os.environ.get("VOICE_PROFILE_NAME", "baroobi")
 STATE = os.environ.get("VOICE_PROFILE_STATE", os.path.join(ROOT, "assets", "voice", "profile.json"))
 REF_SECONDS = float(os.environ.get("VOICE_REF_SECONDS", 25))   # VoxCPM2 caps at 30 s; longer = slower on CPU
-GAP = 0.06                # between sentences: v2 at 0.12 still read loose to him
+GAP = 0.02                # between sentences: 0.06 still read loose to him (Oct 19)
 
 # Whisper mishearings of his own sample, fixed so the reference transcript matches what he said
 HEARD = [(r"\bMaroobie\b|\bBaroobie\b|\bbaroobie\b", "baroobi"), (r"\bcloud code\b", "Claude Code")]
@@ -241,15 +241,33 @@ def join(slug, parts, prof):
                 f.write(f"file '{gap}'\n")
     dest = os.path.join(ROOT, "assets", "voice", f"{slug}.wav")
     ffmpeg("-f", "concat", "-safe", "0", "-i", lst, "-ar", "48000", "-ac", "1",
-           # any pause over 0.12 s shrinks to 0.07 s (his edits leave ~0.09 s)
-           "-af", "silenceremove=stop_periods=-1:stop_duration=0.12:stop_threshold=-40dB:stop_silence=0.07,"
+           # any pause over 0.09 s shrinks to 0.04 s: sharp cuts, but stop closures (< 0.09 s) stay whole
+           "-af", "silenceremove=stop_periods=-1:stop_duration=0.09:stop_threshold=-40dB:stop_silence=0.04,"
                   "loudnorm=I=-16:TP=-1.5", dest)
     json.dump({"source": "voice clone", "engine": ENGINE, "profile": prof["profile_id"]},
               open(os.path.join(ROOT, "assets", "voice", f"{slug}.meta.json"), "w"))
     print(f"-> {dest} ({duration(dest):.2f}s)")
 
 
+def assemble(slug):
+    """A variant reel: beats with "take": [slug, n] reuse that reel's take; only the new lines are generated."""
+    import shutil
+    beats = json.load(open(os.path.join(ROOT, "scripts", slug, "beats.json")))
+    work = os.path.join(ROOT, "assets", "voice", "work", slug)
+    os.makedirs(work, exist_ok=True)
+    new = set()
+    for i, st in enumerate(beats["steps"]):
+        out = os.path.join(work, f"beat{i + 1:02d}.wav")
+        if "take" in st:
+            src = os.path.join(ROOT, "assets", "voice", "work", st["take"][0], f"beat{st['take'][1]:02d}")
+            shutil.copy(src + ".wav", out)
+            shutil.copy(src + ".raw.wav", out.replace(".wav", ".raw.wav"))
+        elif not os.path.exists(out):
+            new.add(i + 1)
+    speak(slug, new)
+
+
 if __name__ == "__main__":
     {"profile": lambda: build_profile(sys.argv[2]), "speak": lambda: speak(sys.argv[2]),
      "redo": lambda: speak(sys.argv[2], {int(x) for x in sys.argv[3].split(",")}),
-     "retrim": lambda: retrim(sys.argv[2])}[sys.argv[1]]()
+     "retrim": lambda: retrim(sys.argv[2]), "assemble": lambda: assemble(sys.argv[2])}[sys.argv[1]]()

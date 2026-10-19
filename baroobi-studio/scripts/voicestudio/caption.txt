@@ -4,7 +4,7 @@ ElevenLabs charges every month to clone your voice. VoiceStudio does it on your 
 
 The voice in this video is my clone, made locally. VoiceStudio does voice cloning, voice design, video dubbing and transcription in 646 languages, on Mac, Windows and Linux.
 
-Heads up: the default model (OmniVoice) is non-commercial. If you're getting paid, pick an Apache or MIT engine. And only clone voices you have permission to use.
+Heads up: the default model (OmniVoice) is for personal use only. For paid work, pick an Apache or MIT model. And only clone voices you have permission to use.
 
 ElevenLabs Starter is $6/mo per elevenlabs.io/pricing (Oct 19, 2026).
 

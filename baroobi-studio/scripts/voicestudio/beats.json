@@ -115,16 +115,16 @@
       }
     },
     {
-      "say": "Heads up, the default model is non-commercial. If you're getting paid, switch engines.",
+      "say": "Heads up, the default model is for personal use only. For paid work, pick a different model.",
       "title": [
         "Heads up:",
-        "default model is non-commercial."
+        "default model is personal use only."
       ],
       "pose": "shrug",
       "card": {
         "type": "note",
         "head": "Default model: CC-BY-NC",
-        "body": "For paid content pick an Apache or MIT engine. I use VoxCPM2. Only clone voices you have permission to use."
+        "body": "For paid work, pick an Apache or MIT model. I use VoxCPM2. Only clone voices you have permission to use."
       }
     },
     {

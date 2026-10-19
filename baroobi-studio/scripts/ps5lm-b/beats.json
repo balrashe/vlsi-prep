@@ -1,0 +1,277 @@
+{
+ "repo_owner": "cobanov",
+ "repo_name": "PS5LM",
+ "keyword": "PS5",
+ "style": "b",
+ "accent": "#3b82f6",
+ "shots": "ps5lm",
+ "head_on": 0.8,
+ "variant_of": "ps5lm",
+ "steps": [
+  {
+   "say": "This PS5 isn't running a game. It's running an AI model.",
+   "title": [
+    "Not a game.",
+    "An AI model."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "app",
+    "title": "PS5LM · Home",
+    "h": 600,
+    "credit": "real screenshot · PS5LM app on a PS5 Slim · github.com/cobanov/PS5LM",
+    "screens": [
+     {
+      "img": "home.jpg",
+      "zooms": [
+       [
+        0,
+        0,
+        0.1,
+        0.62
+       ],
+       [
+        0.55,
+        0.02,
+        0.2,
+        0.42
+       ]
+      ],
+      "marks": [
+       [
+        0.3,
+        0.045,
+        0.25,
+        0.21,
+        0.07,
+        "AI model on the PS5"
+       ],
+       [
+        0.62,
+        0.045,
+        0.43,
+        0.36,
+        0.2,
+        "tokens per second"
+       ]
+      ]
+     }
+    ]
+   },
+   "badge": "Not a game"
+  },
+  {
+   "say": "It runs a language model right on the console's GPU.",
+   "title": [
+    "Right on",
+    "the console's GPU."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "app",
+    "title": "PS5LM · Console",
+    "h": 600,
+    "credit": "real screenshot · PS5LM app on a PS5 Slim · github.com/cobanov/PS5LM",
+    "screens": [
+     {
+      "img": "console.jpg",
+      "zooms": [
+       [
+        0,
+        0.04,
+        0.1,
+        0.62
+       ],
+       [
+        0.4,
+        0.04,
+        0.52,
+        0.32
+       ]
+      ],
+      "marks": [
+       [
+        0.5,
+        0.266,
+        0.566,
+        0.06,
+        0.052,
+        ""
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "ps5lm",
+    2
+   ]
+  },
+  {
+   "say": "The 9B model does 55 tokens a second.",
+   "title": [
+    "The 9B model:",
+    "55 tokens a second."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "gauge",
+    "head": "Qwen 3.5 9B on a PS5 Slim",
+    "value": 55,
+    "max": 220,
+    "unit": "tok/s",
+    "rows": [
+     [
+      0.55,
+      "Qwen 3.5 0.8B",
+      "207 tok/s"
+     ],
+     [
+      0.7,
+      "Qwen 3.8 27B",
+      "~20 tok/s"
+     ]
+    ],
+    "credit": "benchmarks from the PS5LM README"
+   },
+   "take": [
+    "ps5lm",
+    3
+   ]
+  },
+  {
+   "say": "Every device on your network can use it. Even Claude Code.",
+   "title": [
+    "Your whole network.",
+    "Even Claude Code."
+   ],
+   "pose": "wave",
+   "card": {
+    "type": "app",
+    "title": "PS5LM · API",
+    "h": 600,
+    "credit": "real screenshot · PS5LM app on a PS5 Slim · github.com/cobanov/PS5LM",
+    "screens": [
+     {
+      "img": "api.jpg",
+      "zooms": [
+       [
+        0,
+        0.03,
+        0.12,
+        0.55
+       ],
+       [
+        0.6,
+        0.52,
+        0.45,
+        0.45
+       ]
+      ],
+      "marks": [
+       [
+        0.15,
+        0.045,
+        0.24,
+        0.3,
+        0.09,
+        "any device on your network"
+       ],
+       [
+        0.7,
+        0.535,
+        0.77,
+        0.395,
+        0.06,
+        "Claude Code"
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "ps5lm",
+    4
+   ]
+  },
+  {
+   "say": "No PC, no cloud, no account.",
+   "title": [
+    "No PC. No cloud.",
+    "No account."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "xlist",
+    "items": [
+     [
+      0.05,
+      "ok",
+      "No PC needed"
+     ],
+     [
+      0.32,
+      "ok",
+      "No cloud"
+     ],
+     [
+      0.58,
+      "ok",
+      "No account"
+     ]
+    ],
+    "credit": "GPL-3.0 · not affiliated with Sony"
+   },
+   "take": [
+    "ps5lm",
+    5
+   ]
+  },
+  {
+   "say": "Heads up, it needs a jailbroken PS5 on firmware 13.60 or lower.",
+   "title": [
+    "Heads up:",
+    "jailbroken PS5 only."
+   ],
+   "pose": "shrug",
+   "card": {
+    "type": "xlist",
+    "head": "Firmware",
+    "items": [
+     [
+      0.3,
+      "ok",
+      "7.00 to 13.60"
+     ],
+     [
+      0.55,
+      "no",
+      "14.00 closes it"
+     ]
+    ],
+    "credit": "jailbreak re-run after every reboot · PS5LM README"
+   },
+   "take": [
+    "ps5lm",
+    6
+   ]
+  },
+  {
+   "say": "Comment PS5 and I'll send you the repo.",
+   "title": [
+    "Comment",
+    "PS5"
+   ],
+   "pose": "point",
+   "card": {
+    "type": "cta2",
+    "word": "PS5",
+    "dm": "here you go -> github.com/cobanov/PS5LM"
+   },
+   "take": [
+    "ps5lm",
+    7
+   ]
+  }
+ ]
+}

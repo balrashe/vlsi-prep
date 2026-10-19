@@ -1,0 +1,13 @@
+Comment ECC and I'll send you the repo 👇
+
+71 agents for Claude Code, one command ⚡
+
+Everything Claude Code (ECC) adds subagents like a planner, architect and code reviewer, plus skills for TDD, security review and research that only load when you need them. One command to install. MIT license.
+
+Built by Affaan Mustafa, who won the Anthropic x Forum Ventures hackathon in Sep 2025. Counts are from ECC v2.2.3.
+
+Voiceover: AI clone of my own voice.
+
+#claudecode #ai #agents #opensource #baroobi
+---
+DM on ECC: https://github.com/affaan-m/ECC

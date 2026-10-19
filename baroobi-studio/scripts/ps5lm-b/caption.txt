@@ -1,0 +1,15 @@
+Comment PS5 and I'll send you the repo 👇
+
+This PS5 isn't running a game. It's running an AI model 🎮
+
+PS5LM runs llama.cpp on the console's GPU. Qwen 3.5 9B does 55 tokens a second on a PS5 Slim, and every device on your network can use it, Claude Code included. No PC, no cloud, no account.
+
+Heads up: it needs a jailbroken PS5 on firmware 7.00 to 13.60 and has to be re-run after every reboot. Not affiliated with Sony. Speeds are the author's numbers.
+
+Screenshot: PS5LM by cobanov (GPL-3.0).
+
+Voiceover: AI clone of my own voice.
+
+#ai #ps5 #llm #opensource #baroobi
+---
+DM on PS5: https://github.com/cobanov/PS5LM

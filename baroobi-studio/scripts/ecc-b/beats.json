@@ -1,0 +1,287 @@
+{
+ "repo_owner": "affaan-m",
+ "repo_name": "ECC",
+ "keyword": "ECC",
+ "style": "b",
+ "accent": "#d97757",
+ "shots": "ecc",
+ "head_on": 0.8,
+ "variant_of": "ecc",
+ "steps": [
+  {
+   "say": "Here's how to give Claude Code 71 agents with one command.",
+   "title": [
+    "71 agents.",
+    "One command."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "bigterm",
+    "title": "Terminal",
+    "lines": [
+     [
+      0.03,
+      "cmd",
+      "npx ecc-universal@2.2.3 setup"
+     ],
+     [
+      0.42,
+      "bar",
+      "installing"
+     ],
+     [
+      0.68,
+      "ok",
+      "71 agents"
+     ],
+     [
+      0.78,
+      "ok",
+      "311 skills"
+     ],
+     [
+      0.88,
+      "ok",
+      "97 commands"
+     ]
+    ]
+   },
+   "badge": "Claude Code"
+  },
+  {
+   "say": "It's called Everything Claude Code.",
+   "title": [
+    "Everything",
+    "Claude Code."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "flow",
+    "h": 520,
+    "credit": "ECC v2.2.3 · MIT",
+    "nodes": [
+     {
+      "id": "e",
+      "t": "Everything Claude Code",
+      "sub": "affaan-m/ECC",
+      "x": 420,
+      "y": 260,
+      "f": 0.05,
+      "cls": "hub"
+     },
+     {
+      "id": "a",
+      "t": "Claude Code",
+      "x": 170,
+      "y": 80,
+      "f": 0.3
+     },
+     {
+      "id": "b",
+      "t": "Codex",
+      "x": 670,
+      "y": 80,
+      "f": 0.4
+     },
+     {
+      "id": "c",
+      "t": "Cursor",
+      "x": 170,
+      "y": 440,
+      "f": 0.5
+     },
+     {
+      "id": "d",
+      "t": "Gemini",
+      "x": 670,
+      "y": 440,
+      "f": 0.6
+     }
+    ],
+    "edges": [
+     [
+      "e",
+      "a",
+      0.28
+     ],
+     [
+      "e",
+      "b",
+      0.38
+     ],
+     [
+      "e",
+      "c",
+      0.48
+     ],
+     [
+      "e",
+      "d",
+      0.58
+     ]
+    ]
+   },
+   "take": [
+    "ecc",
+    2
+   ]
+  },
+  {
+   "say": "Planner, architect, code reviewer. Each one is a subagent you can hand work to.",
+   "title": [
+    "A subagent",
+    "for every job."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "flow",
+    "h": 540,
+    "badge": [
+     0.62,
+     "71"
+    ],
+    "credit": "agents/ in the ECC repo",
+    "nodes": [
+     {
+      "id": "y",
+      "t": "Claude Code",
+      "x": 420,
+      "y": 70,
+      "f": 0.02,
+      "cls": "hub"
+     },
+     {
+      "id": "p",
+      "t": "planner",
+      "sub": "agents/planner.md",
+      "x": 160,
+      "y": 300,
+      "f": 0.06
+     },
+     {
+      "id": "r",
+      "t": "architect",
+      "sub": "agents/architect.md",
+      "x": 420,
+      "y": 300,
+      "f": 0.16
+     },
+     {
+      "id": "v",
+      "t": "code-reviewer",
+      "sub": "agents/code-reviewer.md",
+      "x": 680,
+      "y": 300,
+      "f": 0.28
+     },
+     {
+      "id": "m",
+      "t": "+ 68 more",
+      "x": 420,
+      "y": 470,
+      "f": 0.6,
+      "cls": "hot"
+     }
+    ],
+    "edges": [
+     [
+      "y",
+      "p",
+      0.05
+     ],
+     [
+      "y",
+      "r",
+      0.15
+     ],
+     [
+      "y",
+      "v",
+      0.27
+     ],
+     [
+      "r",
+      "m",
+      0.58
+     ]
+    ]
+   },
+   "take": [
+    "ecc",
+    3
+   ]
+  },
+  {
+   "say": "Skills for TDD, security reviews and research. They only load when you need them.",
+   "title": [
+    "Skills load",
+    "only when needed."
+   ],
+   "pose": "shrug",
+   "card": {
+    "type": "xlist",
+    "head": "311 skills · loaded on demand",
+    "items": [
+     [
+      0.1,
+      "ok",
+      "tdd-workflow"
+     ],
+     [
+      0.24,
+      "ok",
+      "security-review"
+     ],
+     [
+      0.38,
+      "ok",
+      "search-first"
+     ]
+    ],
+    "credit": "skills/ in the ECC repo"
+   },
+   "take": [
+    "ecc",
+    4
+   ]
+  },
+  {
+   "say": "Built by an Anthropic hackathon winner.",
+   "title": [
+    "Built by a",
+    "hackathon winner."
+   ],
+   "pose": "wave",
+   "card": {
+    "type": "profile",
+    "avatar": "affaan.jpg",
+    "name": "Affaan Mustafa",
+    "handle": "affaan-m",
+    "role": "Author of ECC",
+    "stamp": "Hackathon winner · Sep 2025",
+    "source": "from the ECC README"
+   },
+   "take": [
+    "ecc",
+    6
+   ]
+  },
+  {
+   "say": "Comment ECC and I'll send you the repo.",
+   "title": [
+    "Comment",
+    "ECC"
+   ],
+   "pose": "point",
+   "card": {
+    "type": "cta2",
+    "word": "ECC",
+    "dm": "here you go -> github.com/affaan-m/ECC"
+   },
+   "take": [
+    "ecc",
+    7
+   ]
+  }
+ ]
+}

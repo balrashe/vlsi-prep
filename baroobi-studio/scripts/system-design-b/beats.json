@@ -1,0 +1,283 @@
+{
+ "repo_owner": "donnemartin",
+ "repo_name": "system-design-primer",
+ "keyword": "SYSTEM",
+ "style": "b",
+ "accent": "#f0883e",
+ "shots": "system-design",
+ "head_on": 0.8,
+ "variant_of": "system-design",
+ "steps": [
+  {
+   "say": "This GitHub repo has 370 thousand stars, and it's a free system design course.",
+   "title": [
+    "370K stars.",
+    "Free course."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "app",
+    "title": "system-design-primer",
+    "h": 600,
+    "credit": "github.com/donnemartin/system-design-primer · CC BY 4.0",
+    "screens": [
+     {
+      "img": "jj3A5N8.png",
+      "zooms": [
+       [
+        0,
+        0.1,
+        0.25,
+        0.8
+       ],
+       [
+        0.55,
+        0.15,
+        0.45,
+        0.6
+       ]
+      ]
+     }
+    ],
+    "stamps": [
+     [
+      0.12,
+      "★ 370K+",
+      "right:24px;top:24px"
+     ],
+     [
+      0.6,
+      "$0",
+      "left:24px;bottom:24px"
+     ]
+    ]
+   },
+   "badge": "Free course"
+  },
+  {
+   "say": "People pay 148 dollars for system design courses.",
+   "title": [
+    "People pay $148",
+    "for this."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "receipt",
+    "head": "System design course",
+    "sub": "popular paid course · one-time",
+    "rows": [
+     [
+      0.15,
+      "Paid course",
+      "$148"
+     ],
+     [
+      0.4,
+      "system-design-primer",
+      "$0"
+     ]
+    ],
+    "total": [
+     0.62,
+     "You keep",
+     "$148"
+    ],
+    "credit": "designgurus.io course page, Oct 19 2026"
+   },
+   "take": [
+    "system-design",
+    1
+   ]
+  },
+  {
+   "say": "Every topic they ask you. Caching, load balancers, sharding, CAP theorem.",
+   "title": [
+    "Every topic.",
+    "Every trade-off."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "app",
+    "title": "Design the Twitter timeline",
+    "h": 600,
+    "credit": "diagram from the system-design-primer solutions",
+    "screens": [
+     {
+      "img": "jrUBAF7.png",
+      "zooms": [
+       [
+        0,
+        0,
+        0,
+        1
+       ],
+       [
+        0.42,
+        0.3,
+        0.62,
+        0.42
+       ],
+       [
+        0.56,
+        0.3,
+        0.08,
+        0.42
+       ],
+       [
+        0.72,
+        0.28,
+        0.7,
+        0.42
+       ],
+       [
+        0.86,
+        0,
+        0.2,
+        1
+       ]
+      ],
+      "marks": [
+       [
+        0.45,
+        0.36,
+        0.73,
+        0.155,
+        0.095,
+        "caching"
+       ],
+       [
+        0.58,
+        0.365,
+        0.145,
+        0.16,
+        0.095,
+        "load balancer"
+       ],
+       [
+        0.74,
+        0.315,
+        0.875,
+        0.26,
+        0.105,
+        "sharding"
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "system-design",
+    3
+   ]
+  },
+  {
+   "say": "Real interview questions with full solutions.",
+   "title": [
+    "Real questions.",
+    "Full solutions."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "app",
+    "title": "system-design-primer · solutions",
+    "h": 600,
+    "credit": "diagrams from the system-design-primer solutions",
+    "screens": [
+     {
+      "img": "4edXG0T.png",
+      "label": "Design Pastebin",
+      "zooms": [
+       [
+        0,
+        0,
+        0,
+        1
+       ]
+      ]
+     },
+     {
+      "img": "jrUBAF7.png",
+      "f": 0.5,
+      "label": "Design Twitter",
+      "zooms": [
+       [
+        0,
+        0,
+        0.1,
+        1
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "system-design",
+    4
+   ]
+  },
+  {
+   "say": "Plus Anki flashcards so it actually sticks.",
+   "title": [
+    "Plus Anki",
+    "flashcards."
+   ],
+   "pose": "wave",
+   "card": {
+    "type": "app",
+    "title": "Anki · system design deck",
+    "h": 600,
+    "credit": "3 Anki decks in system-design-primer",
+    "screens": [
+     {
+      "img": "zdCAkB3.png",
+      "zooms": [
+       [
+        0,
+        0,
+        0,
+        1
+       ],
+       [
+        0.45,
+        0,
+        0.58,
+        0.5
+       ]
+      ],
+      "marks": [
+       [
+        0.55,
+        0.005,
+        0.893,
+        0.135,
+        0.05,
+        "spaced repetition"
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "system-design",
+    5
+   ]
+  },
+  {
+   "say": "Comment SYSTEM and I'll send you the repo.",
+   "title": [
+    "Comment",
+    "SYSTEM"
+   ],
+   "pose": "point",
+   "card": {
+    "type": "cta2",
+    "word": "SYSTEM",
+    "dm": "here you go -> github.com/donnemartin/system-design-primer"
+   },
+   "take": [
+    "system-design",
+    6
+   ]
+  }
+ ]
+}

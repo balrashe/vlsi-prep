@@ -1,0 +1,312 @@
+{
+ "repo_owner": "hypit-ai",
+ "repo_name": "hypit",
+ "keyword": "CLONE",
+ "style": "b",
+ "accent": "#a371f7",
+ "shots": "hypit",
+ "head_on": 0.8,
+ "variant_of": "hypit",
+ "steps": [
+  {
+   "say": "This repo watches any viral reel and rebuilds it with AI.",
+   "title": [
+    "Any viral reel.",
+    "Rebuilt by AI."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "flow",
+    "h": 520,
+    "edges": [
+     [
+      "a",
+      "h",
+      0.25
+     ],
+     [
+      "h",
+      "b",
+      0.6
+     ]
+    ],
+    "credit": "github.com/hypit-ai/hypit · works with Claude Code and Codex",
+    "nodes": [
+     {
+      "id": "a",
+      "t": "viral reel",
+      "sub": "reference.mp4",
+      "x": 190,
+      "y": 120,
+      "f": 0.05
+     },
+     {
+      "id": "h",
+      "t": "Hypit",
+      "sub": "your coding agent",
+      "x": 420,
+      "y": 290,
+      "f": 0.3,
+      "cls": "hub"
+     },
+     {
+      "id": "b",
+      "t": "your reel",
+      "sub": "same structure",
+      "x": 650,
+      "y": 450,
+      "f": 0.62,
+      "cls": "hot"
+     }
+    ]
+   },
+   "badge": "Viral clone"
+  },
+  {
+   "say": "Not the script. The whole edit. Footage, captions, B-roll, effects.",
+   "title": [
+    "Not the script.",
+    "The whole edit."
+   ],
+   "pose": "shrug",
+   "card": {
+    "type": "tracks",
+    "title": "hypit · edit",
+    "tag": "illustration",
+    "rows": [
+     {
+      "name": "Footage",
+      "color": "#8957e5",
+      "f": 0.4,
+      "clips": [
+       [
+        0.42,
+        0,
+        46,
+        "A-roll"
+       ],
+       [
+        0.46,
+        47,
+        53,
+        "A-roll"
+       ]
+      ]
+     },
+     {
+      "name": "Captions",
+      "color": "#2ea043",
+      "f": 0.58,
+      "clips": [
+       [
+        0.6,
+        0,
+        100,
+        "word-synced captions"
+       ]
+      ]
+     },
+     {
+      "name": "B-roll",
+      "color": "#d29922",
+      "f": 0.72,
+      "clips": [
+       [
+        0.74,
+        10,
+        22,
+        "B"
+       ],
+       [
+        0.76,
+        40,
+        18,
+        "B"
+       ],
+       [
+        0.78,
+        70,
+        24,
+        "B"
+       ]
+      ]
+     },
+     {
+      "name": "Effects",
+      "color": "#db61a2",
+      "f": 0.84,
+      "clips": [
+       [
+        0.86,
+        30,
+        12,
+        "fx"
+       ],
+       [
+        0.88,
+        62,
+        14,
+        "fx"
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "hypit",
+    2
+   ]
+  },
+  {
+   "say": "Their football tier list cost a dollar fifteen to make.",
+   "title": [
+    "A full reel",
+    "for $1.15."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "receipt",
+    "head": "\"GOAT DEBATE\"",
+    "sub": "20-second football tier list · Hypit example",
+    "rows": [
+     [
+      0.12,
+      "AI video A-rolls",
+      "x2"
+     ],
+     [
+      0.24,
+      "AI images",
+      "x11"
+     ],
+     [
+      0.36,
+      "Captions, ranking board, music",
+      "incl."
+     ]
+    ],
+    "total": [
+     0.6,
+     "Total cost",
+     "$1.15"
+    ],
+    "credit": "example costs from the Hypit README"
+   },
+   "take": [
+    "hypit",
+    3
+   ]
+  },
+  {
+   "say": "Install it with one command, then just ask your agent.",
+   "title": [
+    "One command.",
+    "Then ask your agent."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "bigterm",
+    "title": "Terminal",
+    "lines": [
+     [
+      0.03,
+      "cmd",
+      "npx skills add hypit-ai/hypit -g"
+     ],
+     [
+      0.42,
+      "cmd",
+      "/hypit Clone this video: viral.mp4"
+     ],
+     [
+      0.8,
+      "bar",
+      "rendering"
+     ]
+    ]
+   },
+   "take": [
+    "hypit",
+    4
+   ]
+  },
+  {
+   "say": "And you own every video you make.",
+   "title": [
+    "You own",
+    "every video."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "xlist",
+    "items": [
+     [
+      0.08,
+      "ok",
+      "No seat pricing"
+     ],
+     [
+      0.32,
+      "ok",
+      "No per-render fees"
+     ],
+     [
+      0.56,
+      "ok",
+      "No added watermark"
+     ]
+    ],
+    "credit": "Apache-2.0 with conditions · Hypit README"
+   },
+   "take": [
+    "hypit",
+    6
+   ]
+  },
+  {
+   "say": "Heads up, Hypit is free, but the AI models for new footage cost money.",
+   "title": [
+    "Hypit is free.",
+    "The models aren't."
+   ],
+   "pose": "shrug",
+   "card": {
+    "type": "xlist",
+    "items": [
+     [
+      0.1,
+      "ok",
+      "Hypit: free"
+     ],
+     [
+      0.45,
+      "no",
+      "AI footage: paid"
+     ]
+    ],
+    "credit": "about $1 per reel in their examples"
+   },
+   "take": [
+    "hypit",
+    5
+   ]
+  },
+  {
+   "say": "Comment CLONE and I'll send you the repo.",
+   "title": [
+    "Comment",
+    "CLONE"
+   ],
+   "pose": "point",
+   "card": {
+    "type": "cta2",
+    "word": "CLONE",
+    "dm": "here you go -> github.com/hypit-ai/hypit"
+   },
+   "take": [
+    "hypit",
+    7
+   ]
+  }
+ ]
+}

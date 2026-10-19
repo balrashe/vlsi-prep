@@ -1,0 +1,15 @@
+Comment VOICE and I'll send you the repo 👇
+
+You're not hearing me right now. This is a free clone of my voice 🎙️
+
+The voice in this video is my clone, made locally. VoiceStudio does voice cloning, voice design, video dubbing and transcription in 646 languages, on Mac, Windows and Linux.
+
+Heads up: the default model (OmniVoice) is for personal use only. For paid work, pick an Apache or MIT model. And only clone voices you have permission to use.
+
+ElevenLabs Starter is $6/mo per elevenlabs.io/pricing (Oct 19, 2026).
+
+Screenshots: VoiceStudio app by debpalash (AGPL-3.0).
+
+#ai #voiceclone #opensource #elevenlabs #baroobi
+---
+DM on VOICE: https://github.com/debpalash/VoiceStudio

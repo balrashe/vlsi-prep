@@ -22,6 +22,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numwords  # noqa: E402
+import cards_b  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VOX = os.path.join(ROOT, "assets", "character", "voxel")    # build_voxel.py
@@ -160,6 +161,10 @@ def anim(kind, f, extra=""):
 def card_html(i, c, beats):
     t = c["type"]
     owner, name = beats["repo_owner"], beats["repo_name"]
+    if beats.get("style") == "b":
+        b = cards_b.card(c, beats, os.path.join(ROOT, "assets", "shots", beats.get("shots", beats["slug"])))
+        if b is not None:
+            return b
     if t == "stats":
         cols = "".join(
             f'<div class="stat" {anim("stamp", 0.08 + k * 0.26)}><div class="num">{E(n)}</div><div class="lab">{E(l)}</div></div>'
@@ -427,14 +432,15 @@ function fitNums() {
 }
 function fitLines() {
   // long commands and links shrink to fit their card instead of running off the edge
-  document.querySelectorAll(".tl, .dmtext, .rtitle").forEach((el) => {
+  document.querySelectorAll(".tl, .dmtext, .rtitle, .bt, .ntext").forEach((el) => {
     let fs = parseFloat(getComputedStyle(el).fontSize);
     while (el.scrollWidth > el.clientWidth + 1 && fs > 16) { fs -= 1; el.style.fontSize = fs + "px"; }
   });
 }
 function fitTitles() {
+  const base = document.getElementById("root").classList.contains("vb") ? 100 : 124;
   document.querySelectorAll(".tline").forEach((el) => {
-    let fs = 124;
+    let fs = base;
     el.style.fontSize = fs + "px";
     while (el.scrollWidth > 938 && fs > 60) { fs -= 2; el.style.fontSize = fs + "px"; }
   });
@@ -483,6 +489,7 @@ function build() {
       tl.set(cell.querySelector("i"), { backgroundColor: GREENS[Math.floor(rnd(idx) * 4)] }, st.start + c * 0.03);
     }
   });
+  if (window.buildB) buildB(tl, DATA);
   window.__timelines["main"] = tl;
 }
 document.fonts.ready.then(build);
@@ -491,6 +498,8 @@ document.fonts.ready.then(build);
 
 def build(slug):
     beats = json.load(open(os.path.join(ROOT, "scripts", slug, "beats.json")))
+    beats["slug"] = slug
+    vb = beats.get("style") == "b"
     steps = beats["steps"]
     proj = os.path.join(ROOT, "projects", slug)
     os.makedirs(os.path.join(proj, "assets", "fonts"), exist_ok=True)
@@ -552,7 +561,7 @@ def build(slug):
     # assets
     for f in ("Inter.woff2", "JetBrainsMono.woff2"):
         shutil.copy(os.path.join(ROOT, "assets", "fonts", f), os.path.join(proj, "assets", "fonts", f))
-    shots = os.path.join(ROOT, "assets", "shots", slug)
+    shots = os.path.join(ROOT, "assets", "shots", beats.get("shots", slug))
     os.makedirs(shots, exist_ok=True)
     for sub, src in (("voxel", VOX), ("people", os.path.join(ROOT, "assets", "people")), ("shots", shots)):
         os.makedirs(os.path.join(proj, "assets", sub), exist_ok=True)
@@ -571,9 +580,10 @@ def build(slug):
         lines = "".join(
             f'<div class="tline l{li + 1}">' + "".join(f'<span class="tw" data-t="{t}">{E(tok)}</span>' for tok, t in ln)
             + "</div>" for li, ln in enumerate(reveals[i]))
+        badge = f'<div class="hbadge">{E(st["badge"])}</div>' if st.get("badge") else ""
         step_html.append(
             f'<section class="step clip" id="s{i}" data-start="{starts[i]}" data-duration="{round(ends[i] - starts[i], 3)}" '
-            f'data-track-index="1"><div class="pill">$ {i + 1:02d}/{len(steps):02d}</div>'
+            f'data-track-index="1"><div class="pill">$ {i + 1:02d}/{len(steps):02d}</div>{badge}'
             f'<div class="title">{lines}</div><div class="cardwrap">{card_html(i, st["card"], beats)}</div></section>')
 
     cells = "".join('<span class="gcell"><i></i></span>' for _ in range(65))
@@ -584,6 +594,13 @@ def build(slug):
                   f'data-volume="1"></audio>')
     data = {"total": total, "steps": [{"start": s, "end": e, "pose": st["pose"]} for s, e, st in zip(starts, ends, steps)],
             "cues": [[round(c["start"], 3), c["value"]] for c in cues if c["start"] < total]}
+    if beats.get("head_on"):
+        data["headOn"] = beats["head_on"]
+    segs = ""
+    if vb:
+        host = "" if len(beats["repo_owner"] + beats["repo_name"]) > 20 else "github.com/"   # long paths would run into the badge
+        segs = (f'<div id="segs">{"<i><b></b></i>" * len(steps)}</div><div class="repochip">{host}{E(beats["repo_owner"])}/'
+                f'<b>{E(beats["repo_name"])}</b></div>')
     scene_js = open(os.path.join(ROOT, "scripts", "voxel_scene.js")).read()
 
     page = f"""<!doctype html>
@@ -593,20 +610,22 @@ def build(slug):
 <meta name="viewport" content="width=1080, height=1920" />
 <title>{E(slug)}</title>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
-<style>{CSS}</style>
+<style>{CSS}{cards_b.CSS if vb else ""}</style>
 </head>
 <body>
-<div id="root" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1080" data-height="1920" data-fps="{FPS}">
+<div id="root" class="{"vb" if vb else ""}" style="--acc:{beats.get("accent", "#79c0ff")}" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1080" data-height="1920" data-fps="{FPS}">
   <canvas id="mc" width="1080" height="1920"></canvas>
   <div id="shade"></div>
   <div class="path">{E(beats["repo_owner"])} / <b>{E(beats["repo_name"])}</b></div>
   <div class="rule"></div>
   {"".join(step_html)}
   <div id="gridmeter">{cells}</div>
+  {segs}
   {audio}
 </div>
 <script>
 window.DATA = {json.dumps(data)};
+{cards_b.JS if vb else ""}
 {JS}
 </script>
 <script type="module">

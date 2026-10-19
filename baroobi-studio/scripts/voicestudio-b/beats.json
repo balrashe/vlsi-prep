@@ -1,0 +1,333 @@
+{
+ "repo_owner": "debpalash",
+ "repo_name": "VoiceStudio",
+ "keyword": "VOICE",
+ "style": "b",
+ "accent": "#e0306f",
+ "shots": "voicestudio",
+ "head_on": 0.8,
+ "variant_of": "voicestudio",
+ "steps": [
+  {
+   "say": "You're not hearing me right now. This is a free clone of my voice.",
+   "title": [
+    "Not my voice.",
+    "A free clone."
+   ],
+   "pose": "shrug",
+   "card": {
+    "type": "app",
+    "title": "VoiceStudio · Voice cloning",
+    "h": 600,
+    "credit": "real screenshot · github.com/debpalash/VoiceStudio README",
+    "screens": [
+     {
+      "img": "voice-cloning.png",
+      "zooms": [
+       [
+        0,
+        0.27,
+        0.04,
+        0.7
+       ],
+       [
+        0.55,
+        0.5,
+        0.45,
+        0.46
+       ]
+      ],
+      "marks": [
+       [
+        0.25,
+        0.285,
+        0.19,
+        0.575,
+        0.05,
+        "my script"
+       ],
+       [
+        0.62,
+        0.69,
+        0.845,
+        0.15,
+        0.055,
+        "made on my laptop"
+       ]
+      ]
+     }
+    ],
+    "cursor": [
+     [
+      0,
+      0.45,
+      0.4
+     ],
+     [
+      0.62,
+      0.76,
+      0.87
+     ]
+    ]
+   },
+   "badge": "AI voice"
+  },
+  {
+   "say": "ElevenLabs charges you every month to clone your voice.",
+   "title": [
+    "ElevenLabs bills",
+    "every month."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "receipt",
+    "head": "ElevenLabs",
+    "sub": "voice cloning · Starter plan",
+    "rows": [
+     [
+      0.12,
+      "Month 1",
+      "$6"
+     ],
+     [
+      0.22,
+      "Month 2",
+      "$6"
+     ],
+     [
+      0.32,
+      "Month 3",
+      "$6"
+     ],
+     [
+      0.42,
+      "...every month",
+      ""
+     ]
+    ],
+    "total": [
+     0.62,
+     "12 months",
+     "$72"
+    ],
+    "credit": "elevenlabs.io/pricing · Starter $6/mo, Oct 19 2026"
+   },
+   "take": [
+    "voicestudio",
+    1
+   ]
+  },
+  {
+   "say": "This does it on your laptop for free.",
+   "title": [
+    "VoiceStudio:",
+    "free, on your laptop."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "xlist",
+    "head": "VoiceStudio",
+    "items": [
+     [
+      0.08,
+      "ok",
+      "$0, open source"
+     ],
+     [
+      0.3,
+      "ok",
+      "Runs on your machine"
+     ],
+     [
+      0.52,
+      "ok",
+      "No account, no API key"
+     ]
+    ],
+    "credit": "VoiceStudio README · AGPL-3.0"
+   },
+   "take": [
+    "voicestudio",
+    2
+   ]
+  },
+  {
+   "say": "Clone a voice, design a new one, dub videos, even transcribe.",
+   "title": [
+    "Clone. Design.",
+    "Dub. Transcribe."
+   ],
+   "pose": "point",
+   "card": {
+    "type": "app",
+    "title": "VoiceStudio",
+    "h": 600,
+    "credit": "real screenshot · github.com/debpalash/VoiceStudio README",
+    "screens": [
+     {
+      "img": "voice-cloning.png",
+      "label": "Clone a voice",
+      "zooms": [
+       [
+        0,
+        0.2,
+        0.0,
+        0.8
+       ]
+      ]
+     },
+     {
+      "img": "voice-design.png",
+      "f": 0.3,
+      "label": "Design a new one",
+      "zooms": [
+       [
+        0,
+        0.1,
+        0.1,
+        0.75
+       ]
+      ]
+     },
+     {
+      "img": "dubbing.png",
+      "f": 0.58,
+      "label": "Dub videos",
+      "zooms": [
+       [
+        0,
+        0.33,
+        0.14,
+        0.65
+       ]
+      ]
+     },
+     {
+      "img": "dubbing.png",
+      "f": 0.8,
+      "label": "Transcribe",
+      "zooms": [
+       [
+        0,
+        0.02,
+        0.1,
+        0.45
+       ]
+      ],
+      "marks": [
+       [
+        0.84,
+        0.045,
+        0.13,
+        0.26,
+        0.14,
+        ""
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "voicestudio",
+    4
+   ]
+  },
+  {
+   "say": "One command to install.",
+   "title": [
+    "One command",
+    "to install."
+   ],
+   "pose": "thumb",
+   "card": {
+    "type": "bigterm",
+    "title": "Terminal",
+    "lines": [
+     [
+      0.03,
+      "cmd",
+      "curl -fsSL https://voicestudio.sh/install | sh"
+     ],
+     [
+      0.5,
+      "bar",
+      "installing"
+     ],
+     [
+      0.85,
+      "ok",
+      "Local workflows run on your hardware"
+     ]
+    ]
+   },
+   "take": [
+    "voicestudio",
+    5
+   ]
+  },
+  {
+   "say": "Heads up, the default model is for personal use only. For paid work, pick a different model.",
+   "title": [
+    "Heads up:",
+    "default model is personal use only."
+   ],
+   "pose": "shrug",
+   "card": {
+    "type": "app",
+    "title": "VoiceStudio · Settings › Models",
+    "h": 600,
+    "credit": "default OmniVoice model is CC-BY-NC · Apache/MIT models allowed for paid work",
+    "screens": [
+     {
+      "img": "models.png",
+      "zooms": [
+       [
+        0,
+        0.2,
+        0.08,
+        0.62
+       ],
+       [
+        0.3,
+        0.2,
+        0.22,
+        0.42
+       ]
+      ],
+      "marks": [
+       [
+        0.38,
+        0.21,
+        0.28,
+        0.19,
+        0.065,
+        "non-commercial license"
+       ]
+      ]
+     }
+    ]
+   },
+   "take": [
+    "voicestudio",
+    6
+   ]
+  },
+  {
+   "say": "Comment VOICE and I'll send you the repo.",
+   "title": [
+    "Comment",
+    "VOICE"
+   ],
+   "pose": "point",
+   "card": {
+    "type": "cta2",
+    "word": "VOICE",
+    "dm": "here you go -> github.com/debpalash/VoiceStudio"
+   },
+   "take": [
+    "voicestudio",
+    7
+   ]
+  }
+ ]
+}

@@ -71,7 +71,7 @@ def card(c, beats, shots_dir):
             cur = (f'<div class="cursor" data-path=\'{json.dumps(path)}\'><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.4L20 11z" '
                    f'fill="#fff" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/></svg><i class="ring"></i></div>')
         return (f'<div class="pane app"><div class="pbar"><i class="d r"></i><i class="d y"></i><i class="d g"></i>'
-                f'<b>{E(c["title"])}</b><span class="real">real screenshot</span></div>'
+                f'<b>{E(c["title"])}</b><span class="real">{E(c.get("tag", "real screenshot"))}</span></div>'
                 f'<div class="view" style="height:{vh}px">{screens}{cur}'
                 + "".join(f'<div class="ovstamp" {anim("stamp", f)} style="{st}">{E(txt)}</div>' for f, txt, st in c.get("stamps", []))
                 + '</div>'

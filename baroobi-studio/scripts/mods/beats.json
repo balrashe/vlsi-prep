@@ -40,51 +40,53 @@
   {
    "say": "A mod is a small JavaScript plugin that changes how Claude Code looks and behaves.",
    "title": [
-    "Change how",
-    "Claude Code works."
+    "Same Claude Code.",
+    "Totally new look."
    ],
    "pose": "thumb",
    "card": {
     "type": "app",
-    "title": "Claude Code · first mod",
-    "h": 420,
-    "credit": "real recording · Claude Code docs, Mods overview",
+    "title": "Claude Code",
+    "h": 560,
+    "credit": "before: real recording from the Claude Code docs · after: preview of a theme mod",
     "screens": [
      {
-      "img": "spinner.jpg",
+      "img": "before.jpg",
+      "label": "BEFORE",
       "zooms": [
        [
         0,
         0,
         0,
-        1
-       ],
+        0.9
+       ]
+      ]
+     },
+     {
+      "img": "after.jpg",
+      "f": 0.42,
+      "label": "AFTER · one mod",
+      "zooms": [
        [
-        0.35,
         0,
-        0.32,
-        0.5
+        0,
+        0,
+        0.95
        ]
       ],
       "marks": [
        [
-        0.45,
-        0.02,
-        0.44,
-        0.34,
-        0.11,
+        0.6,
+        0.55,
+        0.04,
+        0.35,
+        0.88,
         ""
        ]
       ]
      }
     ],
-    "stamps": [
-     [
-      0.5,
-      "added by a mod",
-      "right:24px;bottom:24px"
-     ]
-    ]
+    "tag": "before · after"
    }
   },
   {

@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>voicestudio-b</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+@font-face { font-family: "Inter"; src: url("assets/fonts/Inter.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono.woff2") format("woff2"); font-weight: 100 800; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c120b; }
+#root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #1c120b;
+  font-family: "Inter", sans-serif; color: #1f2328; }
+#mc { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; display: block; }
+#shade { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(12,7,4,.72) 0%, rgba(12,7,4,.35) 38%, rgba(12,7,4,0) 55%),
+              radial-gradient(ellipse at 55% 78%, rgba(0,0,0,0) 45%, rgba(0,0,0,.5) 100%); }
+.mono, .tl, .pill, .path, .chip, .src, .lic, .cmd2, .dl, .flab, .file, .psrc, .phandle { font-family: "JetBrains Mono", monospace; }
+.step { position: absolute; inset: 0; }
+.pill { position: absolute; left: 72px; top: 296px; padding: 6px 18px; border-radius: 22px; background: rgba(255,255,255,.12);
+  border: 2px solid rgba(255,255,255,.28); color: #d6ecff; font-size: 34px; font-weight: 500; }
+.path { position: absolute; right: 70px; top: 302px; font-size: 32px; color: rgba(255,255,255,.72); }
+.path b { color: #79c0ff; }
+.title { position: absolute; left: 72px; top: 376px; width: 938px; }
+.tline { font-weight: 800; font-size: 124px; line-height: 1.04; letter-spacing: -0.045em; white-space: nowrap; color: #fff;
+  text-shadow: 0 6px 24px rgba(0,0,0,.55); }
+.tline.l2 { color: #79c0ff; }
+.tw { display: inline-block; margin-right: 0.24em; }
+.tw:last-child { margin-right: 0; }
+.rule { position: absolute; left: 72px; top: 664px; width: 938px; height: 3px; background: rgba(255,255,255,.22); }
+.cardwrap { position: absolute; left: 72px; top: 712px; width: 938px; }
+.card { background: #fff; border-radius: 18px; box-shadow: 0 18px 50px rgba(0,0,0,.45); overflow: hidden; }
+.bar { display: flex; align-items: center; gap: 14px; height: 76px; padding: 0 26px; background: #f6f8fa; border-bottom: 2px solid #d0d7de; font-size: 34px; }
+.cmd2 { margin-left: auto; color: #0969da; font-size: 30px; }
+.d { width: 20px; height: 20px; border-radius: 50%; display: inline-block; }
+.d.r { background: #ff5f57; } .d.y { background: #febc2e; } .d.g { background: #28c840; }
+.cmark { width: 34px; height: 34px; flex: none; }
+.body { padding: 22px 28px 26px; }
+.tl { font-size: 31px; line-height: 1.35; padding: 7px 0; display: flex; align-items: center; gap: 14px; white-space: nowrap; }
+.tl.cmd { background: #f6f8fa; border: 2px solid #d8dee4; border-radius: 10px; padding: 11px 18px; margin: 6px 0; }
+.tl .gt { color: #bc4c00; font-weight: 700; }
+.tl.ok { color: #1a7f37; } .tl.dim { color: #57606a; }
+.ico { width: 1em; height: 1em; flex: none; }
+.stats .row { display: flex; padding: 34px 20px 8px; }
+.stat { flex: 1; text-align: center; }
+.num { font-size: 140px; font-weight: 800; letter-spacing: -0.05em; color: #0969da; line-height: 1; }
+.lab { font-size: 30px; color: #57606a; margin-top: 10px; font-weight: 600; }
+.src { font-size: 25px; color: #8c959f; text-align: center; padding: 12px 0 24px; }
+/* job application */
+.abar { display: flex; align-items: center; gap: 16px; height: 84px; padding: 0 28px; background: #f3f6f8; border-bottom: 2px solid #dfe3e8; font-size: 36px; }
+.inlogo { width: 50px; height: 50px; border-radius: 9px; background: #0a66c2; color: #fff; font-weight: 800; font-size: 34px;
+  display: grid; place-items: center; letter-spacing: -0.04em; }
+.ctr { margin-left: auto; font-size: 48px; font-weight: 800; color: #0a66c2; }
+.ctrof { font-size: 28px; color: #57606a; }
+.abody { padding: 20px 28px 26px; }
+.jobs { display: flex; gap: 12px; margin-bottom: 14px; }
+.jobchip { font-size: 26px; padding: 6px 16px; border-radius: 18px; background: #eef3f8; color: #1f2328; font-weight: 600; }
+.field { margin: 12px 0; }
+.flab { font-size: 24px; color: #57606a; display: flex; align-items: center; gap: 10px; }
+.drafted { font-style: normal; color: #bc4c00; display: inline-flex; align-items: center; gap: 6px; }
+.drafted .cmark { width: 26px; height: 26px; }
+.file { display: inline-flex; align-items: center; gap: 12px; margin-top: 8px; font-size: 28px; padding: 10px 16px; border: 2px solid #d0d7de; border-radius: 10px; }
+.okc { color: #1a7f37; }
+.letter { margin-top: 8px; min-height: 120px; font-size: 29px; line-height: 1.35; padding: 14px 18px; border: 2px solid #0a66c2; border-radius: 12px; white-space: pre-wrap; }
+.submit { margin-top: 18px; height: 78px; border-radius: 40px; background: #0a66c2; color: #fff; font-size: 34px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 14px; }
+.submit.sent { position: relative; margin-top: -78px; background: #1a7f37; }
+/* profile */
+.profile { position: relative; display: flex; gap: 30px; align-items: center; padding: 30px 32px 92px; }
+.pava { width: 190px; height: 190px; border-radius: 50%; object-fit: cover; border: 5px solid #fff; box-shadow: 0 0 0 3px #d0d7de; flex: none; }
+.pname { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; }
+.phandle { font-size: 26px; color: #57606a; margin-top: 4px; }
+.prole { display: inline-block; margin-top: 14px; font-size: 32px; font-weight: 700; padding: 6px 18px; border-radius: 22px; background: #ddf4ff; color: #0969da; }
+.stamp { position: absolute; right: 26px; bottom: 18px; font-size: 32px; font-weight: 800; color: #cf222e; border: 5px solid #cf222e;
+  border-radius: 12px; padding: 6px 16px; background: rgba(255,255,255,.9); text-transform: uppercase; letter-spacing: 0.02em; }
+.psrc { position: absolute; left: 32px; bottom: 16px; font-size: 22px; color: #8c959f; }
+/* repo */
+.repo { padding: 30px 32px 30px; }
+.rtitle { display: flex; align-items: center; gap: 14px; font-size: 40px; color: #0969da; white-space: nowrap; }
+.rtitle .ico { color: #57606a; }
+.own { font-weight: 500; }
+.pub { margin-left: 8px; font-size: 24px; color: #57606a; border: 2px solid #d0d7de; border-radius: 20px; padding: 2px 14px; display: inline-flex; gap: 8px; align-items: center; }
+.mit { margin-left: auto; font-size: 30px; font-weight: 800; color: #fff; background: #1a7f37; border-radius: 10px; padding: 4px 16px; }
+.blur { filter: blur(9px); font-weight: 700; }
+.desc { font-size: 36px; color: #1f2328; margin: 18px 0 6px; }
+.chips { display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
+.chip { font-size: 30px; color: #0969da; background: #ddf4ff; border-radius: 22px; padding: 6px 18px; }
+/* rank */
+.rrow { display: flex; align-items: center; gap: 18px; padding: 10px 0; font-size: 30px; }
+.rjob { width: 330px; font-weight: 600; white-space: nowrap; }
+.rtrack { flex: 1; height: 26px; border-radius: 13px; background: #eef1f4; overflow: hidden; }
+.rbar { display: block; height: 100%; border-radius: 13px; }
+.rbar.hi { background: #1a7f37; } .rbar.mid { background: #d4a72c; } .rbar.lo { background: #cf222e; }
+.rlab { width: 150px; text-align: right; font-weight: 700; font-size: 26px; }
+.rlab.hi { color: #1a7f37; } .rlab.mid { color: #9a6700; } .rlab.lo { color: #cf222e; }
+/* cv diff */
+.dbar { display: flex; align-items: center; gap: 14px; height: 76px; padding: 0 28px; background: #f6f8fa; border-bottom: 2px solid #d0d7de; font-size: 32px; color: #57606a; }
+.tag { margin-left: auto; font-size: 26px; font-weight: 800; color: #fff; background: #8250df; border-radius: 10px; padding: 4px 14px; }
+.dbody { padding: 14px 0 18px; }
+.dl { font-size: 29px; padding: 8px 28px; white-space: nowrap; display: flex; gap: 16px; }
+.dl.del { background: #ffebe9; color: #82071e; text-decoration: line-through; }
+.dl.add { background: #dafbe1; color: #116329; }
+.dl.ctx { color: #57606a; }
+.dk { width: 18px; font-weight: 700; }
+/* chat */
+.chat { padding: 22px 26px 26px; }
+.chead { display: flex; align-items: center; gap: 12px; font-size: 32px; margin-bottom: 10px; }
+.chead span { color: #8c959f; font-size: 26px; }
+.bub { margin: 12px 0; padding: 16px 22px; border-radius: 22px; font-size: 30px; line-height: 1.35; max-width: 88%; }
+.bub b { display: block; font-size: 22px; margin-bottom: 4px; opacity: .7; }
+.bub.q { background: #f1f3f5; border-bottom-left-radius: 6px; }
+.bub.a { background: #ddf4ff; margin-left: auto; border-bottom-right-radius: 6px; color: #0a3069; }
+/* dm cta */
+.dm { padding: 26px 30px 30px; position: relative; }
+.cmrow, .dmrow { display: flex; gap: 18px; align-items: center; font-size: 30px; }
+.fava { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg,#f58529,#dd2a7b,#8134af); color: #fff;
+  display: grid; place-items: center; font-weight: 800; font-size: 34px; flex: none; }
+.ctext { font-size: 40px; font-weight: 800; margin-top: 2px; }
+.kw { position: absolute; right: 30px; top: 22px; font-size: 92px; font-weight: 900; color: #0969da; letter-spacing: -0.04em; }
+.dmrow { margin-top: 26px; padding: 18px 20px; border-radius: 20px; background: #f3f0ff; }
+.dmrow > div { min-width: 0; flex: 1; }
+.ava { width: 70px; height: 70px; border-radius: 50%; image-rendering: pixelated; background: #3a2416; flex: none; }
+.dmlab { margin-left: 10px; color: #8c959f; font-size: 24px; }
+.dmtext { font-size: 23px; color: #0969da; margin-top: 4px; white-space: pre; overflow: hidden; font-family: "JetBrains Mono", monospace; }
+/* note */
+.note { background: #fff8c5; padding: 34px 34px; }
+.nh { font-size: 42px; font-weight: 800; display: flex; gap: 16px; align-items: center; color: #7d4e00; }
+.nb { font-size: 34px; margin-top: 16px; color: #4d2d00; line-height: 1.35; }
+/* contract */
+.contract { padding: 30px 34px 30px; position: relative; }
+.ch1 { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; }
+.cline { height: 12px; border-radius: 6px; background: #eef1f4; margin-top: 16px; width: 92%; }
+.cline.s { width: 64%; }
+.crow { display: flex; gap: 70px; margin-top: 22px; }
+.clab { font-size: 24px; color: #8c959f; }
+.cval { font-size: 34px; font-weight: 700; }
+.sig { width: 330px; height: 78px; margin-top: 14px; }
+.sig path { fill: none; stroke: #0a3069; stroke-width: 5; stroke-linecap: round; }
+.signed { position: absolute; right: 34px; bottom: 34px; font-size: 38px; font-weight: 800; color: #1a7f37; border: 5px solid #1a7f37;
+  border-radius: 12px; padding: 6px 18px; display: flex; gap: 10px; align-items: center; }
+/* versus */
+.versus { position: relative; display: flex; align-items: stretch; gap: 0; padding: 26px 26px 54px; }
+.vs { flex: 1; border-radius: 14px; padding: 18px 20px; text-align: center; }
+.vs.l { background: #fff1f0; } .vs.r { background: #e9fbef; }
+.vlab { font-size: 28px; font-weight: 700; color: #57606a; }
+.vnum { font-size: 96px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; margin-top: 6px; }
+.vs.l .vnum { color: #cf222e; } .vs.r .vnum { color: #1a7f37; }
+.vsub { font-size: 26px; color: #57606a; margin-top: 4px; }
+.vsx { align-self: center; font-size: 40px; font-weight: 900; color: #8c959f; margin: 0 16px; }
+.vsrc { position: absolute; left: 0; right: 0; bottom: 8px; padding: 0; }
+/* repo screenshot */
+.shot { padding: 0; }
+.shot img { display: block; width: 100%; }
+.shot .src { padding: 10px 0 12px; }
+/* teaser */
+.wave { display: flex; align-items: center; gap: 6px; height: 80px; margin-top: 18px; }
+.wave i { display: block; width: 14px; border-radius: 7px; background: #8250df; }
+#gridmeter { position: absolute; left: 750px; top: 196px; display: grid; grid-template-columns: repeat(13, 18px); grid-auto-rows: 18px; gap: 2px; }
+.gcell i { display: block; width: 18px; height: 18px; background: rgba(255,255,255,.14); border-radius: 3px; }
+.ch { white-space: pre; }
+
+.vb #shade { background: linear-gradient(180deg, rgba(8,6,10,.86) 0%, rgba(8,6,10,.7) 45%, rgba(8,6,10,.15) 66%, rgba(8,6,10,0) 74%),
+  radial-gradient(ellipse at 55% 85%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%); }
+.vb .pill, .vb .path, .vb .rule, .vb #gridmeter { display: none; }
+#segs { position: absolute; left: 72px; top: 236px; width: 938px; display: flex; gap: 8px; }
+#segs i { flex: 1; height: 10px; border-radius: 5px; background: rgba(255,255,255,.18); overflow: hidden; display: block; }
+#segs i b { display: block; height: 100%; background: var(--acc); transform-origin: 0 50%; transform: scaleX(0); }
+.repochip { position: absolute; right: 70px; top: 272px; font: 500 28px "JetBrains Mono", monospace; color: rgba(255,255,255,.7); }
+.repochip b { color: var(--acc); font-weight: 600; }
+.hbadge { position: absolute; left: 72px; top: 266px; font: 800 30px "Inter"; letter-spacing: .06em; color: #fff; background: var(--acc);
+  padding: 6px 18px; border-radius: 10px; text-transform: uppercase; }
+.vb .title { top: 330px; }
+.vb .tline { font-size: 100px; }
+.vb .tline.l2 { color: var(--acc); }
+.vb .cardwrap { left: 120px; top: 592px; width: 840px; }
+.pane { background: rgba(13,17,23,.94); border: 2px solid rgba(255,255,255,.12); border-radius: 22px; overflow: hidden; color: #e6edf3;
+  box-shadow: 0 24px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(0,0,0,.4); position: relative; }
+.pbar { display: flex; align-items: center; gap: 12px; height: 62px; padding: 0 22px; background: #161b22; border-bottom: 2px solid #30363d; font-size: 28px; }
+.pbar b { font-weight: 700; }
+.real { margin-left: auto; font: 600 20px "JetBrains Mono", monospace; color: #7ee787; border: 2px solid #238636; border-radius: 16px; padding: 2px 12px; }
+.pcred { font: 500 20px "JetBrains Mono", monospace; color: #8b949e; padding: 10px 22px 14px; }
+.view { position: relative; overflow: hidden; background: #010409; }
+.scr { position: absolute; inset: 0; }
+.scr + .scr { opacity: 0; }
+.zoom { position: absolute; left: 0; top: 0; width: 840px; transform-origin: 0 0; }
+.zoom img { display: block; }
+.mark { position: absolute; border: 5px solid var(--acc); border-radius: 12px; box-shadow: 0 0 0 4000px rgba(0,0,0,.0), 0 0 26px var(--acc); }
+.mlab { position: absolute; left: -5px; top: -46px; font: 800 24px "Inter"; background: var(--acc); color: #fff; padding: 4px 12px; border-radius: 8px; white-space: nowrap; }
+.scrlab { position: absolute; left: 18px; bottom: 16px; font: 800 30px "Inter"; background: rgba(0,0,0,.78); color: #fff; padding: 8px 18px;
+  border-radius: 12px; border-left: 6px solid var(--acc); }
+.cursor { position: absolute; left: 0; top: 0; width: 46px; height: 46px; z-index: 5; filter: drop-shadow(0 4px 8px rgba(0,0,0,.6)); }
+.cursor svg { width: 46px; height: 46px; }
+.cursor .ring { position: absolute; left: -22px; top: -22px; width: 56px; height: 56px; border-radius: 50%; border: 5px solid #fff; opacity: 0; }
+.ovstamp { position: absolute; z-index: 6; font: 900 64px "Inter"; letter-spacing: -0.03em; color: #fff; background: var(--acc);
+  padding: 8px 24px; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,.6); white-space: nowrap; }
+/* gauge */
+.gauge { padding: 22px 30px 0; text-align: center; }
+.ghead { font: 800 34px "Inter"; text-align: left; color: #e6edf3; margin-bottom: 6px; }
+.gsvg { width: 600px; height: 345px; display: block; margin: 0 auto -40px; }
+.gtrack, .garc { fill: none; stroke-width: 26; stroke-linecap: round; }
+.gtrack { stroke: #21262d; } .garc { stroke: var(--acc); }
+.gticks line { stroke: #6e7681; stroke-width: 4; }
+.needle line { stroke: #fff; stroke-width: 8; stroke-linecap: round; } .needle circle { fill: #fff; }
+.gnum { font: 900 150px "Inter"; letter-spacing: -0.05em; line-height: 1; color: #fff; }
+.gnum small { font-size: 40px; color: #8b949e; margin-left: 12px; letter-spacing: 0; font-weight: 700; }
+.grow2 { display: flex; justify-content: space-between; font: 600 30px "Inter"; padding: 12px 6px; border-top: 2px solid #21262d; color: #c9d1d9; text-align: left; }
+.grow2 b { font-family: "JetBrains Mono", monospace; color: var(--acc); }
+/* big terminal */
+.btbody { padding: 22px 26px 28px; font-family: "JetBrains Mono", monospace; }
+.bt { font-size: 30px; line-height: 1.4; padding: 6px 0; display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+.bt.cmd { opacity: 0; color: #fff; font-size: 31px; }
+.bt.cmd .ch { opacity: 0; }
+.bt .gt { color: var(--acc); font-weight: 800; }
+.bt.out { color: #8b949e; } .bt.ok { color: #7ee787; } .bt.warn { color: #f2cc60; }
+.barrow { opacity: 0; gap: 18px; color: #c9d1d9; }
+.btrack { flex: 1; height: 22px; border-radius: 11px; background: #21262d; overflow: hidden; display: block; }
+.bfill { display: block; height: 100%; background: linear-gradient(90deg, var(--acc), #7ee787); transform-origin: 0 50%; }
+/* flow */
+.fcan { position: relative; }
+.fsvg { position: absolute; left: 0; top: 0; width: 840px; }
+.fsvg line { stroke: var(--acc); stroke-width: 5; stroke-dasharray: 2000; opacity: .85; }
+.npin { position: absolute; width: 0; height: 0; }
+.node { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); background: #161b22; border: 3px solid #30363d; border-radius: 16px; padding: 12px 20px;
+  text-align: center; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+.node b { display: block; font: 800 30px "Inter"; }
+.node small { display: block; font: 500 21px "JetBrains Mono", monospace; color: #8b949e; margin-top: 4px; }
+.node.hub { border-color: var(--acc); background: #1f1418; padding: 18px 28px; }
+.node.hub b { font-size: 38px; }
+.node.hot { border-color: var(--acc); box-shadow: 0 0 30px var(--acc); }
+.fbadge { position: absolute; right: 24px; top: 20px; font: 900 64px "Inter"; color: var(--acc); letter-spacing: -0.03em; }
+/* receipt */
+.receipt { background: #fbfaf6; color: #1f2328; padding: 30px 36px 6px; font-family: "JetBrains Mono", monospace; border: none; }
+.rchead { font: 900 44px "Inter"; letter-spacing: -0.02em; }
+.rcsub { font-size: 24px; color: #57606a; margin: 4px 0 16px; padding-bottom: 16px; border-bottom: 3px dashed #c4c8cc; }
+.rc { display: flex; justify-content: space-between; font-size: 29px; padding: 9px 0; }
+.rctot { display: flex; justify-content: space-between; font: 900 64px "Inter"; padding: 18px 0 8px; margin-top: 10px; border-top: 3px dashed #c4c8cc; }
+.rctot b { color: #1a7f37; }
+.receipt .pcred { color: #8c959f; padding: 6px 0 16px; }
+/* tracks */
+.tbody { position: relative; padding: 16px 22px 26px; }
+.ruler { display: flex; justify-content: space-between; margin-left: 176px; font: 500 20px "JetBrains Mono", monospace; color: #6e7681; margin-bottom: 10px; }
+.trk { display: flex; align-items: center; gap: 14px; height: 78px; }
+.tname { width: 162px; font: 800 26px "Inter"; color: #c9d1d9; }
+.tlane { position: relative; flex: 1; height: 58px; background: #0d1117; border: 2px solid #21262d; border-radius: 10px; }
+.clipx { position: absolute; top: 5px; bottom: 5px; border-radius: 8px; font: 700 21px "Inter"; font-style: normal; color: #fff; padding: 0 10px;
+  display: flex; align-items: center; overflow: hidden; white-space: nowrap; transform-origin: 0 50%; }
+.playhead { position: absolute; top: 6px; bottom: 14px; left: 198px; width: 4px; background: #fff; box-shadow: 0 0 12px #fff; }
+/* xlist */
+.xlist { padding: 26px 32px 10px; }
+.xl { display: flex; align-items: center; gap: 22px; font: 800 52px "Inter"; padding: 14px 0; letter-spacing: -0.02em; }
+.xl .ico { width: 58px; height: 58px; padding: 8px; border-radius: 14px; }
+.xl.ok .ico { background: #238636; color: #fff; } .xl.no .ico { background: #da3633; color: #fff; }
+.xl.no span { color: #ffb4ad; }
+.xlist .pcred { padding: 8px 0 16px; }
+/* comment CTA */
+.cta2 { padding: 24px 26px 28px; background: #000; border-color: #262626; }
+.post { display: flex; align-items: center; gap: 16px; font-size: 28px; }
+.post b { display: block; font-size: 30px; } .post span { color: #a8a8a8; font-size: 24px; }
+.post .ico { margin-left: auto; width: 40px; height: 40px; color: #fff; }
+.cav { width: 70px; height: 70px; border-radius: 50%; image-rendering: pixelated; background: #3a2416; border: 3px solid #ff3d7f; flex: none; }
+.ccom { display: flex; align-items: center; gap: 16px; margin-top: 22px; height: 92px; border: 2px solid #363636; border-radius: 46px; padding: 0 14px 0 28px; }
+.cuser { font: 700 26px "Inter"; color: #a8a8a8; }
+.cword { font: 900 46px "Inter"; color: #fff; letter-spacing: .02em; }
+.cword .ch { opacity: 0; }
+.csend { margin-left: auto; width: 66px; height: 66px; border-radius: 50%; background: #0095f6; display: grid; place-items: center; color: #fff; }
+.csend .ico { width: 34px; height: 34px; }
+.big { position: absolute; right: 30px; top: 18px; font: 900 34px "Inter"; color: #000; background: #fff; border-radius: 10px; padding: 4px 14px; display: none; }
+.notif { display: flex; gap: 16px; align-items: center; margin-top: 22px; padding: 18px 20px; border-radius: 26px; background: rgba(60,60,67,.92);
+  border: 1px solid rgba(255,255,255,.12); }
+.notif > div { min-width: 0; flex: 1; }
+.notif b { font-size: 28px; } .notif small { float: right; color: #a8a8a8; font-size: 22px; }
+.ntext { font: 500 23px "JetBrains Mono", monospace; color: #7cc4ff; margin-top: 4px; white-space: pre; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="root" class="vb" style="--acc:#e0306f" data-composition-id="main" data-start="0" data-duration="19.733333333333334" data-width="1080" data-height="1920" data-fps="30">
+  <canvas id="mc" width="1080" height="1920"></canvas>
+  <div id="shade"></div>
+  <div class="path">debpalash / <b>VoiceStudio</b></div>
+  <div class="rule"></div>
+  <section class="step clip" id="s0" data-start="0.0" data-duration="3.21" data-track-index="1"><div class="pill">$ 01/07</div><div class="hbadge">AI voice</div><div class="title"><div class="tline l1"><span class="tw" data-t="0.0">You&#x27;re</span><span class="tw" data-t="0.34">not</span><span class="tw" data-t="0.42">hearing</span><span class="tw" data-t="0.62">me.</span></div><div class="tline l2"><span class="tw" data-t="1.66">A</span><span class="tw" data-t="1.78">free</span><span class="tw" data-t="2.04">AI</span><span class="tw" data-t="2.38">clone.</span></div></div><div class="cardwrap"><div class="pane app"><div class="pbar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><b>VoiceStudio · Voice cloning</b><span class="real">real screenshot</span></div><div class="view" style="height:600px"><div class="scr" data-anim="show" data-f="0" ><div class="zoom" data-zooms='[[0, 0.27, 0.04, 0.7], [0.55, 0.5, 0.45, 0.46]]' data-vw="840" data-ih="560.0" style="height:560.0px"><img src="assets/shots/voice-cloning.png" alt="" style="width:840px;height:560.0px"><div class="mark" data-anim="mark" data-f="0.25"  style="left:28.50%;top:19.00%;width:57.50%;height:5.00%"><span class="mlab">my script</span></div><div class="mark" data-anim="mark" data-f="0.62"  style="left:69.00%;top:84.50%;width:15.00%;height:5.50%"><span class="mlab">made on my laptop</span></div></div></div><div class="cursor" data-path='[[0, 216, 288], [0.62, 475, 511]]'><svg viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.4L20 11z" fill="#fff" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/></svg><i class="ring"></i></div></div><div class="pcred">real screenshot · github.com/debpalash/VoiceStudio README</div></div></div></section><section class="step clip" id="s1" data-start="3.21" data-duration="3.48" data-track-index="1"><div class="pill">$ 02/07</div><div class="title"><div class="tline l1"><span class="tw" data-t="3.22">ElevenLabs</span><span class="tw" data-t="3.21">bills</span></div><div class="tline l2"><span class="tw" data-t="4.8">every</span><span class="tw" data-t="5.08">month.</span></div></div><div class="cardwrap"><div class="pane receipt"><div class="rchead">ElevenLabs</div><div class="rcsub">voice cloning · Starter plan</div><div class="rc" data-anim="slide" data-f="0.12" ><span>Month 1</span><b>$6</b></div><div class="rc" data-anim="slide" data-f="0.22" ><span>Month 2</span><b>$6</b></div><div class="rc" data-anim="slide" data-f="0.32" ><span>Month 3</span><b>$6</b></div><div class="rc" data-anim="slide" data-f="0.42" ><span>...every month</span><b></b></div><div class="rctot" data-anim="stamp" data-f="0.62" ><span>12 months</span><b>$72</b></div><div class="pcred">elevenlabs.io/pricing · Starter $6/mo, Oct 19 2026</div></div></div></section><section class="step clip" id="s2" data-start="6.69" data-duration="2.04" data-track-index="1"><div class="pill">$ 03/07</div><div class="title"><div class="tline l1"><span class="tw" data-t="6.69">VoiceStudio:</span></div><div class="tline l2"><span class="tw" data-t="8.0">free,</span><span class="tw" data-t="7.18">on</span><span class="tw" data-t="7.3">your</span><span class="tw" data-t="7.42">laptop.</span></div></div><div class="cardwrap"><div class="pane xlist"><div class="ghead">VoiceStudio</div><div class="xl ok" data-anim="stamp" data-f="0.08" ><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>$0, open source</span></div><div class="xl ok" data-anim="stamp" data-f="0.3" ><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Runs on your machine</span></div><div class="xl ok" data-anim="stamp" data-f="0.52" ><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>No account, no API key</span></div><div class="pcred">VoiceStudio README · AGPL-3.0</div></div></div></section><section class="step clip" id="s3" data-start="8.73" data-duration="2.98" data-track-index="1"><div class="pill">$ 04/07</div><div class="title"><div class="tline l1"><span class="tw" data-t="8.74">Clone.</span><span class="tw" data-t="9.38">Design.</span></div><div class="tline l2"><span class="tw" data-t="10.22">Dub.</span><span class="tw" data-t="10.96">Transcribe.</span></div></div><div class="cardwrap"><div class="pane app"><div class="pbar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><b>VoiceStudio</b><span class="real">real screenshot</span></div><div class="view" style="height:600px"><div class="scr" data-anim="show" data-f="0" data-off="0.3"><div class="zoom" data-zooms='[[0, 0.2, 0.0, 0.8]]' data-vw="840" data-ih="560.0" style="height:560.0px"><img src="assets/shots/voice-cloning.png" alt="" style="width:840px;height:560.0px"></div><div class="scrlab">Clone a voice</div></div><div class="scr" data-anim="show" data-f="0.3" data-off="0.58"><div class="zoom" data-zooms='[[0, 0.1, 0.1, 0.75]]' data-vw="840" data-ih="560.0" style="height:560.0px"><img src="assets/shots/voice-design.png" alt="" style="width:840px;height:560.0px"></div><div class="scrlab">Design a new one</div></div><div class="scr" data-anim="show" data-f="0.58" data-off="0.8"><div class="zoom" data-zooms='[[0, 0.33, 0.14, 0.65]]' data-vw="840" data-ih="560.0" style="height:560.0px"><img src="assets/shots/dubbing.png" alt="" style="width:840px;height:560.0px"></div><div class="scrlab">Dub videos</div></div><div class="scr" data-anim="show" data-f="0.8" ><div class="zoom" data-zooms='[[0, 0.02, 0.1, 0.45]]' data-vw="840" data-ih="560.0" style="height:560.0px"><img src="assets/shots/dubbing.png" alt="" style="width:840px;height:560.0px"><div class="mark" data-anim="mark" data-f="0.84"  style="left:4.50%;top:13.00%;width:26.00%;height:14.00%"></div></div><div class="scrlab">Transcribe</div></div></div><div class="pcred">real screenshot · github.com/debpalash/VoiceStudio README</div></div></div></section><section class="step clip" id="s4" data-start="11.71" data-duration="1.44" data-track-index="1"><div class="pill">$ 05/07</div><div class="title"><div class="tline l1"><span class="tw" data-t="11.72">One</span><span class="tw" data-t="11.9">command</span></div><div class="tline l2"><span class="tw" data-t="12.14">to</span><span class="tw" data-t="12.38">install.</span></div></div><div class="cardwrap"><div class="pane bigterm"><div class="pbar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><b>Terminal</b></div><div class="btbody"><div class="bt cmd" data-anim="show" data-f="0.03" ><span class="gt">$</span> <span data-anim="type" data-f="0.03" data-d=0.22><span class="ch">c</span><span class="ch">u</span><span class="ch">r</span><span class="ch">l</span><span class="ch"> </span><span class="ch">-</span><span class="ch">f</span><span class="ch">s</span><span class="ch">S</span><span class="ch">L</span><span class="ch"> </span><span class="ch">h</span><span class="ch">t</span><span class="ch">t</span><span class="ch">p</span><span class="ch">s</span><span class="ch">:</span><span class="ch">/</span><span class="ch">/</span><span class="ch">v</span><span class="ch">o</span><span class="ch">i</span><span class="ch">c</span><span class="ch">e</span><span class="ch">s</span><span class="ch">t</span><span class="ch">u</span><span class="ch">d</span><span class="ch">i</span><span class="ch">o</span><span class="ch">.</span><span class="ch">s</span><span class="ch">h</span><span class="ch">/</span><span class="ch">i</span><span class="ch">n</span><span class="ch">s</span><span class="ch">t</span><span class="ch">a</span><span class="ch">l</span><span class="ch">l</span><span class="ch"> </span><span class="ch">|</span><span class="ch"> </span><span class="ch">s</span><span class="ch">h</span></span></div><div class="bt barrow" data-anim="show" data-f="0.5" ><span>installing</span><i class="btrack"><i class="bfill" data-anim="fill" data-f="0.5" data-d=0.3></i></i></div><div class="bt ok" data-anim="slide" data-f="0.85" ><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Local workflows run on your hardware</div></div></div></div></section><section class="step clip" id="s5" data-start="13.15" data-duration="4.38" data-track-index="1"><div class="pill">$ 06/07</div><div class="title"><div class="tline l1"><span class="tw" data-t="13.16">Heads</span><span class="tw" data-t="13.28">up:</span></div><div class="tline l2"><span class="tw" data-t="13.7">default</span><span class="tw" data-t="14.02">model</span><span class="tw" data-t="14.34">is</span><span class="tw" data-t="14.7">personal</span><span class="tw" data-t="15.0">use</span><span class="tw" data-t="15.22">only.</span></div></div><div class="cardwrap"><div class="pane app"><div class="pbar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><b>VoiceStudio · Settings › Models</b><span class="real">real screenshot</span></div><div class="view" style="height:600px"><div class="scr" data-anim="show" data-f="0" ><div class="zoom" data-zooms='[[0, 0.2, 0.08, 0.62], [0.3, 0.2, 0.22, 0.42]]' data-vw="840" data-ih="560.0" style="height:560.0px"><img src="assets/shots/models.png" alt="" style="width:840px;height:560.0px"><div class="mark" data-anim="mark" data-f="0.38"  style="left:21.00%;top:28.00%;width:19.00%;height:6.50%"><span class="mlab">non-commercial license</span></div></div></div></div><div class="pcred">default OmniVoice model is CC-BY-NC · Apache/MIT models allowed for paid work</div></div></div></section><section class="step clip" id="s6" data-start="17.53" data-duration="2.203" data-track-index="1"><div class="pill">$ 07/07</div><div class="title"><div class="tline l1"><span class="tw" data-t="17.54">Comment</span></div><div class="tline l2"><span class="tw" data-t="17.72">VOICE</span></div></div><div class="cardwrap"><div class="pane cta2"><div class="post"><img class="cav" src="assets/avatar.png" alt=""><div><b>baroobi.inc</b><span>Comment the word below</span></div><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></svg></div><div class="ccom" data-anim="pop" data-f="0.08" ><span class="cuser">you</span><span class="cword" data-anim="type" data-f="0.1" data-d=0.16><span class="ch">V</span><span class="ch">O</span><span class="ch">I</span><span class="ch">C</span><span class="ch">E</span></span><span class="csend" data-anim="press" data-f="0.36" ><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></span></div><div class="notif" data-anim="drop" data-f="0.5" ><img class="cav" src="assets/avatar.png" alt=""><div><b>baroobi.inc</b><small>now</small><div class="ntext" data-anim="type" data-f="0.56" data-d=0.24><span class="ch">h</span><span class="ch">e</span><span class="ch">r</span><span class="ch">e</span><span class="ch"> </span><span class="ch">y</span><span class="ch">o</span><span class="ch">u</span><span class="ch"> </span><span class="ch">g</span><span class="ch">o</span><span class="ch"> </span><span class="ch">-</span><span class="ch">&gt;</span><span class="ch"> </span><span class="ch">g</span><span class="ch">i</span><span class="ch">t</span><span class="ch">h</span><span class="ch">u</span><span class="ch">b</span><span class="ch">.</span><span class="ch">c</span><span class="ch">o</span><span class="ch">m</span><span class="ch">/</span><span class="ch">d</span><span class="ch">e</span><span class="ch">b</span><span class="ch">p</span><span class="ch">a</span><span class="ch">l</span><span class="ch">a</span><span class="ch">s</span><span class="ch">h</span><span class="ch">/</span><span class="ch">V</span><span class="ch">o</span><span class="ch">i</span><span class="ch">c</span><span class="ch">e</span><span class="ch">S</span><span class="ch">t</span><span class="ch">u</span><span class="ch">d</span><span class="ch">i</span><span class="ch">o</span></div></div></div></div></div></section>
+  <div id="gridmeter"><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span></div>
+  <div id="segs"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div><div class="repochip">github.com/debpalash/<b>VoiceStudio</b></div>
+  <audio id="bed" src="assets/bed.wav" data-start="0" data-duration="19.733333333333334" data-track-index="4" data-volume="1"></audio><audio id="vo" src="assets/vo.wav" data-start="0" data-duration="19.733333333333334" data-track-index="3" data-volume="1"></audio>
+</div>
+<script>
+window.DATA = {"total": 19.733333333333334, "steps": [{"start": 0.0, "end": 3.21, "pose": "shrug"}, {"start": 3.21, "end": 6.69, "pose": "point"}, {"start": 6.69, "end": 8.73, "pose": "thumb"}, {"start": 8.73, "end": 11.71, "pose": "point"}, {"start": 11.71, "end": 13.15, "pose": "thumb"}, {"start": 13.15, "end": 17.53, "pose": "shrug"}, {"start": 17.53, "end": 19.733333333333334, "pose": "point"}], "cues": [[0.0, "X"], [0.3, "C"], [0.37, "B"], [0.71, "A"], [0.79, "B"], [0.99, "C"], [1.27, "E"], [1.41, "B"], [1.65, "C"], [1.79, "G"], [1.93, "B"], [2.14, "C"], [2.21, "B"], [2.28, "C"], [2.42, "F"], [2.7, "B"], [2.77, "G"], [2.84, "A"], [2.92, "C"], [2.98, "G"], [3.1, "E"], [3.17, "B"], [3.4, "C"], [3.69, "G"], [3.76, "C"], [3.83, "A"], [3.91, "B"], [3.96, "H"], [4.07, "D"], [4.14, "A"], [4.26, "B"], [4.32, "E"], [4.51, "B"], [4.65, "F"], [4.86, "C"], [5.0, "G"], [5.07, "B"], [5.14, "A"], [5.23, "C"], [5.34, "B"], [5.58, "F"], [6.0, "G"], [6.14, "E"], [6.21, "B"], [6.49, "C"], [6.75, "B"], [6.96, "C"], [7.03, "B"], [7.17, "E"], [7.31, "F"], [7.38, "B"], [7.45, "H"], [7.52, "A"], [7.6, "B"], [7.65, "D"], [7.76, "A"], [7.85, "G"], [7.96, "E"], [8.1, "G"], [8.24, "B"], [8.45, "C"], [8.54, "B"], [8.68, "F"], [8.96, "G"], [9.03, "E"], [9.1, "B"], [9.52, "C"], [9.71, "E"], [9.76, "F"], [9.92, "E"], [9.97, "C"], [10.14, "B"], [10.19, "C"], [10.24, "A"], [10.32, "G"], [10.38, "B"], [10.58, "F"], [10.65, "B"], [11.14, "C"], [11.21, "B"], [11.42, "A"], [11.77, "F"], [11.84, "C"], [11.9, "B"], [12.04, "A"], [12.12, "C"], [12.18, "F"], [12.38, "B"], [12.52, "E"], [12.86, "C"], [13.26, "B"], [13.4, "C"], [13.47, "A"], [13.59, "B"], [13.92, "G"], [13.99, "E"], [14.06, "B"], [14.13, "A"], [14.21, "D"], [14.28, "B"], [14.56, "G"], [14.63, "A"], [14.71, "E"], [14.86, "B"], [15.07, "F"], [15.42, "B"], [15.73, "G"], [15.81, "A"], [15.89, "C"], [16.05, "B"], [16.12, "F"], [16.26, "E"], [16.33, "C"], [16.47, "A"], [16.58, "B"], [16.94, "A"], [17.02, "D"], [17.08, "B"], [17.28, "C"], [17.49, "D"], [17.59, "C"], [17.63, "A"], [17.71, "C"], [17.75, "B"], [17.86, "G"], [17.93, "E"], [18.0, "B"], [18.21, "C"], [18.28, "B"], [18.42, "C"], [18.49, "F"], [18.63, "C"], [18.7, "B"], [18.77, "A"], [18.85, "F"], [19.04, "X"]], "headOn": 0.8};
+
+function buildB(tl, DATA) {
+  // zooming screenshots: [[f, x, y, w]] fractions of the image; scale so w fills the viewport, top-left at (x, y)
+  DATA.steps.forEach((st, i) => {
+    const s = document.getElementById("s" + i), dur = st.end - st.start;
+    const at = (f) => st.start + Math.min(Math.max(0, dur - 0.12), f * dur);
+    s.querySelectorAll(".zoom").forEach((el) => {
+      const vw = parseFloat(el.dataset.vw), ih = parseFloat(el.dataset.ih);
+      const zs = JSON.parse(el.dataset.zooms);
+      const tf = (z) => ({ scale: 1 / z[3], x: -z[1] * vw / z[3], y: -z[2] * ih / z[3] });
+      tl.set(el, tf(zs[0]), st.start);
+      zs.slice(1).forEach((z) => tl.to(el, { ...tf(z), duration: 0.45, ease: "power3.inOut" }, at(z[0])));
+      // a mark sits in image space, so its border would scale with the zoom: counter-scale the stroke
+      el.querySelectorAll(".mark").forEach((m) => {
+        const k = zs.filter((z) => z[0] <= parseFloat(m.dataset.f)).pop() || zs[0];
+        m.style.borderWidth = (5 * k[3]).toFixed(2) + "px";
+        m.style.borderRadius = (12 * k[3]).toFixed(2) + "px";
+        const lab = m.querySelector(".mlab");
+        if (lab) { lab.style.transform = `scale(${k[3]})`; lab.style.transformOrigin = "0 100%"; lab.style.top = (-46 * k[3]) + "px"; }
+      });
+    });
+    s.querySelectorAll(".cursor").forEach((el) => {
+      const path = JSON.parse(el.dataset.path);
+      tl.set(el, { x: path[0][1], y: path[0][2] }, st.start);
+      path.slice(1).forEach((p) => tl.to(el, { x: p[1], y: p[2], duration: 0.32, ease: "power2.inOut" }, at(p[0]) - 0.32));
+      const ring = el.querySelector(".ring"), last = path[path.length - 1];
+      tl.fromTo(ring, { opacity: 0.9, scale: 0.3 }, { opacity: 0, scale: 1.6, duration: 0.35, ease: "power2.out" }, at(last[0]));
+    });
+    s.querySelectorAll("[data-f]").forEach((el) => {
+      const t = at(parseFloat(el.dataset.f)), a = el.dataset.anim;
+      if (a === "show") tl.set(el, { opacity: 1 }, t);
+      else if (a === "mark") tl.fromTo(el, { opacity: 0, scale: 1.35 }, { opacity: 1, scale: 1, duration: 0.18, ease: "power3.out" }, t);
+      else if (a === "needle") tl.fromTo(el, { rotation: -90, svgOrigin: "200 200" }, { rotation: parseFloat(el.dataset.rot), svgOrigin: "200 200", duration: 1.6 * dur * 0.4, ease: "power2.out" }, t);
+      else if (a === "fill") tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: parseFloat(el.dataset.d) * dur, ease: "power1.inOut" }, t);
+      else if (a === "sweep") tl.fromTo(el, { x: 0 }, { x: 590, duration: dur * 0.9, ease: "none" }, t);
+      else if (a === "drop") tl.fromTo(el, { opacity: 0, y: -60 }, { opacity: 1, y: 0, duration: 0.2, ease: "back.out(2)" }, t);
+    });
+  });
+  document.querySelectorAll("#segs i b").forEach((b, i) => {
+    const st = DATA.steps[i];
+    tl.fromTo(b, { scaleX: 0 }, { scaleX: 1, duration: st.end - st.start, ease: "none" }, st.start);
+  });
+}
+
+
+const GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
+function rnd(i) { const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
+function fitNums() {
+  document.querySelectorAll(".num, .vnum").forEach((el) => {
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.parentElement.clientWidth - 8 && fs > 40) { fs -= 4; el.style.fontSize = fs + "px"; }
+  });
+}
+function fitLines() {
+  // long commands and links shrink to fit their card instead of running off the edge
+  document.querySelectorAll(".tl, .dmtext, .rtitle, .bt, .ntext").forEach((el) => {
+    let fs = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && fs > 16) { fs -= 1; el.style.fontSize = fs + "px"; }
+  });
+}
+function fitTitles() {
+  const base = document.getElementById("root").classList.contains("vb") ? 100 : 124;
+  document.querySelectorAll(".tline").forEach((el) => {
+    let fs = base;
+    el.style.fontSize = fs + "px";
+    while (el.scrollWidth > 938 && fs > 60) { fs -= 2; el.style.fontSize = fs + "px"; }
+  });
+}
+function build() {
+  fitTitles();
+  fitNums();
+  fitLines();
+  const tl = gsap.timeline({ paused: true });
+  // headline words pop on the spoken word: these are the captions
+  document.querySelectorAll(".tw").forEach((el) => {
+    tl.fromTo(el, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.12, ease: "power3.out" }, parseFloat(el.dataset.t));
+  });
+  const cells = document.querySelectorAll("#gridmeter .gcell");
+  DATA.steps.forEach((st, i) => {
+    const s = document.getElementById("s" + i), dur = st.end - st.start;
+    const at = (f) => st.start + Math.min(Math.max(0, dur - 0.12), f * dur);
+    // hard cut: the card is simply there on the cut, its contents perform
+    s.querySelectorAll("[data-f]").forEach((el) => {
+      const t = at(parseFloat(el.dataset.f)), a = el.dataset.anim;
+      if (a === "pop") tl.fromTo(el, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.14, ease: "back.out(3)" }, t);
+      else if (a === "slide") tl.fromTo(el, { opacity: 0, x: -28 }, { opacity: 1, x: 0, duration: 0.14, ease: "power3.out" }, t);
+      else if (a === "stamp") tl.fromTo(el, { opacity: 0, scale: 2.4 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power4.in" }, t);
+      else if (a === "grow") tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power3.out", transformOrigin: "0% 50%" }, t);
+      else if (a === "shake") tl.fromTo(el, { x: -14 }, { x: 0, duration: 0.4, ease: "elastic.out(1.2, 0.25)" }, t);
+      else if (a === "press") tl.fromTo(el, { scale: 1 }, { scale: 0.93, duration: 0.07, yoyo: true, repeat: 1 }, t);
+      else if (a === "type") {
+        const ch = el.querySelectorAll(".ch"), d = parseFloat(el.dataset.d || 0.4) * dur;
+        tl.fromTo(ch, { opacity: 0 }, { opacity: 1, duration: 0.001, stagger: d / Math.max(1, ch.length) }, t);
+      } else if (a === "count") {
+        const o = { v: parseFloat(el.dataset.from) }, to = parseFloat(el.dataset.to);
+        tl.to(o, { v: to, duration: parseFloat(el.dataset.d || 0.8) * dur * 0.4, ease: "power2.in",
+          onUpdate: () => (el.textContent = Math.round(o.v)) }, t);
+      } else if (a === "draw") {
+        const L = el.getTotalLength();
+        el.style.strokeDasharray = L;
+        tl.fromTo(el, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.55, ease: "power1.inOut" }, t);
+      }
+      if (el.dataset.off) tl.set(el, { opacity: 0 }, at(parseFloat(el.dataset.off)));
+    });
+    const per = Math.ceil(65 / DATA.steps.length);      // grid fills completely by the last beat
+    for (let c = 0; c < per; c++) {
+      const idx = i * per + c;
+      if (idx >= 65) break;
+      const cell = cells[(idx % 5) * 13 + Math.floor(idx / 5)];
+      tl.set(cell.querySelector("i"), { backgroundColor: GREENS[Math.floor(rnd(idx) * 4)] }, st.start + c * 0.03);
+    }
+  });
+  if (window.buildB) buildB(tl, DATA);
+  window.__timelines["main"] = tl;
+}
+document.fonts.ready.then(build);
+
+</script>
+<script type="module">
+// Minecraft-style baroobi in a dark-oak room, rendered from HyperFrames time (hf-seek), never wall-clock.
+// Reads window.DATA: { total, steps:[{start,end,pose}], cues:[[t, shape]] }.
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.181.2/+esm";
+
+const D = window.DATA;
+const W = 1080, H = 1920;
+const canvas = document.getElementById("mc");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false);
+renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const loader = new THREE.TextureLoader();
+function tex(name, repeat) {
+  const t = loader.load("assets/voxel/" + name);
+  t.magFilter = THREE.NearestFilter;
+  t.minFilter = THREE.NearestFilter;
+  t.generateMipmaps = false;
+  t.colorSpace = THREE.SRGBColorSpace;
+  if (repeat) {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(repeat[0], repeat[1]);
+  }
+  return t;
+}
+const mat = (t, o = {}) => new THREE.MeshStandardMaterial({ map: t, roughness: 0.92, metalness: 0, ...o });
+const clear = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0, depthWrite: false });
+function box(w, h, d, mats) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mats);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  return m;
+}
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1c120b);
+
+// ---- room ----------------------------------------------------------------
+const BLOCK = 7;
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), mat(tex("dark_oak.png", [140 / BLOCK, 140 / BLOCK])));
+wall.position.set(0, 40, -8);
+wall.receiveShadow = true;
+scene.add(wall);
+const panel = box(140, 34, 0.6, mat(tex("panel.png", [140 / BLOCK, 34 / BLOCK])));
+panel.position.set(0, 4, -7.6);
+scene.add(panel);
+const oak = tex("dark_oak.png", [2, 2]);
+const table = box(16, 18, 10, mat(oak));
+table.position.set(24, 6, -2);
+scene.add(table);
+const pot = box(4, 4, 4, mat(tex("pot.png")));
+pot.position.set(21, 17, -2);
+scene.add(pot);
+const leafMat = mat(tex("leaves.png"), { transparent: true, alphaTest: 0.5, side: THREE.DoubleSide });
+[[21, 21, -2, 3.4], [19.6, 23, -1.2, 2.4], [22.4, 24, -2.6, 2.6], [21, 26, -2, 2]].forEach(([x, y, z, s]) => {
+  const l = box(s, s, s, leafMat);
+  l.position.set(x, y, z);
+  scene.add(l);
+});
+
+// ---- character (Minecraft proportions, 1 unit = 1 skin pixel at 8 px/face) --
+const faces = {};
+for (const m of "XABCDEFGH") {
+  faces[m] = tex(`face_${m}.png`);
+  faces[m + "_b"] = tex(`face_${m}_b.png`);
+}
+const headFront = mat(faces.X);
+const head = box(8, 8, 8, [
+  mat(tex("head_right.png")), mat(tex("head_left.png")), mat(tex("head_top.png")),
+  mat(tex("head_bottom.png")), headFront, mat(tex("head_back.png")),
+]);
+const hairSide = tex("hair_side.png"), hairOpts = { transparent: true, alphaTest: 0.5 };
+const hair = box(8.9, 8.9, 8.9, [
+  mat(hairSide, hairOpts), mat(hairSide, hairOpts), mat(tex("hair_top.png"), hairOpts),
+  clear, mat(tex("hair_front.png"), hairOpts), mat(tex("hair_back.png"), hairOpts),
+]);
+const headPivot = new THREE.Group();          // pivot at the neck so nods look natural
+head.position.y = 4;
+hair.position.y = 4.15;
+headPivot.add(head, hair);
+headPivot.position.set(0, 24, 0);
+
+const bodySide = tex("body_side.png");
+const body = box(8, 12, 4, [mat(bodySide), mat(bodySide), mat(tex("body_top.png")), mat(tex("arm_top.png")),
+  mat(tex("body_front.png")), mat(tex("body_back.png"))]);
+body.position.y = 18;
+
+function makeArm(sign) {
+  const side = tex("arm_side.png");
+  const a = box(4, 12, 4, [mat(side), mat(side), mat(tex("arm_top.png")), mat(tex("arm_bottom.png")), mat(side), mat(side)]);
+  a.position.y = -4;
+  const pivot = new THREE.Group();
+  pivot.position.set(sign * 6, 22, 0);
+  pivot.add(a);
+  return pivot;
+}
+const armL = makeArm(-1), armR = makeArm(1);     // R = viewer's right, the gesturing arm
+const char = new THREE.Group();
+char.add(body, headPivot, armL, armR);
+scene.add(char);
+
+// ---- light: warm key from the right like the reference, cool weak fill ----
+scene.add(new THREE.HemisphereLight(0xffe2c4, 0x140b06, 0.55));
+const key = new THREE.DirectionalLight(0xffb36b, 3.1);
+key.position.set(38, 46, 34);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+Object.assign(key.shadow.camera, { left: -45, right: 45, top: 60, bottom: -10, near: 1, far: 160 });
+key.shadow.bias = -0.0008;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0x8fa6d8, 0.35);
+fill.position.set(-40, 30, 30);
+scene.add(fill);
+
+// ---- camera framings: hard cut per beat, slow push-in inside a beat --------
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.5, 400);
+const HEAD_Y = 28, HEAD_ON_SCREEN = D.headOn || 0.76;   // head centre sits 76% down the frame, under the cards (v2 panels: lower)
+function frame(t, i, st) {
+  const close = i % 2 === 1;
+  const dist = close ? 104 : 124;
+  const fov = (close ? 26 : 30) - 0.8 * Math.min(1, (t - st.start) / Math.max(0.5, st.end - st.start));
+  camera.fov = fov;
+  camera.updateProjectionMatrix();
+  const half = Math.tan((fov * Math.PI) / 360) * dist;
+  const ty = HEAD_Y + (HEAD_ON_SCREEN * 2 - 1) * half;
+  const x = close ? 5 : 8;                    // he sits left of centre, clear of the progress grid
+  camera.position.set(x, ty + 5, dist);       // a touch above eye line so the curls on top read
+  camera.lookAt(x * 0.4, ty, 0);
+  camera.rotateZ(close ? -0.035 : -0.05);    // slight dutch angle
+}
+
+// ---- performance from data ---------------------------------------------------
+const OPEN = { X: 0, A: 0, B: 0.3, C: 0.65, D: 1, E: 0.6, F: 0.35, G: 0.3, H: 0.6 };
+function cueAt(t) {
+  let lo = 0, hi = D.cues.length - 1, v = "X";
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (D.cues[mid][0] <= t) { v = D.cues[mid][1]; lo = mid + 1; } else hi = mid - 1;
+  }
+  return v;
+}
+const talk = (t) => [0, 0.05, 0.1, 0.15, 0.2].reduce((a, d) => a + OPEN[cueAt(t - d)], 0) / 5;
+const hash = (n) => { const x = Math.sin(n * 91.345 + 7.13) * 43758.5453; return x - Math.floor(x); };
+const blinks = [];
+for (let t = 1.4, n = 0; t < D.total; t += 2.4 + hash(n++) * 1.8) blinks.push(t);
+const blinking = (t) => blinks.some((b) => t >= b && t < b + 0.12);
+
+const POSES = {
+  rest:  { L: [0.05, -0.06], R: [0.05, 0.06], roll: 0 },
+  point: { L: [0.05, -0.06], R: [-2.2, 0.38], roll: 0.03 },
+  wave:  { L: [0.05, -0.06], R: [-0.25, 2.55], roll: -0.02, wave: true },
+  thumb: { L: [0.05, -0.06], R: [-1.35, 0.16], roll: 0.02 },
+  shrug: { L: [-0.65, -0.95], R: [-0.65, 0.95], roll: 0.13 },
+};
+const easeOutBack = (k) => 1 + 2.4 * Math.pow(k - 1, 3) + 1.4 * Math.pow(k - 1, 2);
+function stepAt(t) {
+  let i = 0;
+  while (i < D.steps.length - 1 && t >= D.steps[i + 1].start) i++;
+  return i;
+}
+
+function renderAt(t) {
+  const i = stepAt(t), st = D.steps[i];
+  const cur = POSES[st.pose] || POSES.rest, prev = POSES[(D.steps[i - 1] || st).pose] || POSES.rest;
+  const k = easeOutBack(Math.min(1, Math.max(0, (t - st.start) / 0.2)));
+  const mix = (a, b) => a + (b - a) * k;
+  const sway = 0.04 * Math.sin(t * 2.6);
+  armL.rotation.set(mix(prev.L[0], cur.L[0]) + sway * 0.5, 0, mix(prev.L[1], cur.L[1]));
+  armR.rotation.set(mix(prev.R[0], cur.R[0]) - sway, 0,
+    mix(prev.R[1], cur.R[1]) + (cur.wave ? 0.2 * Math.sin(t * 11) : 0));
+  const tk = talk(t);
+  headPivot.rotation.set(0.07 * tk + 0.015 * Math.sin(t * 1.7), -0.22 + 0.05 * Math.sin(t * 0.55),
+    0.05 + mix(prev.roll, cur.roll) + 0.015 * Math.sin(t * 0.9));
+  body.scale.y = 1 + 0.006 * Math.sin(t * 2.2);
+  const shape = cueAt(t);
+  headFront.map = faces[shape + (blinking(t) ? "_b" : "")];
+  frame(t, i, st);
+  renderer.render(scene, camera);
+}
+
+window.__hf = window.__hf || {};
+window.__hf.buildReady = window.__hf.buildReady || {};
+window.__hf.buildReady.voxel = new Promise((resolve) => {
+  THREE.DefaultLoadingManager.onLoad = () => {
+    renderer.compile(scene, camera);
+    renderAt(window.__hfThreeTime || 0);
+    resolve();
+  };
+});
+window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{
+ "repo_owner": "anthropics",
+ "repo_name": "claude-code",
+ "keyword": "MODS",
+ "style": "b",
+ "accent": "#d97757",
+ "shots": "mods",
+ "head_on": 0.8,
+ "steps": [
+  {
+   "say": "Claude Code just got mods, and most people have no idea what they can do.",
+   "title": ["Claude Code", "just got mods."],
+   "pose": "point",
+   "badge": "new",
+   "card": {"type": "bigterm", "title": "Terminal", "lines": [
+     [0.03, "cmd", "claude --version"],
+     [0.3, "ok", "2.1.287 or later"],
+     [0.5, "ok", "mods on by default"]]}
+  },
+  {
+   "say": "A mod is a small JavaScript plugin that changes how Claude Code looks and behaves.",
+   "title": ["Change how", "Claude Code works."],
+   "pose": "thumb",
+   "card": {"type": "app", "title": "Claude Code · first mod", "h": 420,
+    "credit": "real recording · Claude Code docs, Mods overview",
+    "screens": [{"img": "spinner.jpg", "zooms": [[0, 0, 0, 1], [0.35, 0, 0.3, 0.6]],
+      "marks": [[0.45, 0.02, 0.44, 0.34, 0.11, "a mod added this count"]]}]}
+  },
+  {
+   "say": "Here are three ways to use them. One, a mod can send a message to another of your sessions, so one chat hands work to the next.",
+   "title": ["Your sessions", "talk to each other."],
+   "pose": "point",
+   "card": {"type": "flow", "h": 520, "credit": "docs: a mod can send a message to another of your sessions",
+    "nodes": [
+     {"id": "a", "t": "Session 1", "sub": "research", "x": 170, "y": 110, "f": 0.3},
+     {"id": "b", "t": "Session 2", "sub": "outreach", "x": 670, "y": 110, "f": 0.45},
+     {"id": "m", "t": "your mod", "sub": "passes the message", "x": 420, "y": 330, "f": 0.55, "cls": "hub"}],
+    "edges": [["a", "m", 0.58], ["m", "b", 0.68]]}
+  },
+  {
+   "say": "Two, it can send a request to a different model, so easy tasks stop burning your best one.",
+   "title": ["Easy tasks,", "cheaper model."],
+   "pose": "shrug",
+   "card": {"type": "flow", "h": 520, "credit": "docs: send one request to a different model",
+    "nodes": [
+     {"id": "r", "t": "your request", "x": 420, "y": 70, "f": 0.05},
+     {"id": "m", "t": "your mod", "sub": "picks the model", "x": 420, "y": 250, "f": 0.2, "cls": "hub"},
+     {"id": "h", "t": "Haiku", "sub": "easy stuff", "x": 175, "y": 440, "f": 0.45},
+     {"id": "o", "t": "Opus", "sub": "hard stuff", "x": 665, "y": 440, "f": 0.55, "cls": "hot"}],
+    "edges": [["r", "m", 0.18], ["m", "h", 0.43], ["m", "o", 0.53]]}
+  },
+  {
+   "say": "Three, it can draw its own panel inside Claude Code, with tabs and buttons, like a dashboard for your to-dos.",
+   "title": ["Build your own", "dashboard."],
+   "pose": "point",
+   "card": {"type": "app", "title": "Claude Code · /hello-tabs", "h": 460,
+    "credit": "real recording · Claude Code docs, Draw in the interface",
+    "screens": [
+     {"img": "tabs1.jpg", "zooms": [[0, 0, 0.15, 1]], "marks": [[0.15, 0.03, 0.37, 0.94, 0.26, "a pane from a mod"]]},
+     {"img": "tabs2.jpg", "f": 0.5, "zooms": [[0, 0, 0.2, 0.7]], "marks": [[0.6, 0.045, 0.52, 0.3, 0.075, "buttons work"]]}]}
+  },
+  {
+   "say": "Just know a mod runs with your permissions, so only install ones you trust.",
+   "title": ["Only install", "mods you trust."],
+   "pose": "wave",
+   "card": {"type": "xlist", "head": "A mod runs as you. It can:",
+    "items": [[0.08, "ok", "Read and write your files"], [0.28, "ok", "Read your API keys"], [0.48, "ok", "Spend your usage"]],
+    "credit": "from the Claude Code docs · mods aren't sandboxed"}
+  },
+  {
+   "say": "Comment MODS and I'll send you the docs and three sample mods.",
+   "title": ["Comment", "MODS"],
+   "pose": "point",
+   "card": {"type": "cta2", "word": "MODS", "dm": "here you go -> code.claude.com/docs/en/plugins/mods/overview"}
+  }
+ ]
+}

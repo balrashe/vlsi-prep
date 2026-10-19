@@ -1,0 +1,14 @@
+Comment MODS and I'll send you the docs and three sample mods 👇
+
+Claude Code mods are live, and most people haven't touched them yet 🧩
+
+A mod is a small JavaScript or TypeScript plugin that runs inside Claude Code. It can message your other sessions, send a request to a different model, and draw its own panes with tabs and buttons. Mods are on by default in Claude Code 2.1.287 and later.
+
+Heads up: a mod runs with your permissions and isn't sandboxed. It can read your files and API keys, so only install ones you trust.
+
+Voiceover: AI clone of my own voice.
+
+#claudecode #claude #ai #anthropic #baroobi
+---
+DM on MODS: https://code.claude.com/docs/en/plugins/mods/overview
+Sample mods: https://github.com/anthropics/claude-code-playground/tree/main/claude-code/mods

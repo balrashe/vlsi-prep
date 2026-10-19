@@ -9,95 +9,159 @@
 @font-face { font-family: "Inter"; src: url("assets/fonts/Inter.woff2") format("woff2"); font-weight: 100 900; }
 @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono.woff2") format("woff2"); font-weight: 100 800; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f3f4f7; }
-#root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #f3f4f7;
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c120b; }
+#root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #1c120b;
   font-family: "Inter", sans-serif; color: #1f2328; }
-.mono, .tl, .pill, .path, .chip, .src, .lic { font-family: "JetBrains Mono", monospace; }
+#mc { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; display: block; }
+#shade { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(12,7,4,.72) 0%, rgba(12,7,4,.35) 38%, rgba(12,7,4,0) 55%),
+              radial-gradient(ellipse at 55% 78%, rgba(0,0,0,0) 45%, rgba(0,0,0,.5) 100%); }
+.mono, .tl, .pill, .path, .chip, .src, .lic, .cmd2, .dl, .flab, .file, .psrc, .phandle { font-family: "JetBrains Mono", monospace; }
 .step { position: absolute; inset: 0; }
-.pill { position: absolute; left: 72px; top: 296px; padding: 6px 18px; border-radius: 22px; background: #ddf4ff;
-  border: 2px solid #b6e3ff; color: #0969da; font-size: 34px; font-weight: 500; }
-.path { position: absolute; right: 70px; top: 302px; font-size: 32px; color: #57606a; }
-.path b { color: #0969da; }
+.pill { position: absolute; left: 72px; top: 296px; padding: 6px 18px; border-radius: 22px; background: rgba(255,255,255,.12);
+  border: 2px solid rgba(255,255,255,.28); color: #d6ecff; font-size: 34px; font-weight: 500; }
+.path { position: absolute; right: 70px; top: 302px; font-size: 32px; color: rgba(255,255,255,.72); }
+.path b { color: #79c0ff; }
 .title { position: absolute; left: 72px; top: 376px; width: 938px; }
-.tline { font-weight: 800; font-size: 124px; line-height: 1.04; letter-spacing: -0.045em; white-space: nowrap; }
-.tline.l2 { color: #0969da; }
+.tline { font-weight: 800; font-size: 124px; line-height: 1.04; letter-spacing: -0.045em; white-space: nowrap; color: #fff;
+  text-shadow: 0 6px 24px rgba(0,0,0,.55); }
+.tline.l2 { color: #79c0ff; }
 .tw { display: inline-block; margin-right: 0.24em; }
 .tw:last-child { margin-right: 0; }
-.rule { position: absolute; left: 72px; top: 664px; width: 938px; height: 3px; background: #d0d7de; }
-.cardwrap { position: absolute; left: 72px; top: 720px; width: 938px; }
-.card { background: #fff; border: 2px solid #d0d7de; border-radius: 14px; box-shadow: 0 8px 24px rgba(31,35,40,.07); overflow: hidden; }
-.bar { display: flex; align-items: center; gap: 14px; height: 76px; padding: 0 26px; background: #f6f8fa; border-bottom: 2px solid #d0d7de;
-  font-size: 34px; }
+.rule { position: absolute; left: 72px; top: 664px; width: 938px; height: 3px; background: rgba(255,255,255,.22); }
+.cardwrap { position: absolute; left: 72px; top: 712px; width: 938px; }
+.card { background: #fff; border-radius: 18px; box-shadow: 0 18px 50px rgba(0,0,0,.45); overflow: hidden; }
+.bar { display: flex; align-items: center; gap: 14px; height: 76px; padding: 0 26px; background: #f6f8fa; border-bottom: 2px solid #d0d7de; font-size: 34px; }
+.cmd2 { margin-left: auto; color: #0969da; font-size: 30px; }
 .d { width: 20px; height: 20px; border-radius: 50%; display: inline-block; }
 .d.r { background: #ff5f57; } .d.y { background: #febc2e; } .d.g { background: #28c840; }
-.cmark { width: 34px; height: 34px; margin-left: 10px; }
-.body { padding: 26px 28px 30px; }
-.tl { font-size: 32px; line-height: 1.35; padding: 8px 0; display: flex; align-items: center; gap: 14px; white-space: nowrap; }
-.tl.cmd { background: #f6f8fa; border: 2px solid #d8dee4; border-radius: 10px; padding: 12px 18px; margin: 6px 0; }
+.cmark { width: 34px; height: 34px; flex: none; }
+.body { padding: 22px 28px 26px; }
+.tl { font-size: 31px; line-height: 1.35; padding: 7px 0; display: flex; align-items: center; gap: 14px; white-space: nowrap; }
+.tl.cmd { background: #f6f8fa; border: 2px solid #d8dee4; border-radius: 10px; padding: 11px 18px; margin: 6px 0; }
 .tl .gt { color: #bc4c00; font-weight: 700; }
 .tl.ok { color: #1a7f37; } .tl.dim { color: #57606a; }
 .ico { width: 1em; height: 1em; flex: none; }
-.stats .row { display: flex; padding: 34px 20px 10px; }
+.stats .row { display: flex; padding: 34px 20px 8px; }
 .stat { flex: 1; text-align: center; }
-.num { font-size: 132px; font-weight: 800; letter-spacing: -0.05em; color: #0969da; line-height: 1; }
-.lab { font-size: 30px; color: #57606a; margin-top: 10px; font-weight: 500; }
-.src { font-size: 26px; color: #8c959f; text-align: center; padding: 14px 0 26px; }
-.docs .grid { display: grid; grid-template-columns: repeat(23, 1fr); gap: 6px; padding: 30px 28px 6px; color: #0969da; }
-.doc { display: block; font-size: 32px; line-height: 0; }
-.quote p { font-size: 40px; line-height: 1.42; font-weight: 500; }
-mark { background: #fff8c5; color: #1f2328; padding: 0 6px; border-radius: 6px; }
-.quote .bar { gap: 16px; color: #57606a; }
+.num { font-size: 140px; font-weight: 800; letter-spacing: -0.05em; color: #0969da; line-height: 1; }
+.lab { font-size: 30px; color: #57606a; margin-top: 10px; font-weight: 600; }
+.src { font-size: 25px; color: #8c959f; text-align: center; padding: 12px 0 24px; }
+/* job application */
+.abar { display: flex; align-items: center; gap: 16px; height: 84px; padding: 0 28px; background: #f3f6f8; border-bottom: 2px solid #dfe3e8; font-size: 36px; }
+.inlogo { width: 50px; height: 50px; border-radius: 9px; background: #0a66c2; color: #fff; font-weight: 800; font-size: 34px;
+  display: grid; place-items: center; letter-spacing: -0.04em; }
+.ctr { margin-left: auto; font-size: 48px; font-weight: 800; color: #0a66c2; }
+.ctrof { font-size: 28px; color: #57606a; }
+.abody { padding: 20px 28px 26px; }
+.jobs { display: flex; gap: 12px; margin-bottom: 14px; }
+.jobchip { font-size: 26px; padding: 6px 16px; border-radius: 18px; background: #eef3f8; color: #1f2328; font-weight: 600; }
+.field { margin: 12px 0; }
+.flab { font-size: 24px; color: #57606a; display: flex; align-items: center; gap: 10px; }
+.drafted { font-style: normal; color: #bc4c00; display: inline-flex; align-items: center; gap: 6px; }
+.drafted .cmark { width: 26px; height: 26px; }
+.file { display: inline-flex; align-items: center; gap: 12px; margin-top: 8px; font-size: 28px; padding: 10px 16px; border: 2px solid #d0d7de; border-radius: 10px; }
+.okc { color: #1a7f37; }
+.letter { margin-top: 8px; min-height: 120px; font-size: 29px; line-height: 1.35; padding: 14px 18px; border: 2px solid #0a66c2; border-radius: 12px; white-space: pre-wrap; }
+.submit { margin-top: 18px; height: 78px; border-radius: 40px; background: #0a66c2; color: #fff; font-size: 34px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 14px; }
+.submit.sent { position: relative; margin-top: -78px; background: #1a7f37; }
+/* profile */
+.profile { position: relative; display: flex; gap: 30px; align-items: center; padding: 30px 32px 92px; }
+.pava { width: 190px; height: 190px; border-radius: 50%; object-fit: cover; border: 5px solid #fff; box-shadow: 0 0 0 3px #d0d7de; flex: none; }
+.pname { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; }
+.phandle { font-size: 26px; color: #57606a; margin-top: 4px; }
+.prole { display: inline-block; margin-top: 14px; font-size: 32px; font-weight: 700; padding: 6px 18px; border-radius: 22px; background: #ddf4ff; color: #0969da; }
+.stamp { position: absolute; right: 26px; bottom: 18px; font-size: 32px; font-weight: 800; color: #cf222e; border: 5px solid #cf222e;
+  border-radius: 12px; padding: 6px 16px; background: rgba(255,255,255,.9); text-transform: uppercase; letter-spacing: 0.02em; }
+.psrc { position: absolute; left: 32px; bottom: 16px; font-size: 22px; color: #8c959f; }
+/* repo */
 .repo { padding: 30px 32px 30px; }
 .rtitle { display: flex; align-items: center; gap: 14px; font-size: 40px; color: #0969da; white-space: nowrap; }
 .rtitle .ico { color: #57606a; }
 .own { font-weight: 500; }
-.pub { margin-left: 8px; font-size: 24px; color: #57606a; border: 2px solid #d0d7de; border-radius: 20px; padding: 2px 14px;
-  display: inline-flex; gap: 8px; align-items: center; }
+.pub { margin-left: 8px; font-size: 24px; color: #57606a; border: 2px solid #d0d7de; border-radius: 20px; padding: 2px 14px; display: inline-flex; gap: 8px; align-items: center; }
+.mit { margin-left: auto; font-size: 30px; font-weight: 800; color: #fff; background: #1a7f37; border-radius: 10px; padding: 4px 16px; }
 .blur { filter: blur(9px); font-weight: 700; }
 .desc { font-size: 36px; color: #1f2328; margin: 18px 0 6px; }
 .chips { display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap; }
 .chip { font-size: 30px; color: #0969da; background: #ddf4ff; border-radius: 22px; padding: 6px 18px; }
-.foot { margin-top: 20px; }
-.lic { font-size: 26px; color: #57606a; }
-.comment { padding: 30px 32px 0; }
-.cmhead { display: flex; align-items: center; gap: 16px; font-size: 34px; }
-.cmhead .dim { color: #8c959f; font-size: 28px; }
-.ava { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 2px solid #d0d7de; }
-.cmbox { margin-top: 24px; height: 104px; border: 2px solid #d0d7de; border-radius: 52px; display: flex; align-items: center;
-  padding: 0 34px; font-size: 46px; font-weight: 700; }
-.caret { width: 4px; height: 52px; background: #0969da; margin-left: 4px; }
-.post { margin-left: auto; color: #0969da; font-weight: 700; font-size: 34px; }
-.note { background: #fff8c5; border-color: #d4a72c; padding: 34px 34px; }
+/* rank */
+.rrow { display: flex; align-items: center; gap: 18px; padding: 10px 0; font-size: 30px; }
+.rjob { width: 330px; font-weight: 600; white-space: nowrap; }
+.rtrack { flex: 1; height: 26px; border-radius: 13px; background: #eef1f4; overflow: hidden; }
+.rbar { display: block; height: 100%; border-radius: 13px; }
+.rbar.hi { background: #1a7f37; } .rbar.mid { background: #d4a72c; } .rbar.lo { background: #cf222e; }
+.rlab { width: 150px; text-align: right; font-weight: 700; font-size: 26px; }
+.rlab.hi { color: #1a7f37; } .rlab.mid { color: #9a6700; } .rlab.lo { color: #cf222e; }
+/* cv diff */
+.dbar { display: flex; align-items: center; gap: 14px; height: 76px; padding: 0 28px; background: #f6f8fa; border-bottom: 2px solid #d0d7de; font-size: 32px; color: #57606a; }
+.tag { margin-left: auto; font-size: 26px; font-weight: 800; color: #fff; background: #8250df; border-radius: 10px; padding: 4px 14px; }
+.dbody { padding: 14px 0 18px; }
+.dl { font-size: 29px; padding: 8px 28px; white-space: nowrap; display: flex; gap: 16px; }
+.dl.del { background: #ffebe9; color: #82071e; text-decoration: line-through; }
+.dl.add { background: #dafbe1; color: #116329; }
+.dl.ctx { color: #57606a; }
+.dk { width: 18px; font-weight: 700; }
+/* chat */
+.chat { padding: 22px 26px 26px; }
+.chead { display: flex; align-items: center; gap: 12px; font-size: 32px; margin-bottom: 10px; }
+.chead span { color: #8c959f; font-size: 26px; }
+.bub { margin: 12px 0; padding: 16px 22px; border-radius: 22px; font-size: 30px; line-height: 1.35; max-width: 88%; }
+.bub b { display: block; font-size: 22px; margin-bottom: 4px; opacity: .7; }
+.bub.q { background: #f1f3f5; border-bottom-left-radius: 6px; }
+.bub.a { background: #ddf4ff; margin-left: auto; border-bottom-right-radius: 6px; color: #0a3069; }
+/* dm cta */
+.dm { padding: 26px 30px 30px; position: relative; }
+.cmrow, .dmrow { display: flex; gap: 18px; align-items: center; font-size: 30px; }
+.fava { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg,#f58529,#dd2a7b,#8134af); color: #fff;
+  display: grid; place-items: center; font-weight: 800; font-size: 34px; flex: none; }
+.ctext { font-size: 40px; font-weight: 800; margin-top: 2px; }
+.kw { position: absolute; right: 30px; top: 22px; font-size: 92px; font-weight: 900; color: #0969da; letter-spacing: -0.04em; }
+.dmrow { margin-top: 26px; padding: 18px 20px; border-radius: 20px; background: #f3f0ff; }
+.ava { width: 70px; height: 70px; border-radius: 50%; image-rendering: pixelated; background: #3a2416; flex: none; }
+.dmlab { margin-left: 10px; color: #8c959f; font-size: 24px; }
+.dmtext { font-size: 28px; color: #0969da; margin-top: 4px; white-space: pre-wrap; font-family: "JetBrains Mono", monospace; }
+/* note */
+.note { background: #fff8c5; padding: 34px 34px; }
 .nh { font-size: 42px; font-weight: 800; display: flex; gap: 16px; align-items: center; color: #7d4e00; }
 .nb { font-size: 34px; margin-top: 16px; color: #4d2d00; line-height: 1.35; }
-.badge { display: flex; gap: 30px; align-items: center; padding: 36px 34px; border-color: #4ac26b; background: #f0fff4; }
-.bigcheck { width: 120px; height: 120px; border-radius: 50%; background: #1a7f37; color: #fff; display: grid; place-items: center;
-  font-size: 72px; flex: none; }
-.bh { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; }
-.bb { font-size: 32px; color: #57606a; margin-top: 8px; }
-#char { position: absolute; left: 40px; bottom: 0; width: 800px; height: 768px; }
-#sprite { position: absolute; left: 0; bottom: 0; }
-#sprite img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; image-rendering: pixelated; }
-#sprite img.ov, #sprite img.g { opacity: 0; }
-#gridmeter { position: absolute; left: 748px; top: 1800px; display: grid; grid-template-columns: repeat(13, 18px);
-  grid-auto-rows: 18px; gap: 2px; }
-.gcell i { display: block; width: 18px; height: 18px; background: #ebedf0; border-radius: 3px; }
+/* contract */
+.contract { padding: 30px 34px 30px; position: relative; }
+.ch1 { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; }
+.cline { height: 12px; border-radius: 6px; background: #eef1f4; margin-top: 16px; width: 92%; }
+.cline.s { width: 64%; }
+.crow { display: flex; gap: 70px; margin-top: 22px; }
+.clab { font-size: 24px; color: #8c959f; }
+.cval { font-size: 34px; font-weight: 700; }
+.sig { width: 330px; height: 78px; margin-top: 14px; }
+.sig path { fill: none; stroke: #0a3069; stroke-width: 5; stroke-linecap: round; }
+.signed { position: absolute; right: 34px; bottom: 34px; font-size: 38px; font-weight: 800; color: #1a7f37; border: 5px solid #1a7f37;
+  border-radius: 12px; padding: 6px 18px; display: flex; gap: 10px; align-items: center; }
+/* teaser */
+.wave { display: flex; align-items: center; gap: 6px; height: 80px; margin-top: 18px; }
+.wave i { display: block; width: 14px; border-radius: 7px; background: #8250df; }
+#gridmeter { position: absolute; left: 750px; top: 196px; display: grid; grid-template-columns: repeat(13, 18px); grid-auto-rows: 18px; gap: 2px; }
+.gcell i { display: block; width: 18px; height: 18px; background: rgba(255,255,255,.14); border-radius: 3px; }
+.ch { white-space: pre; }
 </style>
 </head>
 <body>
-<div id="root" data-composition-id="main" data-start="0" data-duration="43.86666666666667" data-width="1080" data-height="1920" data-fps="30">
+<div id="root" data-composition-id="main" data-start="0" data-duration="39.36666666666667" data-width="1080" data-height="1920" data-fps="30">
+  <canvas id="mc" width="1080" height="1920"></canvas>
+  <div id="shade"></div>
   <div class="path">MadsLorentzen / <b>ai-job-search</b></div>
   <div class="rule"></div>
-  <section class="step clip" id="s0" data-start="0.0" data-duration="3.34" data-track-index="1"><div class="pill">$ 01/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="0.0">69</span><span class="tw" data-t="0.95">applications.</span></div><div class="tline l2"><span class="tw" data-t="1.81">20</span><span class="tw" data-t="1.97">interviews.</span><span class="tw" data-t="2.67">1</span><span class="tw" data-t="2.81">job.</span></div></div><div class="cardwrap"><div class="card stats"><div class="row"><div class="stat reveal"><div class="num" data-to="69">0</div><div class="lab">applications</div></div><div class="stat reveal"><div class="num" data-to="20">0</div><div class="lab">first interviews</div></div><div class="stat reveal"><div class="num" data-to="1">1</div><div class="lab">signed contract</div></div></div><div class="src">from the repo README</div></div></div></section><section class="step clip" id="s1" data-start="3.34" data-duration="2.84" data-track-index="1"><div class="pill">$ 02/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="4.27">An</span><span class="tw" data-t="4.39">AI</span><span class="tw" data-t="4.65">wrote</span></div><div class="tline l2"><span class="tw" data-t="4.91">every</span><span class="tw" data-t="5.29">single</span><span class="tw" data-t="5.51">one.</span></div></div><div class="cardwrap"><div class="card docs"><div class="grid"><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span><span class="doc"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg></span></div><div class="src reveal">69 tailored applications</div></div></div></section><section class="step clip" id="s2" data-start="6.18" data-duration="4.6" data-track-index="1"><div class="pill">$ 03/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="7.03">A</span><span class="tw" data-t="7.09">geophysicist.</span></div><div class="tline l2"><span class="tw" data-t="8.17">Job</span><span class="tw" data-t="8.63">cut</span><span class="tw" data-t="8.87">in</span><span class="tw" data-t="9.15">late</span><span class="tw" data-t="9.33">2025.</span></div></div><div class="cardwrap"><div class="card quote"><div class="bar"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z"/></svg><span class="mono">README.md</span></div><div class="body"><p class="reveal">I&#x27;m a <mark>geophysicist</mark> by training. When my position was <mark>cut in late 2025</mark>, I built this framework to run my own job search.</p></div></div></div></section><section class="step clip" id="s3" data-start="10.78" data-duration="3.14" data-track-index="1"><div class="pill">$ 04/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="10.85">So</span><span class="tw" data-t="11.01">he</span><span class="tw" data-t="11.15">built</span></div><div class="tline l2"><span class="tw" data-t="11.31">a</span><span class="tw" data-t="11.55">Claude</span><span class="tw" data-t="11.67">Code</span><span class="tw" data-t="11.89">agent.</span></div></div><div class="cardwrap"><div class="card repo"><div class="rtitle"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z"/></svg><span class="own">MadsLorentzen</span> / <b>ai-job-search</b><span class="pub">Public</span></div><div class="desc reveal">The job search that runs on your machine.</div><div class="chips"><span class="chip reveal">/scrape</span><span class="chip reveal">/rank</span><span class="chip reveal">/apply</span><span class="chip reveal">/interview</span></div><div class="foot reveal"><span class="lic">MIT license</span></div></div></div></section><section class="step clip" id="s4" data-start="13.92" data-duration="2.64" data-track-index="1"><div class="pill">$ 05/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="13.99">It</span><span class="tw" data-t="14.27">scores</span></div><div class="tline l2"><span class="tw" data-t="14.47">every</span><span class="tw" data-t="14.83">job</span><span class="tw" data-t="15.05">post.</span></div></div><div class="cardwrap"><div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg><b>Claude Code</b></div><div class="body"><div class="tl cmd reveal" ><span class="gt">&gt;</span> /scrape</div><div class="tl dim reveal">Searching job portals for your profile</div><div class="tl cmd reveal" ><span class="gt">&gt;</span> /rank</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Scored against your fit framework</div></div></div></div></section><section class="step clip" id="s5" data-start="16.56" data-duration="3.28" data-track-index="1"><div class="pill">$ 06/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="16.63">Tailors</span><span class="tw" data-t="17.19">your</span></div><div class="tline l2"><span class="tw" data-t="17.39">CV</span><span class="tw" data-t="17.71">and</span><span class="tw" data-t="18.11">cover</span><span class="tw" data-t="18.35">letter.</span></div></div><div class="cardwrap"><div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg><b>Claude Code</b></div><div class="body"><div class="tl cmd reveal" ><span class="gt">&gt;</span> /apply &lt;job url&gt;</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> CV tailored</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Cover letter drafted</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> ATS check on the PDF</div></div></div></div></section><section class="step clip" id="s6" data-start="19.84" data-duration="2.92" data-track-index="1"><div class="pill">$ 07/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="20.39">Preps</span><span class="tw" data-t="20.75">you</span><span class="tw" data-t="20.85">for</span></div><div class="tline l2"><span class="tw" data-t="20.99">the</span><span class="tw" data-t="21.11">interview.</span></div></div><div class="cardwrap"><div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg><b>Claude Code</b></div><div class="body"><div class="tl cmd reveal" ><span class="gt">&gt;</span> /interview</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Prep pack built</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Likely questions mapped</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Mock interview ready</div></div></div></div></section><section class="step clip" id="s7" data-start="22.76" data-duration="2.2" data-track-index="1"><div class="pill">$ 08/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="22.83">Comment</span></div><div class="tline l2"><span class="tw" data-t="23.25">JOBS</span></div></div><div class="cardwrap"><div class="card comment"><div class="cmhead"><img class="ava" src="assets/avatar.png" alt=""><b>baroobi.inc</b><span class="dim">Reels</span></div><div class="cmbox"><span class="typed"><span class="ch">J</span><span class="ch">O</span><span class="ch">B</span><span class="ch">S</span></span><span class="caret"></span><span class="post">Post</span></div><div class="src">I&#39;ll DM you the link</div></div></div></section><section class="step clip" id="s8" data-start="24.96" data-duration="2.98" data-track-index="1"><div class="pill">$ 09/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="25.39">Open</span><span class="tw" data-t="25.65">source.</span></div><div class="tline l2"><span class="tw" data-t="25.93">MIT</span><span class="tw" data-t="26.39">license.</span></div></div><div class="cardwrap"><div class="card repo"><div class="rtitle"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z"/></svg><span class="own">MadsLorentzen</span> / <b>ai-job-search</b><span class="pub">Public</span></div><div class="desc reveal">Open source. MIT license.</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Runs on your own machine</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Fork it, fill in your profile</div><div class="foot reveal"><span class="lic">MIT license</span></div></div></div></section><section class="step clip" id="s9" data-start="27.94" data-duration="4.14" data-track-index="1"><div class="pill">$ 10/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="28.01">Heads</span><span class="tw" data-t="28.45">up:</span></div><div class="tline l2"><span class="tw" data-t="29.81">Claude</span><span class="tw" data-t="30.01">plan</span><span class="tw" data-t="30.37">or</span><span class="tw" data-t="30.63">API</span><span class="tw" data-t="31.01">credits.</span></div></div><div class="cardwrap"><div class="card note"><div class="nh"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20zM12 10v5M12 18h.01"/></svg> Claude Code has no free tier</div><div class="nb reveal">Pro, Max or Team plan, or pay-per-token API credits.</div></div></div></section><section class="step clip" id="s10" data-start="32.08" data-duration="4.02" data-track-index="1"><div class="pill">$ 11/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="32.69">Job</span><span class="tw" data-t="32.87">boards:</span><span class="tw" data-t="33.33">Danish.</span></div><div class="tline l2"><span class="tw" data-t="34.03">LinkedIn:</span><span class="tw" data-t="34.71">anywhere.</span></div></div><div class="cardwrap"><div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg><b>Claude Code</b></div><div class="body"><div class="tl dim reveal">jobindex-search      DK</div><div class="tl dim reveal">jobnet-search        DK</div><div class="tl cmd reveal" ><span class="gt">&gt;</span> linkedin-search -l &quot;Toronto, Canada&quot;</div><div class="tl ok reveal"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Works in any market</div></div></div></div></section><section class="step clip" id="s11" data-start="36.1" data-duration="4.64" data-track-index="1"><div class="pill">$ 12/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="36.17">And</span><span class="tw" data-t="36.49">it</span><span class="tw" data-t="36.61">worked.</span></div><div class="tline l2"><span class="tw" data-t="37.81">AI</span><span class="tw" data-t="38.07">engineer,</span><span class="tw" data-t="38.77">June</span><span class="tw" data-t="38.97">2026.</span></div></div><div class="cardwrap"><div class="card badge"><div class="bigcheck"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><div><div class="bh">1 signed contract</div><div class="bb reveal">Started as an AI engineer, June 2026</div></div></div></div></section><section class="step clip" id="s12" data-start="40.74" data-duration="3.127" data-track-index="1"><div class="pill">$ 13/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="40.81">Next</span><span class="tw" data-t="40.99">one?</span></div><div class="tline l2"><span class="tw" data-t="41.41">A</span><span class="tw" data-t="41.51">free</span><span class="tw" data-t="41.71">voice</span><span class="tw" data-t="41.91">studio.</span></div></div><div class="cardwrap"><div class="card repo"><div class="rtitle"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z"/></svg><span class="own">debpalash</span> / <span class="blur">VoiceStudio</span><span class="pub"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> next video</span></div><div class="desc reveal">Open source. Runs on your laptop.</div></div></div></section>
-  <div id="char"><div id="sprite" style="width:800px;height:768px"><img class="g" id="g-point" src="assets/pixel/point.png" alt=""><img class="g" id="g-wave" src="assets/pixel/wave.png" alt=""><img class="g" id="g-thumb" src="assets/pixel/thumb.png" alt=""><img class="g" id="g-shrug" src="assets/pixel/shrug.png" alt=""><img class="g" id="g-rest" src="assets/pixel/rest.png" alt=""><img class="ov blink" src="assets/pixel/blink.png" alt=""><img class="ov mouth m-X" src="assets/pixel/mouth_X.png" alt=""><img class="ov mouth m-A" src="assets/pixel/mouth_A.png" alt=""><img class="ov mouth m-B" src="assets/pixel/mouth_B.png" alt=""><img class="ov mouth m-C" src="assets/pixel/mouth_C.png" alt=""><img class="ov mouth m-D" src="assets/pixel/mouth_D.png" alt=""><img class="ov mouth m-E" src="assets/pixel/mouth_E.png" alt=""><img class="ov mouth m-F" src="assets/pixel/mouth_F.png" alt=""><img class="ov mouth m-G" src="assets/pixel/mouth_G.png" alt=""><img class="ov mouth m-H" src="assets/pixel/mouth_H.png" alt=""></div></div>
+  <section class="step clip" id="s0" data-start="0.0" data-duration="3.13" data-track-index="1"><div class="pill">$ 01/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="0.0">69</span><span class="tw" data-t="0.44">applications.</span></div><div class="tline l2"><span class="tw" data-t="1.26">20</span><span class="tw" data-t="1.42">interviews.</span><span class="tw" data-t="2.12">1</span><span class="tw" data-t="2.26">job.</span></div></div><div class="cardwrap"><div class="card stats"><div class="row"><div class="stat" data-anim="stamp" data-f="0.08" ><div class="num">69</div><div class="lab">applications</div></div><div class="stat" data-anim="stamp" data-f="0.34" ><div class="num">20</div><div class="lab">first interviews</div></div><div class="stat" data-anim="stamp" data-f="0.6" ><div class="num">1</div><div class="lab">signed contract</div></div></div><div class="src">from the repo README</div></div></div></section><section class="step clip" id="s1" data-start="3.13" data-duration="2.28" data-track-index="1"><div class="pill">$ 02/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="3.44">An</span><span class="tw" data-t="3.54">AI</span><span class="tw" data-t="3.8">wrote</span></div><div class="tline l2"><span class="tw" data-t="4.06">every</span><span class="tw" data-t="4.44">single</span><span class="tw" data-t="4.66">one.</span></div></div><div class="cardwrap"><div class="card apply"><div class="abar"><span class="inlogo">in</span><b>Easy Apply</b><span class="ctr" data-anim="count" data-f="0.62" data-from=1 data-to=69 data-d=0.9>1</span><span class="ctrof">/ 69 sent</span></div><div class="abody"><div class="jobs"><span class="jobchip" data-anim="pop" data-f="0.05" >AI Engineer</span><span class="jobchip" data-anim="pop" data-f="0.08" >Data Scientist</span><span class="jobchip" data-anim="pop" data-f="0.11" >ML Engineer</span></div><div class="field"><span class="flab">Resume</span><span class="file" data-anim="pop" data-f="0.12" ><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg> CV_tailored.pdf <svg class="ico okc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></div><div class="field"><span class="flab">Cover letter <i class="drafted"><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg> drafted by Claude</i></span><div class="letter" data-anim="type" data-f="0.16" data-d=0.42><span class="ch">D</span><span class="ch">e</span><span class="ch">a</span><span class="ch">r</span><span class="ch"> </span><span class="ch">h</span><span class="ch">i</span><span class="ch">r</span><span class="ch">i</span><span class="ch">n</span><span class="ch">g</span><span class="ch"> </span><span class="ch">t</span><span class="ch">e</span><span class="ch">a</span><span class="ch">m</span><span class="ch">,</span><span class="ch">
+</span><span class="ch">h</span><span class="ch">e</span><span class="ch">r</span><span class="ch">e</span><span class="ch"> </span><span class="ch">i</span><span class="ch">s</span><span class="ch"> </span><span class="ch">w</span><span class="ch">h</span><span class="ch">y</span><span class="ch"> </span><span class="ch">m</span><span class="ch">y</span><span class="ch"> </span><span class="ch">b</span><span class="ch">a</span><span class="ch">c</span><span class="ch">k</span><span class="ch">g</span><span class="ch">r</span><span class="ch">o</span><span class="ch">u</span><span class="ch">n</span><span class="ch">d</span><span class="ch"> </span><span class="ch">f</span><span class="ch">i</span><span class="ch">t</span><span class="ch">s</span><span class="ch"> </span><span class="ch">t</span><span class="ch">h</span><span class="ch">i</span><span class="ch">s</span><span class="ch"> </span><span class="ch">r</span><span class="ch">o</span><span class="ch">l</span><span class="ch">e</span><span class="ch">.</span><span class="ch">.</span><span class="ch">.</span></div></div><div class="submit" data-anim="press" data-f="0.58" data-off=0.66>Submit application</div><div class="submit sent" data-anim="pop" data-f="0.66" ><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Application sent</div></div></div></div></section><section class="step clip" id="s2" data-start="5.41" data-duration="4.1" data-track-index="1"><div class="pill">$ 03/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="5.94">A</span><span class="tw" data-t="6.0">geophysicist.</span></div><div class="tline l2"><span class="tw" data-t="7.06">Job</span><span class="tw" data-t="7.52">cut</span><span class="tw" data-t="7.78">in</span><span class="tw" data-t="8.04">late</span><span class="tw" data-t="8.22">2025.</span></div></div><div class="cardwrap"><div class="card profile"><img class="pava" src="assets/people/mads.jpg" alt=""><div class="pinfo"><div class="pname">Mads Lorentzen</div><div class="phandle">@MadsLorentzen · GitHub</div><div class="prole" data-anim="pop" data-f="0.05" >Geophysicist</div></div><div class="stamp" data-anim="stamp" data-f="0.55" >Position cut · late 2025</div><div class="psrc">from the ai-job-search README</div></div></div></section><section class="step clip" id="s3" data-start="9.51" data-duration="2.96" data-track-index="1"><div class="pill">$ 04/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="9.52">So</span><span class="tw" data-t="9.7">he</span><span class="tw" data-t="9.82">built</span></div><div class="tline l2"><span class="tw" data-t="10.0">a</span><span class="tw" data-t="10.26">Claude</span><span class="tw" data-t="10.32">Code</span><span class="tw" data-t="10.56">agent.</span></div></div><div class="cardwrap"><div class="card repo"><div class="rtitle"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z"/></svg><span class="own">MadsLorentzen</span> / <b>ai-job-search</b><span class="pub">Public</span></div><div class="desc">The job search that runs on your machine.</div><div class="chips"><span class="chip" data-anim="pop" data-f="0.25" >/setup</span><span class="chip" data-anim="pop" data-f="0.35" >/scrape</span><span class="chip" data-anim="pop" data-f="0.45" >/rank</span><span class="chip" data-anim="pop" data-f="0.55" >/apply</span><span class="chip" data-anim="pop" data-f="0.65" >/interview</span></div></div></div></section><section class="step clip" id="s4" data-start="12.47" data-duration="2.54" data-track-index="1"><div class="pill">$ 05/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="12.48">It</span><span class="tw" data-t="12.6">scores</span></div><div class="tline l2"><span class="tw" data-t="12.82">every</span><span class="tw" data-t="13.16">job</span><span class="tw" data-t="13.4">post.</span></div></div><div class="cardwrap"><div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg><b>Claude Code</b><span class="cmd2">/rank</span></div><div class="body"><div class="rrow" data-anim="slide" data-f="0.06" ><span class="rjob">AI Engineer</span><span class="rtrack"><span class="rbar hi" data-anim="grow" data-f="0.18"  style="width:92%"></span></span><span class="rlab hi">strong fit</span></div><div class="rrow" data-anim="slide" data-f="0.16" ><span class="rjob">Data Scientist</span><span class="rtrack"><span class="rbar mid" data-anim="grow" data-f="0.28"  style="width:70%"></span></span><span class="rlab mid">good fit</span></div><div class="rrow" data-anim="slide" data-f="0.26" ><span class="rjob">Geo Analyst</span><span class="rtrack"><span class="rbar mid" data-anim="grow" data-f="0.38"  style="width:58%"></span></span><span class="rlab mid">maybe</span></div><div class="rrow" data-anim="slide" data-f="0.36000000000000004" ><span class="rjob">Sales Lead</span><span class="rtrack"><span class="rbar lo" data-anim="grow" data-f="0.48000000000000004"  style="width:18%"></span></span><span class="rlab lo">skip</span></div></div></div></div></section><section class="step clip" id="s5" data-start="15.01" data-duration="3.02" data-track-index="1"><div class="pill">$ 06/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="15.02">Tailors</span><span class="tw" data-t="15.34">your</span></div><div class="tline l2"><span class="tw" data-t="15.52">CV</span><span class="tw" data-t="15.86">and</span><span class="tw" data-t="16.24">cover</span><span class="tw" data-t="16.48">letter.</span></div></div><div class="cardwrap"><div class="card doc"><div class="dbar"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5"/></svg><span class="mono">cv_ai_engineer.tex</span><span class="tag" data-anim="stamp" data-f="0.75" >tailored</span></div><div class="dbody"><div class="dl del" data-anim="slide" data-f="0.08" ><span class="dk">-</span>Generic one-size summary</div><div class="dl add" data-anim="slide" data-f="0.22000000000000003" ><span class="dk">+</span>Summary rewritten for this posting</div><div class="dl add" data-anim="slide" data-f="0.36000000000000004" ><span class="dk">+</span>Skills ordered by the job&#x27;s keywords</div><div class="dl ctx" data-anim="slide" data-f="0.5" ><span class="dk"> </span>Every claim checked against your profile</div><div class="dl add" data-anim="slide" data-f="0.64" ><span class="dk">+</span>Cover letter drafted to match</div></div></div></div></section><section class="step clip" id="s6" data-start="18.03" data-duration="2.38" data-track-index="1"><div class="pill">$ 07/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="18.34">Preps</span><span class="tw" data-t="18.68">you</span><span class="tw" data-t="18.8">for</span></div><div class="tline l2"><span class="tw" data-t="18.92">the</span><span class="tw" data-t="19.06">interview.</span></div></div><div class="cardwrap"><div class="card chat"><div class="chead"><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg><b>/interview</b><span>mock round</span></div><div class="bub q" data-anim="pop" data-f="0.06" ><b>Interviewer</b><span data-anim="type" data-f="0.08" data-d=0.24><span class="ch">T</span><span class="ch">e</span><span class="ch">l</span><span class="ch">l</span><span class="ch"> </span><span class="ch">m</span><span class="ch">e</span><span class="ch"> </span><span class="ch">a</span><span class="ch">b</span><span class="ch">o</span><span class="ch">u</span><span class="ch">t</span><span class="ch"> </span><span class="ch">a</span><span class="ch"> </span><span class="ch">p</span><span class="ch">r</span><span class="ch">o</span><span class="ch">j</span><span class="ch">e</span><span class="ch">c</span><span class="ch">t</span><span class="ch"> </span><span class="ch">y</span><span class="ch">o</span><span class="ch">u</span><span class="ch">&#x27;</span><span class="ch">r</span><span class="ch">e</span><span class="ch"> </span><span class="ch">p</span><span class="ch">r</span><span class="ch">o</span><span class="ch">u</span><span class="ch">d</span><span class="ch"> </span><span class="ch">o</span><span class="ch">f</span><span class="ch">.</span></span></div><div class="bub a" data-anim="pop" data-f="0.36" ><b>You</b><span data-anim="type" data-f="0.38" data-d=0.24><span class="ch">H</span><span class="ch">e</span><span class="ch">r</span><span class="ch">e</span><span class="ch">&#x27;</span><span class="ch">s</span><span class="ch"> </span><span class="ch">m</span><span class="ch">y</span><span class="ch"> </span><span class="ch">S</span><span class="ch">T</span><span class="ch">A</span><span class="ch">R</span><span class="ch"> </span><span class="ch">e</span><span class="ch">x</span><span class="ch">a</span><span class="ch">m</span><span class="ch">p</span><span class="ch">l</span><span class="ch">e</span><span class="ch"> </span><span class="ch">f</span><span class="ch">r</span><span class="ch">o</span><span class="ch">m</span><span class="ch"> </span><span class="ch">t</span><span class="ch">h</span><span class="ch">e</span><span class="ch"> </span><span class="ch">p</span><span class="ch">r</span><span class="ch">e</span><span class="ch">p</span><span class="ch"> </span><span class="ch">p</span><span class="ch">a</span><span class="ch">c</span><span class="ch">k</span><span class="ch">.</span><span class="ch">.</span><span class="ch">.</span></span></div></div></div></section><section class="step clip" id="s7" data-start="20.41" data-duration="1.94" data-track-index="1"><div class="pill">$ 08/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="20.42">Comment</span></div><div class="tline l2"><span class="tw" data-t="20.7">JOBS</span></div></div><div class="cardwrap"><div class="card dm"><div class="cmrow" data-anim="pop" data-f="0.1" ><span class="fava">?</span><div><b>someone_building</b><div class="ctext">JOBS</div></div></div><div class="kw" data-anim="stamp" data-f="0.22" >JOBS</div><div class="dmrow" data-anim="slide" data-f="0.55" ><img class="ava" src="assets/avatar.png" alt=""><div><b>baroobi.inc</b><span class="dmlab">sent you a message</span><div class="dmtext" data-anim="type" data-f="0.6" data-d=0.3><span class="ch">h</span><span class="ch">e</span><span class="ch">r</span><span class="ch">e</span><span class="ch"> </span><span class="ch">y</span><span class="ch">o</span><span class="ch">u</span><span class="ch"> </span><span class="ch">g</span><span class="ch">o</span><span class="ch"> </span><span class="ch">-</span><span class="ch">&gt;</span><span class="ch"> </span><span class="ch">g</span><span class="ch">i</span><span class="ch">t</span><span class="ch">h</span><span class="ch">u</span><span class="ch">b</span><span class="ch">.</span><span class="ch">c</span><span class="ch">o</span><span class="ch">m</span><span class="ch">/</span><span class="ch">M</span><span class="ch">a</span><span class="ch">d</span><span class="ch">s</span><span class="ch">L</span><span class="ch">o</span><span class="ch">r</span><span class="ch">e</span><span class="ch">n</span><span class="ch">t</span><span class="ch">z</span><span class="ch">e</span><span class="ch">n</span><span class="ch">/</span><span class="ch">a</span><span class="ch">i</span><span class="ch">-</span><span class="ch">j</span><span class="ch">o</span><span class="ch">b</span><span class="ch">-</span><span class="ch">s</span><span class="ch">e</span><span class="ch">a</span><span class="ch">r</span><span class="ch">c</span><span class="ch">h</span></div></div></div></div></div></section><section class="step clip" id="s8" data-start="22.35" data-duration="3.44" data-track-index="1"><div class="pill">$ 09/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="22.6">Open</span><span class="tw" data-t="22.8">source.</span></div><div class="tline l2"><span class="tw" data-t="23.32">MIT</span><span class="tw" data-t="23.54">license.</span></div></div><div class="cardwrap"><div class="card repo"><div class="rtitle"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z"/></svg><span class="own">MadsLorentzen</span> / <b>ai-job-search</b><span class="pub">Public</span><span class="mit" data-anim="stamp" data-f="0.15" >MIT</span></div><div class="desc">Open source. Fork it and make it yours.</div><div class="tl ok" data-anim="slide" data-f="0.3" ><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Runs on your own machine</div><div class="tl ok" data-anim="slide" data-f="0.5" ><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Fork it, fill in your profile</div></div></div></section><section class="step clip" id="s9" data-start="25.79" data-duration="2.92" data-track-index="1"><div class="pill">$ 10/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="25.8">Heads</span><span class="tw" data-t="25.9">up:</span></div><div class="tline l2"><span class="tw" data-t="26.62">Claude</span><span class="tw" data-t="26.82">plan</span><span class="tw" data-t="27.18">or</span><span class="tw" data-t="27.46">API</span><span class="tw" data-t="27.8">credits.</span></div></div><div class="cardwrap"><div class="card note" data-anim="shake" data-f="0.05" ><div class="nh"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 21h20zM12 10v5M12 18h.01"/></svg> Claude Code has no free tier</div><div class="nb" data-anim="slide" data-f="0.3" >Pro, Max or Team plan, or pay-per-token API credits.</div></div></div></section><section class="step clip" id="s10" data-start="28.71" data-duration="3.58" data-track-index="1"><div class="pill">$ 11/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="29.3">Job</span><span class="tw" data-t="29.48">boards:</span><span class="tw" data-t="29.94">Danish.</span></div><div class="tline l2"><span class="tw" data-t="30.62">LinkedIn:</span><span class="tw" data-t="31.32">anywhere.</span></div></div><div class="cardwrap"><div class="card term"><div class="bar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><svg class="cmark" viewBox="0 0 24 24"><g stroke="#d97757" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="12" x2="21.0" y2="12.0"/><line x1="12" y1="12" x2="19.8" y2="16.5"/><line x1="12" y1="12" x2="16.5" y2="19.8"/><line x1="12" y1="12" x2="12.0" y2="21.0"/><line x1="12" y1="12" x2="7.5" y2="19.8"/><line x1="12" y1="12" x2="4.2" y2="16.5"/><line x1="12" y1="12" x2="3.0" y2="12.0"/><line x1="12" y1="12" x2="4.2" y2="7.5"/><line x1="12" y1="12" x2="7.5" y2="4.2"/><line x1="12" y1="12" x2="12.0" y2="3.0"/><line x1="12" y1="12" x2="16.5" y2="4.2"/><line x1="12" y1="12" x2="19.8" y2="7.5"/></g></svg><b>Claude Code</b></div><div class="body"><div class="tl dim" data-anim="slide" data-f="0.08" >jobindex-search      DK</div><div class="tl dim" data-anim="slide" data-f="0.25" >jobnet-search        DK</div><div class="tl cmd" data-anim="slide" data-f="0.42" ><span class="gt">&gt;</span> linkedin-search -l &quot;Toronto, Canada&quot;</div><div class="tl ok" data-anim="slide" data-f="0.59" ><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Works in any market</div></div></div></div></section><section class="step clip" id="s11" data-start="32.29" data-duration="4.12" data-track-index="1"><div class="pill">$ 12/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="32.3">And</span><span class="tw" data-t="32.44">it</span><span class="tw" data-t="32.54">worked.</span></div><div class="tline l2"><span class="tw" data-t="33.74">AI</span><span class="tw" data-t="34.0">engineer,</span><span class="tw" data-t="34.7">June</span><span class="tw" data-t="35.26">2026.</span></div></div><div class="cardwrap"><div class="card contract"><div class="ch1">Employment contract</div><div class="cline"></div><div class="cline s"></div><div class="crow"><div><div class="clab">Role</div><div class="cval">AI Engineer</div></div><div><div class="clab">Start</div><div class="cval">June 2026</div></div></div><svg class="sig" viewBox="0 0 300 70"><path data-anim="draw" data-f="0.3"  d="M6 50 C 30 10, 52 10, 50 44 S 80 66, 96 30 S 128 8, 132 40 S 160 62, 176 34 S 206 14, 214 42 S 250 56, 294 24"/></svg><div class="signed" data-anim="stamp" data-f="0.62" ><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Signed</div></div></div></section><section class="step clip" id="s12" data-start="36.41" data-duration="2.957" data-track-index="1"><div class="pill">$ 13/13</div><div class="title"><div class="tline l1"><span class="tw" data-t="36.42">Next</span><span class="tw" data-t="36.5">one?</span></div><div class="tline l2"><span class="tw" data-t="36.9">A</span><span class="tw" data-t="37.0">free</span><span class="tw" data-t="37.22">voice</span><span class="tw" data-t="37.4">studio.</span></div></div><div class="cardwrap"><div class="card repo teaser"><div class="rtitle"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z"/></svg><span class="own">debpalash</span> / <span class="blur">VoiceStudio</span><span class="pub"><svg class="ico " viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> next video</span></div><div class="wave"><i style="height:18px" data-anim="pop" data-f="0.1" ></i><i style="height:57px" data-anim="pop" data-f="0.112" ></i><i style="height:28px" data-anim="pop" data-f="0.124" ></i><i style="height:55px" data-anim="pop" data-f="0.136" ></i><i style="height:37px" data-anim="pop" data-f="0.148" ></i><i style="height:49px" data-anim="pop" data-f="0.16" ></i><i style="height:45px" data-anim="pop" data-f="0.172" ></i><i style="height:42px" data-anim="pop" data-f="0.184" ></i><i style="height:52px" data-anim="pop" data-f="0.196" ></i><i style="height:33px" data-anim="pop" data-f="0.208" ></i><i style="height:56px" data-anim="pop" data-f="0.22" ></i><i style="height:23px" data-anim="pop" data-f="0.232" ></i><i style="height:57px" data-anim="pop" data-f="0.244" ></i><i style="height:22px" data-anim="pop" data-f="0.256" ></i><i style="height:56px" data-anim="pop" data-f="0.268" ></i><i style="height:32px" data-anim="pop" data-f="0.28" ></i><i style="height:53px" data-anim="pop" data-f="0.292" ></i><i style="height:41px" data-anim="pop" data-f="0.304" ></i><i style="height:47px" data-anim="pop" data-f="0.316" ></i><i style="height:48px" data-anim="pop" data-f="0.328" ></i><i style="height:39px" data-anim="pop" data-f="0.34" ></i><i style="height:54px" data-anim="pop" data-f="0.352" ></i><i style="height:29px" data-anim="pop" data-f="0.364" ></i><i style="height:57px" data-anim="pop" data-f="0.376" ></i><i style="height:19px" data-anim="pop" data-f="0.388" ></i><i style="height:57px" data-anim="pop" data-f="0.4" ></i><i style="height:26px" data-anim="pop" data-f="0.412" ></i><i style="height:55px" data-anim="pop" data-f="0.424" ></i><i style="height:36px" data-anim="pop" data-f="0.436" ></i><i style="height:50px" data-anim="pop" data-f="0.448" ></i><i style="height:44px" data-anim="pop" data-f="0.46" ></i><i style="height:43px" data-anim="pop" data-f="0.472" ></i><i style="height:51px" data-anim="pop" data-f="0.484" ></i><i style="height:35px" data-anim="pop" data-f="0.496" ></i><i style="height:55px" data-anim="pop" data-f="0.508" ></i><i style="height:25px" data-anim="pop" data-f="0.52" ></i><i style="height:57px" data-anim="pop" data-f="0.532" ></i><i style="height:20px" data-anim="pop" data-f="0.544" ></i><i style="height:57px" data-anim="pop" data-f="0.556" ></i><i style="height:30px" data-anim="pop" data-f="0.568" ></i></div><div class="desc">Open source. Runs on your laptop.</div></div></div></section>
   <div id="gridmeter"><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span><span class="gcell"><i></i></span></div>
-  <audio id="bed" src="assets/bed.wav" data-start="0" data-duration="43.86666666666667" data-track-index="4" data-volume="1"></audio><audio id="vo" src="assets/vo.wav" data-start="0" data-duration="43.86666666666667" data-track-index="3" data-volume="1"></audio>
+  <audio id="bed" src="assets/bed.wav" data-start="0" data-duration="39.36666666666667" data-track-index="4" data-volume="1"></audio><audio id="vo" src="assets/vo.wav" data-start="0" data-duration="39.36666666666667" data-track-index="3" data-volume="1"></audio>
 </div>
 <script>
-const DATA = {"total": 43.86666666666667, "steps": [{"start": 0.0, "end": 3.34, "pose": "point", "card": "stats", "on": null}, {"start": 3.34, "end": 6.18, "pose": "thumb", "card": "docs", "on": null}, {"start": 6.18, "end": 10.78, "pose": "shrug", "card": "quote", "on": null}, {"start": 10.78, "end": 13.92, "pose": "point", "card": "repo", "on": null}, {"start": 13.92, "end": 16.56, "pose": "point", "card": "terminal", "on": null}, {"start": 16.56, "end": 19.84, "pose": "thumb", "card": "terminal", "on": null}, {"start": 19.84, "end": 22.76, "pose": "wave", "card": "terminal", "on": null}, {"start": 22.76, "end": 24.96, "pose": "point", "card": "comment", "on": 23.3}, {"start": 24.96, "end": 27.94, "pose": "thumb", "card": "repo", "on": null}, {"start": 27.94, "end": 32.08, "pose": "shrug", "card": "note", "on": null}, {"start": 32.08, "end": 36.1, "pose": "point", "card": "terminal", "on": null}, {"start": 36.1, "end": 40.74, "pose": "thumb", "card": "badge", "on": null}, {"start": 40.74, "end": 43.86666666666667, "pose": "wave", "card": "teaser", "on": null}], "cues": [[0.0, "X"], [0.21, "B"], [0.38, "X"], [0.55, "B"], [0.93, "C"], [1.07, "A"], [1.15, "H"], [1.25, "C"], [1.39, "B"], [1.88, "C"], [1.95, "B"], [2.23, "G"], [2.3, "F"], [2.58, "B"], [2.65, "F"], [2.72, "C"], [2.86, "B"], [2.93, "D"], [3.03, "C"], [3.07, "A"], [3.45, "B"], [3.57, "C"], [4.27, "B"], [4.34, "C"], [4.55, "B"], [4.62, "C"], [4.69, "B"], [4.76, "F"], [4.97, "B"], [5.07, "C"], [5.2, "G"], [5.27, "B"], [5.62, "F"], [5.69, "C"], [5.83, "X"], [6.02, "B"], [6.49, "X"], [6.66, "B"], [6.76, "C"], [6.97, "B"], [7.04, "F"], [7.25, "B"], [7.32, "G"], [7.39, "B"], [7.6, "C"], [7.74, "B"], [8.3, "D"], [8.37, "A"], [8.45, "D"], [8.58, "B"], [8.65, "E"], [8.86, "B"], [9.17, "H"], [9.24, "C"], [9.31, "B"], [9.45, "F"], [9.52, "C"], [9.59, "B"], [9.73, "F"], [9.8, "B"], [9.94, "G"], [10.01, "C"], [10.08, "B"], [10.5, "C"], [10.92, "F"], [11.06, "B"], [11.13, "A"], [11.21, "B"], [11.34, "C"], [11.41, "E"], [11.62, "F"], [11.83, "B"], [11.9, "C"], [12.11, "B"], [12.25, "F"], [12.46, "B"], [12.6, "F"], [12.88, "B"], [12.95, "D"], [13.02, "A"], [13.11, "B"], [13.22, "E"], [13.29, "B"], [13.43, "X"], [13.68, "B"], [13.84, "C"], [14.19, "B"], [14.33, "E"], [14.54, "B"], [14.61, "C"], [14.75, "B"], [14.96, "D"], [15.03, "A"], [15.13, "F"], [15.27, "B"], [15.34, "C"], [15.55, "F"], [15.69, "A"], [15.77, "F"], [16.02, "G"], [16.09, "C"], [16.16, "B"], [16.23, "X"], [16.42, "B"], [16.56, "C"], [16.77, "B"], [16.91, "C"], [17.05, "E"], [17.19, "F"], [17.33, "B"], [17.68, "G"], [17.75, "B"], [17.96, "C"], [18.1, "B"], [18.31, "G"], [18.38, "E"], [18.45, "H"], [18.52, "B"], [18.59, "E"], [18.66, "F"], [18.87, "B"], [19.15, "F"], [19.22, "C"], [19.36, "X"], [19.55, "B"], [20.01, "X"], [20.21, "B"], [20.31, "C"], [20.45, "A"], [20.54, "B"], [20.62, "A"], [20.69, "F"], [20.93, "G"], [21.0, "E"], [21.07, "B"], [21.35, "F"], [21.52, "A"], [21.61, "D"], [21.69, "C"], [21.76, "B"], [21.9, "E"], [21.97, "B"], [22.11, "E"], [22.32, "C"], [22.51, "B"], [22.61, "C"], [22.89, "B"], [23.03, "D"], [23.13, "C"], [23.17, "A"], [23.25, "C"], [23.32, "B"], [23.46, "D"], [23.53, "A"], [23.63, "B"], [23.7, "C"], [23.84, "B"], [23.98, "C"], [24.05, "F"], [24.19, "C"], [24.26, "B"], [24.33, "A"], [24.41, "F"], [24.58, "X"], [24.77, "B"], [24.91, "C"], [25.26, "B"], [25.33, "F"], [25.54, "A"], [25.64, "B"], [25.8, "E"], [25.94, "B"], [26.15, "C"], [26.22, "A"], [26.3, "B"], [26.58, "H"], [26.65, "C"], [26.72, "B"], [27.14, "C"], [27.28, "D"], [27.35, "F"], [27.7, "A"], [27.78, "C"], [27.83, "B"], [28.15, "X"], [28.4, "B"], [28.52, "C"], [29.08, "B"], [29.15, "C"], [29.22, "A"], [29.3, "F"], [29.55, "B"], [29.69, "C"], [29.76, "E"], [29.97, "B"], [30.04, "A"], [30.12, "H"], [30.29, "C"], [30.5, "E"], [30.64, "B"], [30.71, "C"], [30.78, "A"], [30.86, "B"], [31.03, "C"], [31.1, "B"], [31.52, "X"], [31.7, "B"], [32.17, "X"], [32.29, "B"], [32.35, "A"], [32.41, "B"], [32.79, "D"], [32.86, "A"], [32.97, "E"], [33.09, "B"], [33.23, "D"], [33.3, "B"], [33.37, "C"], [33.58, "B"], [33.79, "A"], [33.89, "B"], [33.97, "C"], [34.04, "B"], [34.6, "F"], [34.67, "B"], [34.88, "C"], [34.95, "B"], [35.02, "F"], [35.09, "B"], [35.23, "X"], [35.47, "B"], [35.53, "C"], [35.59, "B"], [35.94, "X"], [36.37, "C"], [36.46, "B"], [36.67, "F"], [36.81, "E"], [36.88, "B"], [37.31, "D"], [37.45, "B"], [37.59, "C"], [37.66, "B"], [37.73, "C"], [37.94, "B"], [38.01, "C"], [38.08, "B"], [38.15, "C"], [38.22, "B"], [38.29, "C"], [38.36, "B"], [38.71, "F"], [39.06, "B"], [39.13, "F"], [39.2, "C"], [39.27, "B"], [39.41, "F"], [39.48, "C"], [39.55, "B"], [39.97, "X"], [40.47, "B"], [40.9, "C"], [41.01, "B"], [41.08, "F"], [41.15, "C"], [41.49, "G"], [41.63, "B"], [41.77, "G"], [41.84, "E"], [41.91, "F"], [42.12, "B"], [42.26, "F"], [42.33, "B"], [42.54, "C"], [42.61, "B"], [42.68, "F"], [42.82, "B"], [42.89, "H"], [42.96, "A"], [43.04, "B"], [43.1, "D"], [43.18, "C"], [43.22, "A"], [43.31, "X"]], "words": [[0.0, 1.0], [1.0, 1.6], [1.86, 2.02], [2.02, 2.46], [2.72, 2.86], [2.86, 3.2], [3.46, 4.32], [4.32, 4.44], [4.44, 4.7], [4.7, 4.96], [4.96, 5.34], [5.34, 5.56], [5.56, 5.8], [6.3, 6.82], [6.82, 6.95], [7.08, 7.14], [7.14, 7.74], [8.06, 8.22], [8.22, 8.42], [8.42, 8.68], [8.68, 8.92], [8.92, 9.2], [9.2, 9.38], [9.38, 9.96], [10.9, 11.06], [11.06, 11.2], [11.2, 11.36], [11.36, 11.6], [11.6, 11.66], [11.72, 11.94], [11.94, 12.22], [12.22, 12.48], [12.48, 12.56], [12.56, 12.7], [12.7, 12.9], [12.9, 13.08], [13.08, 13.34], [14.04, 14.32], [14.32, 14.52], [14.52, 14.88], [14.88, 15.1], [15.1, 15.32], [15.32, 15.56], [15.56, 15.78], [15.78, 16.18], [16.68, 17.24], [17.24, 17.44], [17.44, 17.76], [17.76, 18.16], [18.16, 18.4], [18.4, 18.6], [18.6, 18.88], [18.88, 19.06], [19.06, 19.34], [19.96, 20.44], [20.44, 20.8], [20.8, 20.9], [20.9, 21.04], [21.04, 21.16], [21.16, 21.46], [21.72, 21.78], [21.78, 21.88], [21.98, 22.14], [22.14, 22.36], [22.88, 23.3], [23.3, 23.58], [23.58, 23.82], [23.82, 23.94], [23.94, 24.06], [24.06, 24.18], [24.18, 24.3], [24.3, 24.5], [25.08, 25.44], [25.44, 25.7], [25.7, 25.98], [25.98, 26.44], [26.44, 26.9], [26.9, 27.22], [27.22, 27.42], [27.42, 27.52], [27.52, 27.72], [27.72, 28.06], [28.06, 28.5], [28.5, 29.32], [29.48, 29.54], [29.54, 29.68], [29.68, 29.86], [29.86, 29.96], [30.06, 30.42], [30.42, 30.68], [30.68, 31.06], [31.06, 31.46], [32.2, 32.42], [32.42, 32.58], [32.74, 32.92], [32.92, 33.18], [33.18, 33.38], [33.38, 33.68], [33.68, 33.96], [33.96, 34.08], [34.08, 34.26], [34.26, 34.52], [34.52, 34.76], [34.76, 35.14], [36.22, 36.54], [36.54, 36.66], [36.66, 36.88], [37.12, 37.22], [37.22, 37.48], [37.48, 37.72], [37.72, 37.86], [37.86, 38.12], [38.12, 38.38], [38.38, 38.82], [38.82, 39.02], [39.02, 39.92], [40.86, 41.04], [41.04, 41.3], [41.46, 41.56], [41.56, 41.76], [41.76, 41.96], [41.96, 42.24], [42.24, 42.44], [42.44, 42.62], [42.62, 42.76], [42.76, 42.88], [42.88, 43.08]]};
+window.DATA = {"total": 39.36666666666667, "steps": [{"start": 0.0, "end": 3.13, "pose": "point"}, {"start": 3.13, "end": 5.41, "pose": "thumb"}, {"start": 5.41, "end": 9.51, "pose": "shrug"}, {"start": 9.51, "end": 12.47, "pose": "point"}, {"start": 12.47, "end": 15.01, "pose": "point"}, {"start": 15.01, "end": 18.03, "pose": "thumb"}, {"start": 18.03, "end": 20.41, "pose": "wave"}, {"start": 20.41, "end": 22.35, "pose": "point"}, {"start": 22.35, "end": 25.79, "pose": "thumb"}, {"start": 25.79, "end": 28.71, "pose": "shrug"}, {"start": 28.71, "end": 32.29, "pose": "point"}, {"start": 32.29, "end": 36.41, "pose": "thumb"}, {"start": 36.41, "end": 39.36666666666667, "pose": "wave"}], "cues": [[0.0, "X"], [0.03, "B"], [0.38, "C"], [0.52, "A"], [0.6, "H"], [0.69, "C"], [0.83, "B"], [1.32, "F"], [1.39, "B"], [1.74, "F"], [2.16, "C"], [2.3, "B"], [2.37, "D"], [2.47, "C"], [2.51, "A"], [2.89, "C"], [3.41, "B"], [3.48, "C"], [3.69, "B"], [3.76, "C"], [3.83, "B"], [3.9, "F"], [4.11, "B"], [4.21, "C"], [4.34, "G"], [4.41, "B"], [4.76, "F"], [4.83, "C"], [4.97, "B"], [5.14, "C"], [5.51, "B"], [5.65, "C"], [5.86, "B"], [5.93, "F"], [6.14, "B"], [6.21, "G"], [6.28, "B"], [6.56, "C"], [6.63, "B"], [7.19, "D"], [7.26, "A"], [7.34, "D"], [7.48, "B"], [7.55, "E"], [7.76, "B"], [8.06, "H"], [8.13, "C"], [8.2, "B"], [8.34, "F"], [8.41, "C"], [8.48, "B"], [8.62, "F"], [8.69, "B"], [8.83, "G"], [8.9, "C"], [8.97, "B"], [9.29, "C"], [9.59, "F"], [9.73, "B"], [9.8, "A"], [9.88, "B"], [10.08, "E"], [10.29, "F"], [10.5, "B"], [10.57, "C"], [10.78, "B"], [10.92, "F"], [11.13, "B"], [11.27, "F"], [11.55, "B"], [11.62, "D"], [11.69, "A"], [11.77, "B"], [11.88, "E"], [11.95, "B"], [12.26, "C"], [12.52, "B"], [12.66, "E"], [12.87, "B"], [12.94, "C"], [13.08, "B"], [13.29, "D"], [13.36, "A"], [13.46, "F"], [13.6, "B"], [13.67, "C"], [13.88, "F"], [14.02, "A"], [14.1, "F"], [14.31, "G"], [14.45, "B"], [14.78, "C"], [14.91, "B"], [15.05, "C"], [15.19, "E"], [15.33, "F"], [15.47, "B"], [16.13, "C"], [16.19, "B"], [16.25, "C"], [16.46, "G"], [16.53, "E"], [16.6, "H"], [16.67, "B"], [16.74, "E"], [16.81, "F"], [17.02, "B"], [17.23, "F"], [17.37, "C"], [17.51, "B"], [17.71, "C"], [18.11, "B"], [18.25, "C"], [18.39, "A"], [18.47, "B"], [18.55, "A"], [18.62, "F"], [18.88, "E"], [18.95, "B"], [19.23, "G"], [19.3, "F"], [19.44, "A"], [19.55, "D"], [19.65, "B"], [19.79, "C"], [19.86, "E"], [19.93, "B"], [20.0, "E"], [20.39, "C"], [20.46, "D"], [20.56, "C"], [20.6, "A"], [20.68, "C"], [20.75, "B"], [20.89, "D"], [20.96, "A"], [21.06, "B"], [21.11, "C"], [21.15, "B"], [21.22, "C"], [21.29, "B"], [21.43, "C"], [21.5, "F"], [21.64, "C"], [21.71, "B"], [21.78, "A"], [21.86, "F"], [22.04, "B"], [22.21, "C"], [22.4, "B"], [22.47, "F"], [22.68, "A"], [22.78, "B"], [22.94, "E"], [23.08, "B"], [23.29, "C"], [23.36, "A"], [23.44, "B"], [23.72, "H"], [23.79, "C"], [23.86, "B"], [24.28, "C"], [24.42, "D"], [24.49, "F"], [24.84, "A"], [24.92, "C"], [24.99, "B"], [25.43, "C"], [25.89, "B"], [25.96, "C"], [26.03, "A"], [26.11, "F"], [26.36, "B"], [26.43, "C"], [26.57, "E"], [26.78, "B"], [26.85, "A"], [26.93, "H"], [27.09, "C"], [27.3, "E"], [27.44, "B"], [27.51, "C"], [27.58, "A"], [27.66, "B"], [27.85, "C"], [27.92, "B"], [28.51, "C"], [28.85, "B"], [28.92, "A"], [29.0, "B"], [29.38, "D"], [29.45, "A"], [29.56, "E"], [29.68, "B"], [29.82, "D"], [29.89, "B"], [29.96, "C"], [30.17, "B"], [30.38, "A"], [30.48, "B"], [30.57, "C"], [30.64, "B"], [31.06, "E"], [31.13, "B"], [31.2, "F"], [31.27, "B"], [31.41, "C"], [31.55, "B"], [31.62, "F"], [31.69, "B"], [31.76, "X"], [31.93, "B"], [32.34, "C"], [32.4, "B"], [32.6, "F"], [32.74, "E"], [32.81, "B"], [33.23, "D"], [33.37, "B"], [33.51, "C"], [33.58, "B"], [33.65, "C"], [33.86, "B"], [33.93, "C"], [34.0, "B"], [34.07, "C"], [34.14, "B"], [34.21, "C"], [34.28, "B"], [34.63, "F"], [34.98, "B"], [35.12, "C"], [35.19, "B"], [35.4, "C"], [35.47, "B"], [36.07, "C"], [36.47, "B"], [36.61, "F"], [36.68, "C"], [36.99, "G"], [37.12, "B"], [37.26, "G"], [37.33, "E"], [37.4, "F"], [37.61, "B"], [37.75, "F"], [37.82, "B"], [38.03, "C"], [38.1, "B"], [38.17, "F"], [38.31, "B"], [38.38, "H"], [38.45, "A"], [38.53, "B"], [38.59, "D"], [38.67, "C"], [38.71, "A"], [38.84, "X"]]};
+
 const GREENS = ["#9be9a8", "#40c463", "#30a14e", "#216e39"];
 function rnd(i) { const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
-
 function fitTitles() {
   document.querySelectorAll(".tline").forEach((el) => {
     let fs = 124;
@@ -105,71 +169,248 @@ function fitTitles() {
     while (el.scrollWidth > 938 && fs > 60) { fs -= 2; el.style.fontSize = fs + "px"; }
   });
 }
-
 function build() {
   fitTitles();
   const tl = gsap.timeline({ paused: true });
-  const T = DATA.total;
-
-  // headline words pop on the spoken word
+  // headline words pop on the spoken word: these are the captions
   document.querySelectorAll(".tw").forEach((el) => {
-    const t = parseFloat(el.dataset.t);
-    tl.fromTo(el, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.22, ease: "back.out(2)" }, t);
+    tl.fromTo(el, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.12, ease: "power3.out" }, parseFloat(el.dataset.t));
   });
-
+  const cells = document.querySelectorAll("#gridmeter .gcell");
   DATA.steps.forEach((st, i) => {
-    const s = document.getElementById("s" + i);
-    const card = s.querySelector(".card");
-    const dur = st.end - st.start;
-    tl.fromTo(card, { opacity: 0, y: 40, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.32, ease: "power3.out" }, st.start + 0.06);
-    tl.fromTo(s.querySelector(".pill"), { scale: 0.8 }, { scale: 1, duration: 0.25, ease: "back.out(3)" }, st.start);
-    const rev = s.querySelectorAll(".reveal");
-    const gap = Math.min(0.4, (dur * 0.6) / Math.max(1, rev.length));
-    rev.forEach((el, k) => tl.fromTo(el, { opacity: 0, x: -18 }, { opacity: 1, x: 0, duration: 0.25, ease: "power2.out" }, st.start + 0.3 + k * gap));
-    s.querySelectorAll(".num").forEach((el, k) => {
-      const to = parseInt(el.dataset.to, 10), o = { v: to < 10 ? to : 0 };
-      tl.to(o, { v: to, duration: 0.7, ease: "power2.out", onUpdate: () => (el.textContent = Math.round(o.v)) }, st.start + 0.3 + k * gap);
+    const s = document.getElementById("s" + i), dur = st.end - st.start;
+    const at = (f) => st.start + Math.min(Math.max(0, dur - 0.12), f * dur);
+    // hard cut: the card is simply there on the cut, its contents perform
+    s.querySelectorAll("[data-f]").forEach((el) => {
+      const t = at(parseFloat(el.dataset.f)), a = el.dataset.anim;
+      if (a === "pop") tl.fromTo(el, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.14, ease: "back.out(3)" }, t);
+      else if (a === "slide") tl.fromTo(el, { opacity: 0, x: -28 }, { opacity: 1, x: 0, duration: 0.14, ease: "power3.out" }, t);
+      else if (a === "stamp") tl.fromTo(el, { opacity: 0, scale: 2.4 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power4.in" }, t);
+      else if (a === "grow") tl.fromTo(el, { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "power3.out", transformOrigin: "0% 50%" }, t);
+      else if (a === "shake") tl.fromTo(el, { x: -14 }, { x: 0, duration: 0.4, ease: "elastic.out(1.2, 0.25)" }, t);
+      else if (a === "press") tl.fromTo(el, { scale: 1 }, { scale: 0.93, duration: 0.07, yoyo: true, repeat: 1 }, t);
+      else if (a === "type") {
+        const ch = el.querySelectorAll(".ch"), d = parseFloat(el.dataset.d || 0.4) * dur;
+        tl.fromTo(ch, { opacity: 0 }, { opacity: 1, duration: 0.001, stagger: d / Math.max(1, ch.length) }, t);
+      } else if (a === "count") {
+        const o = { v: parseFloat(el.dataset.from) }, to = parseFloat(el.dataset.to);
+        tl.to(o, { v: to, duration: parseFloat(el.dataset.d || 0.8) * dur * 0.4, ease: "power2.in",
+          onUpdate: () => (el.textContent = Math.round(o.v)) }, t);
+      } else if (a === "draw") {
+        const L = el.getTotalLength();
+        el.style.strokeDasharray = L;
+        tl.fromTo(el, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.55, ease: "power1.inOut" }, t);
+      }
+      if (el.dataset.off) tl.set(el, { opacity: 0 }, at(parseFloat(el.dataset.off)));
     });
-    const docs = s.querySelectorAll(".doc");
-    if (docs.length) tl.fromTo(docs, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.18, stagger: Math.min(0.025, (dur * 0.7) / docs.length), ease: "back.out(2)" }, st.start + 0.25);
-    const chars = s.querySelectorAll(".typed .ch");
-    const t0 = st.on != null ? st.on : st.start + 0.6;
-    chars.forEach((el, c) => tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.01 }, t0 + c * 0.07));
-    // pose for this step
-    document.querySelectorAll("#sprite .g").forEach((g) => tl.set(g, { opacity: g.id === "g-" + st.pose ? 1 : 0 }, st.start));
-    if (i === 0 || DATA.steps[i - 1].pose !== st.pose)
-      tl.fromTo("#char", { scale: 0.95, y: 14 }, { scale: 1, y: 0, duration: 0.3, ease: "back.out(2.5)", transformOrigin: "50% 100%" }, st.start);
-    // contribution-grid progress, 5 cells per step
-    const cells = document.querySelectorAll("#gridmeter i");
     for (let c = 0; c < 5; c++) {
       const idx = i * 5 + c;
-      if (idx >= cells.length) break;
-      const col = Math.floor(idx / 5), row = idx % 5, cell = document.querySelectorAll("#gridmeter .gcell")[row * 13 + col];
-      tl.to(cell.querySelector("i"), { backgroundColor: GREENS[Math.floor(rnd(idx) * 4)], duration: 0.12 }, st.start + 0.15 + c * 0.06);
+      if (idx >= 65) break;
+      const cell = cells[(idx % 5) * 13 + Math.floor(idx / 5)];
+      tl.set(cell.querySelector("i"), { backgroundColor: GREENS[Math.floor(rnd(idx) * 4)] }, st.start + c * 0.05);
     }
   });
-
-  // mouth: Rhubarb cues
-  tl.set(".m-X", { opacity: 1 }, 0);
-  let prev = "X";
-  DATA.cues.forEach(([t, v]) => {
-    if (v === prev) return;
-    tl.set(".m-" + prev, { opacity: 0 }, t);
-    tl.set(".m-" + v, { opacity: 1 }, t);
-    prev = v;
-  });
-
-  // idle life: breathing bob + blinks every ~3s
-  // 8 px steps keep the bob on the pixel grid
-  tl.fromTo("#sprite", { y: 0 }, { y: -8, duration: 0.7, ease: "steps(1)", yoyo: true, repeat: Math.floor(T / 0.7) }, 0);
-  for (let t = 1.7, n = 0; t < T - 0.3; t += 2.6 + rnd(n++) * 1.6) {
-    tl.set(".blink", { opacity: 1 }, t);
-    tl.set(".blink", { opacity: 0 }, t + 0.12);
-  }
-
   window.__timelines["main"] = tl;
 }
 document.fonts.ready.then(build);
+
+</script>
+<script type="module">
+// Minecraft-style baroobi in a dark-oak room, rendered from HyperFrames time (hf-seek), never wall-clock.
+// Reads window.DATA: { total, steps:[{start,end,pose}], cues:[[t, shape]] }.
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.181.2/+esm";
+
+const D = window.DATA;
+const W = 1080, H = 1920;
+const canvas = document.getElementById("mc");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false);
+renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const loader = new THREE.TextureLoader();
+function tex(name, repeat) {
+  const t = loader.load("assets/voxel/" + name);
+  t.magFilter = THREE.NearestFilter;
+  t.minFilter = THREE.NearestFilter;
+  t.generateMipmaps = false;
+  t.colorSpace = THREE.SRGBColorSpace;
+  if (repeat) {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(repeat[0], repeat[1]);
+  }
+  return t;
+}
+const mat = (t, o = {}) => new THREE.MeshStandardMaterial({ map: t, roughness: 0.92, metalness: 0, ...o });
+const clear = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0, depthWrite: false });
+function box(w, h, d, mats) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mats);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  return m;
+}
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1c120b);
+
+// ---- room ----------------------------------------------------------------
+const BLOCK = 7;
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(140, 140), mat(tex("dark_oak.png", [140 / BLOCK, 140 / BLOCK])));
+wall.position.set(0, 40, -8);
+wall.receiveShadow = true;
+scene.add(wall);
+const panel = box(140, 34, 0.6, mat(tex("panel.png", [140 / BLOCK, 34 / BLOCK])));
+panel.position.set(0, 4, -7.6);
+scene.add(panel);
+const oak = tex("dark_oak.png", [2, 2]);
+const table = box(16, 18, 10, mat(oak));
+table.position.set(24, 6, -2);
+scene.add(table);
+const pot = box(4, 4, 4, mat(tex("pot.png")));
+pot.position.set(21, 17, -2);
+scene.add(pot);
+const leafMat = mat(tex("leaves.png"), { transparent: true, alphaTest: 0.5, side: THREE.DoubleSide });
+[[21, 21, -2, 3.4], [19.6, 23, -1.2, 2.4], [22.4, 24, -2.6, 2.6], [21, 26, -2, 2]].forEach(([x, y, z, s]) => {
+  const l = box(s, s, s, leafMat);
+  l.position.set(x, y, z);
+  scene.add(l);
+});
+
+// ---- character (Minecraft proportions, 1 unit = 1 skin pixel at 8 px/face) --
+const faces = {};
+for (const m of "XABCDEFGH") {
+  faces[m] = tex(`face_${m}.png`);
+  faces[m + "_b"] = tex(`face_${m}_b.png`);
+}
+const headFront = mat(faces.X);
+const head = box(8, 8, 8, [
+  mat(tex("head_right.png")), mat(tex("head_left.png")), mat(tex("head_top.png")),
+  mat(tex("head_bottom.png")), headFront, mat(tex("head_back.png")),
+]);
+const hairSide = tex("hair_side.png"), hairOpts = { transparent: true, alphaTest: 0.5 };
+const hair = box(8.9, 8.9, 8.9, [
+  mat(hairSide, hairOpts), mat(hairSide, hairOpts), mat(tex("hair_top.png"), hairOpts),
+  clear, mat(tex("hair_front.png"), hairOpts), mat(tex("hair_back.png"), hairOpts),
+]);
+const headPivot = new THREE.Group();          // pivot at the neck so nods look natural
+head.position.y = 4;
+hair.position.y = 4.15;
+headPivot.add(head, hair);
+headPivot.position.set(0, 24, 0);
+
+const bodySide = tex("body_side.png");
+const body = box(8, 12, 4, [mat(bodySide), mat(bodySide), mat(tex("body_top.png")), mat(tex("arm_top.png")),
+  mat(tex("body_front.png")), mat(tex("body_back.png"))]);
+body.position.y = 18;
+
+function makeArm(sign) {
+  const side = tex("arm_side.png");
+  const a = box(4, 12, 4, [mat(side), mat(side), mat(tex("arm_top.png")), mat(tex("arm_bottom.png")), mat(side), mat(side)]);
+  a.position.y = -4;
+  const pivot = new THREE.Group();
+  pivot.position.set(sign * 6, 22, 0);
+  pivot.add(a);
+  return pivot;
+}
+const armL = makeArm(-1), armR = makeArm(1);     // R = viewer's right, the gesturing arm
+const char = new THREE.Group();
+char.add(body, headPivot, armL, armR);
+scene.add(char);
+
+// ---- light: warm key from the right like the reference, cool weak fill ----
+scene.add(new THREE.HemisphereLight(0xffe2c4, 0x140b06, 0.55));
+const key = new THREE.DirectionalLight(0xffb36b, 3.1);
+key.position.set(38, 46, 34);
+key.castShadow = true;
+key.shadow.mapSize.set(1024, 1024);
+Object.assign(key.shadow.camera, { left: -45, right: 45, top: 60, bottom: -10, near: 1, far: 160 });
+key.shadow.bias = -0.0008;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0x8fa6d8, 0.35);
+fill.position.set(-40, 30, 30);
+scene.add(fill);
+
+// ---- camera framings: hard cut per beat, slow push-in inside a beat --------
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.5, 400);
+const HEAD_Y = 28, HEAD_ON_SCREEN = 0.76;     // head centre sits 76% down the frame, under the cards
+function frame(t, i, st) {
+  const close = i % 2 === 1;
+  const dist = close ? 104 : 124;
+  const fov = (close ? 26 : 30) - 0.8 * Math.min(1, (t - st.start) / Math.max(0.5, st.end - st.start));
+  camera.fov = fov;
+  camera.updateProjectionMatrix();
+  const half = Math.tan((fov * Math.PI) / 360) * dist;
+  const ty = HEAD_Y + (HEAD_ON_SCREEN * 2 - 1) * half;
+  const x = close ? 5 : 8;                    // he sits left of centre, clear of the progress grid
+  camera.position.set(x, ty + 5, dist);       // a touch above eye line so the curls on top read
+  camera.lookAt(x * 0.4, ty, 0);
+  camera.rotateZ(close ? -0.035 : -0.05);    // slight dutch angle
+}
+
+// ---- performance from data ---------------------------------------------------
+const OPEN = { X: 0, A: 0, B: 0.3, C: 0.65, D: 1, E: 0.6, F: 0.35, G: 0.3, H: 0.6 };
+function cueAt(t) {
+  let lo = 0, hi = D.cues.length - 1, v = "X";
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (D.cues[mid][0] <= t) { v = D.cues[mid][1]; lo = mid + 1; } else hi = mid - 1;
+  }
+  return v;
+}
+const talk = (t) => [0, 0.05, 0.1, 0.15, 0.2].reduce((a, d) => a + OPEN[cueAt(t - d)], 0) / 5;
+const hash = (n) => { const x = Math.sin(n * 91.345 + 7.13) * 43758.5453; return x - Math.floor(x); };
+const blinks = [];
+for (let t = 1.4, n = 0; t < D.total; t += 2.4 + hash(n++) * 1.8) blinks.push(t);
+const blinking = (t) => blinks.some((b) => t >= b && t < b + 0.12);
+
+const POSES = {
+  rest:  { L: [0.05, -0.06], R: [0.05, 0.06], roll: 0 },
+  point: { L: [0.05, -0.06], R: [-2.2, 0.38], roll: 0.03 },
+  wave:  { L: [0.05, -0.06], R: [-0.25, 2.55], roll: -0.02, wave: true },
+  thumb: { L: [0.05, -0.06], R: [-1.35, 0.16], roll: 0.02 },
+  shrug: { L: [-0.65, -0.95], R: [-0.65, 0.95], roll: 0.13 },
+};
+const easeOutBack = (k) => 1 + 2.4 * Math.pow(k - 1, 3) + 1.4 * Math.pow(k - 1, 2);
+function stepAt(t) {
+  let i = 0;
+  while (i < D.steps.length - 1 && t >= D.steps[i + 1].start) i++;
+  return i;
+}
+
+function renderAt(t) {
+  const i = stepAt(t), st = D.steps[i];
+  const cur = POSES[st.pose] || POSES.rest, prev = POSES[(D.steps[i - 1] || st).pose] || POSES.rest;
+  const k = easeOutBack(Math.min(1, Math.max(0, (t - st.start) / 0.2)));
+  const mix = (a, b) => a + (b - a) * k;
+  const sway = 0.04 * Math.sin(t * 2.6);
+  armL.rotation.set(mix(prev.L[0], cur.L[0]) + sway * 0.5, 0, mix(prev.L[1], cur.L[1]));
+  armR.rotation.set(mix(prev.R[0], cur.R[0]) - sway, 0,
+    mix(prev.R[1], cur.R[1]) + (cur.wave ? 0.2 * Math.sin(t * 11) : 0));
+  const tk = talk(t);
+  headPivot.rotation.set(0.07 * tk + 0.015 * Math.sin(t * 1.7), -0.22 + 0.05 * Math.sin(t * 0.55),
+    0.05 + mix(prev.roll, cur.roll) + 0.015 * Math.sin(t * 0.9));
+  body.scale.y = 1 + 0.006 * Math.sin(t * 2.2);
+  const shape = cueAt(t);
+  headFront.map = faces[shape + (blinking(t) ? "_b" : "")];
+  frame(t, i, st);
+  renderer.render(scene, camera);
+}
+
+window.__hf = window.__hf || {};
+window.__hf.buildReady = window.__hf.buildReady || {};
+window.__hf.buildReady.voxel = new Promise((resolve) => {
+  THREE.DefaultLoadingManager.onLoad = () => {
+    renderer.compile(scene, camera);
+    renderAt(window.__hfThreeTime || 0);
+    resolve();
+  };
+});
+window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+
 </script>
 </body>
 </html>

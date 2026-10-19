@@ -1,0 +1,59 @@
+BAROOBI VOICE TRAINING  /  record this for a better voice clone
+About 4 minutes total. Five takes, one file each (or one file with a 2 second pause between takes).
+
+HOW TO RECORD
+- Same phone and same spot you film reels. Quiet room, no music, no fan, AC off.
+- Phone about a hand's length from your mouth.
+- Talk exactly like you do in reels. Don't read it like a script. Messing up is fine, just redo the line.
+- Name the files take1 to take5 and drop them in the same Drive folder.
+
+------------------------------------------------------------
+TAKE 1  /  HYPE (your hook voice)
+
+Yo, stop scrolling. This is actually insane.
+Somebody just open sourced the thing every startup is charging you for.
+Sixty-nine applications. Twenty interviews. One job. And an AI did the heavy lifting.
+I'm not kidding, this repo blew up overnight.
+Free. Local. No subscription. Let's go.
+Wait, it does that too? No way. That's crazy.
+
+------------------------------------------------------------
+TAKE 2  /  EXPLAINING (calm, builder mode)
+
+Okay, so here's how it actually works.
+Step one, you clone the repo from GitHub.
+Step two, you open it in Claude Code and run setup.
+Step three, you give it your CV, your LinkedIn export, and a few job posts.
+It scores every post against your profile, then it tailors your CV and your cover letter to each one.
+Everything runs on your own machine, so your data stays with you.
+It's MIT licensed, which means you can fork it and change whatever you want.
+
+------------------------------------------------------------
+TAKE 3  /  NUMBERS AND TECH WORDS (say each one clearly)
+
+Zero, one, two, three, five, ten, twenty, twenty-five, sixty-nine, one hundred, one thousand, one million.
+Twenty twenty-five. Twenty twenty-six. October nineteenth. June. Toronto, Canada. Denmark.
+Claude. Claude Code. Anthropic. OpenAI. ChatGPT. Gemini. Cursor. Codex.
+GitHub. Repo. API. CLI. GPU. MIT license. Open source. ElevenLabs. PS5. Python. JavaScript.
+LinkedIn. CV. Cover letter. Interview. Geophysicist. AI engineer.
+
+------------------------------------------------------------
+TAKE 4  /  QUESTIONS AND REACTIONS (real emotion)
+
+Why would anyone give this away for free?
+You're telling me this runs on a laptop?
+Hmm. Okay. That's actually smart.
+Honestly? I didn't think it would work. It worked.
+Bro. Look at this. Look at the numbers.
+Heads up though, you need a Claude plan or API credits for this one.
+Nah, that's not it. Let me show you the real one.
+
+------------------------------------------------------------
+TAKE 5  /  CTAS AND OUTROS (your closer voice)
+
+Comment the word JOBS and I'll send you the link.
+Comment VOICE and I'll DM you the repo.
+Comment the word below and I'll send you everything.
+Save this so you don't lose it.
+Follow for more AI tools that actually get real work done.
+Next one? Even crazier. Peace.

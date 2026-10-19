@@ -19,3 +19,5 @@ projects/*/.hyperframes/
 projects/*/renders/
 __pycache__/
 assets/character/pixel/
+assets/character/voxel/
+assets/people/

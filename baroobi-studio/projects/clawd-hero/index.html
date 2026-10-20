@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>clawd-hero</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/" } }
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #15110f; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+#vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 80% 60% at 50% 55%, rgba(0,0,0,0) 55%, rgba(0,0,0,.42) 100%); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="5" data-width="1080" data-height="1920" data-fps="60">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="vig"></div>
+</div>
+<script>
+// nothing on the DOM timeline animates; it only gives HyperFrames the duration
+const tl = gsap.timeline({ paused: true }); tl.set({}, {}, 5); window.__timelines["main"] = tl;
+</script>
+<script type="module">
+import * as THREE from "three";
+import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
+import { BokehPass } from "three/addons/postprocessing/BokehPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { makeClawd, pose } from "./assets/clawd.js";
+
+const W = 1080, H = 1920;
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("gl"), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+RectAreaLightUniformsLib.init();
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x15110f);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; scene.environmentIntensity = 0.28;
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.5, 300);
+
+// seamless cyclorama: floor that sweeps up into the back wall, so there is no horizon line
+function cyc(width = 240, depth = 70, radius = 22, height = 90) {
+  const prof = [];
+  for (let z = depth; z > 0; z -= 4) prof.push([0, z]);
+  for (let a = 0; a <= 24; a++) { const th = a / 24 * Math.PI / 2; prof.push([radius - radius * Math.cos(th), -radius * Math.sin(th)]); }
+  for (let y = radius + 6; y <= height; y += 8) prof.push([y, -radius]);
+  const cols = 48, pos = [], idx = [];
+  prof.forEach(([y, z]) => { for (let c = 0; c <= cols; c++) pos.push(-width / 2 + width * c / cols, y, z - 12); });
+  for (let r = 0; r < prof.length - 1; r++) for (let c = 0; c < cols; c++) { const a = r * (cols + 1) + c, b = a + cols + 1; idx.push(a, b, a + 1, b, b + 1, a + 1); }
+  const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+const stageMat = new THREE.MeshStandardMaterial({ color: 0x40352f, roughness: 0.88, side: THREE.DoubleSide });
+const stage = new THREE.Mesh(cyc(), stageMat); stage.receiveShadow = true; scene.add(stage);
+
+// soft studio lighting: big key softbox, warm rim, overhead fill, one shadow caster
+const key = new THREE.RectAreaLight(0xfff3e8, 5.5, 22, 16); key.position.set(-16, 20, 22); key.lookAt(0, 4, 0); scene.add(key);
+const rimL = new THREE.RectAreaLight(0xffb27a, 14, 6, 22); rimL.position.set(14, 12, -10); rimL.lookAt(0, 4, 0); scene.add(rimL);
+const top = new THREE.RectAreaLight(0xffffff, 1.6, 20, 20); top.position.set(0, 32, 2); top.lookAt(0, 0, 0); scene.add(top);
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(-10, 28, 16); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); sun.shadow.radius = 8; sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.02;
+Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 70 }); scene.add(sun, sun.target);
+scene.add(new THREE.HemisphereLight(0xdfe6ff, 0x2a1d16, 0.25));
+// a soft pool on the floor and a glow on the wall behind, so the stage reads as a lit studio, not a void
+const pool = new THREE.SpotLight(0xffe6d2, 420, 80, 0.5, 1, 1.6); pool.position.set(0, 40, 8); pool.target.position.set(0, 0, -2); scene.add(pool, pool.target);
+const wash = new THREE.SpotLight(0xffb48a, 600, 90, 0.42, 1, 1.4); wash.position.set(0, 6, 20); wash.target.position.set(0, 14, -34); scene.add(wash, wash.target);
+
+const composer = new EffectComposer(renderer);
+composer.setSize(W, H);
+composer.addPass(new RenderPass(scene, camera));
+const ao = new GTAOPass(scene, camera, W / 2, H / 2); ao.blendIntensity = 0.85;
+ao.updateGtaoMaterial({ radius: 1.6, distanceExponent: 1.6, thickness: 2, scale: 1, samples: 16 });
+composer.addPass(ao);
+const bokeh = new BokehPass(scene, camera, { focus: 30, aperture: 0.0016, maxblur: 0.006 });
+composer.addPass(bokeh);
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), 0.18, 0.5, 0.95));
+composer.addPass(new OutputPass());
+
+const C = makeClawd(scene);
+// soft contact shadow: a blurred dark disc that follows him and fades as he leaves the floor
+const blobTex = (() => { const c = document.createElement("canvas"); c.width = c.height = 256; const g = c.getContext("2d");
+  const gr = g.createRadialGradient(128, 128, 0, 128, 128, 128); gr.addColorStop(0, "rgba(0,0,0,0.75)"); gr.addColorStop(0.55, "rgba(0,0,0,0.35)"); gr.addColorStop(1, "rgba(0,0,0,0)");
+  g.fillStyle = gr; g.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c); })();
+const blob = new THREE.Mesh(new THREE.PlaneGeometry(9.5, 5.2), new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, depthWrite: false }));
+blob.rotation.x = -Math.PI / 2; blob.position.y = 0.025; scene.add(blob);
+const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const io = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2; };
+
+// paper: a curled sheet, one texture
+const ptex = (() => { const c = document.createElement("canvas"); c.width = 512; c.height = 680; const g = c.getContext("2d");
+  g.fillStyle = "#f4f0e8"; g.fillRect(0, 0, 512, 680); g.fillStyle = "#26211d"; g.font = "800 34px sans-serif"; g.fillText("Application", 40, 72);
+  g.fillStyle = "#d9534a"; g.fillRect(40, 92, 70, 6); g.fillStyle = "#cfc8bb"; for (let y = 140; y < 640; y += 34) g.fillRect(40, y, 260 + ((y * 37) % 150), 11);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; })();
+const pg = new THREE.PlaneGeometry(2.3, 3.05, 8, 10); { const p = pg.attributes.position; for (let i = 0; i < p.count; i++) p.setZ(i, 0.16 * Math.sin(p.getX(i) * 1.3) + 0.04 * p.getY(i) * p.getY(i)); pg.computeVertexNormals(); }
+const pm = new THREE.MeshStandardMaterial({ map: ptex, side: THREE.DoubleSide, roughness: 0.8, color: 0xd9d4ca });
+const papers = Array.from({ length: 40 }, (_, i) => { const m = new THREE.Mesh(pg, pm); m.castShadow = true; m.receiveShadow = true; scene.add(m);
+  const a = rnd(i) * Math.PI * 2, r = 5 + rnd(i + 9) ** 0.7 * 12; return { m, x: Math.cos(a) * r, z: Math.sin(a) * r * 0.7 - 3, t0: -1 + rnd(i + 3) * 3.4, rz: rnd(i + 4) * 6.28, s: 0.6 + rnd(i + 5) }; });
+
+// ripple rings on landing
+const ringMat = new THREE.MeshBasicMaterial({ color: 0xffe2cc, transparent: true, depthWrite: false, toneMapped: false });
+const rings = [0, 1].map(() => { const m = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 128), ringMat.clone()); m.rotation.x = -Math.PI / 2; scene.add(m); return m; });
+
+let n69;
+function renderAt(t) {
+  const jumps = [[2.2, 3.0, 0.62]], land = 2.2 + 0.62;
+  pose(C, t, { u: t, p: [0, 0, 0], ry: 0.32 * Math.sin(t * 0.5) - 0.12, jumps, look: -0.12, lookUp: 0.3, snap: t < 1.8 || t > 3.6, wave: t > 3.9, armL: t > 2.2 && t < 2.9 ? 0.7 : 0 });
+  const lift = C.root.position.y; blob.position.set(C.root.position.x, 0.025, C.root.position.z + 0.2);
+  blob.scale.setScalar(1 - Math.min(0.45, lift * 0.09)); blob.material.opacity = 1 - Math.min(0.75, lift * 0.18); blob.rotation.z = -C.root.rotation.y;
+  rings.forEach((r, j) => { const k = (t - land - j * 0.12) / 0.8; r.visible = k > 0 && k < 1; r.position.set(0, 0.03 + j * 0.004, 0);
+    r.scale.setScalar(1.6 + io(k) * (j ? 4.5 : 6.5)); r.material.opacity = (1 - k) * (j ? 0.45 : 0.8); });
+  papers.forEach((p, i) => { const k = clamp((t - p.t0) / 1.6), e = k * k, sw = Math.sin(t * 3 * p.s + i) * (1 - k);
+    p.m.visible = t > p.t0; p.m.position.set(p.x + sw * 1.2, 30 - 29.95 * e + (i % 6) * 0.01, p.z);
+    p.m.rotation.set(-Math.PI / 2 + sw * 0.9 + (1 - k) * 0.5, 0, p.rz + (1 - k) * 1.4); });
+  if (n69) { n69.rotation.y = -0.15 + 0.12 * Math.sin(t * 0.6); n69.position.y = 9.5 + 0.2 * Math.sin(t * 1.1); }
+  // slow dolly + orbit, low hero angle
+  const a = -0.3 + t * 0.08, d = 44 - t * 1.4;
+  camera.position.set(Math.sin(a) * d, 7 + t * 0.2, Math.cos(a) * d); camera.lookAt(0, 6.2, -2);
+  bokeh.uniforms.focus.value = camera.position.distanceTo(new THREE.Vector3(0, 3.5, 0));
+  composer.render();
+}
+
+window.__hf = window.__hf || {};
+window.__hf.buildReady = window.__hf.buildReady || {};
+window.__hf.buildReady.scene = (async () => {
+  const font = await new FontLoader().loadAsync("assets/helvetiker_bold.typeface.json");
+  const geo = new TextGeometry("69", { font, size: 6, depth: 1.8, curveSegments: 14, bevelEnabled: true, bevelThickness: 0.35, bevelSize: 0.22, bevelSegments: 8 });
+  geo.computeBoundingBox(); const bb = geo.boundingBox; geo.translate(-(bb.max.x + bb.min.x) / 2, -bb.min.y, -(bb.max.z + bb.min.z) / 2);
+  n69 = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: 0xf2ece2, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08 }));
+  n69.position.set(0, 9.5, -19); n69.castShadow = true; n69.receiveShadow = true; scene.add(n69);
+  renderer.compile(scene, camera);
+  renderAt(window.__hfThreeTime || 0);
+})();
+window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+</script>
+</body>
+</html>

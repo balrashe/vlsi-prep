@@ -1,0 +1,15 @@
+{
+ "_note": "Defaults are @iamajene's measured look (see editing-refs/ajene/DesQj6ro0HP/STYLE.md). The brand interview overwrites these.",
+ "accent": "#e08a3a",
+ "caption_color": "#ffffff",
+ "fonts": {
+  "caption": ["Inter", "Inter.woff2", 600],
+  "accent": ["Instrument Serif", "InstrumentSerif-Italic.woff2", 400, "italic"],
+  "title": ["Montserrat", "Montserrat-ExtraBoldItalic.woff2", 800, "italic"],
+  "card": ["Anton", "Anton.woff2", 400]
+ },
+ "title_box": {"bg": "#fefefe", "fg": "#000000"},
+ "card_name_color": "#f5e04a",
+ "tiers": {"S": "#f3707e", "A": "#f6bb7f", "B": "#fdff82", "C": "#86ff84", "D": "#84bff9", "E": "#7e77f9", "F": "#f167f8"},
+ "fps": 30
+}

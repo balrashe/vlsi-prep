@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>jobs3d</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/" } }
+</script>
+<style>
+@font-face { font-family: "Inter"; src: url("assets/fonts/Inter.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono.woff2") format("woff2"); font-weight: 100 800; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #05040a; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+.cap { position: absolute; left: 70px; right: 70px; top: 1250px; text-align: center; font: 900 92px/1.08 "Inter";
+  letter-spacing: -0.02em; text-transform: uppercase; color: #fff; opacity: 0; -webkit-text-stroke: 10px #000; paint-order: stroke fill;
+  text-shadow: 0 6px 0 rgba(0,0,0,.55), 0 0 30px rgba(0,0,0,.6); }
+.cap .w { display: inline-block; opacity: 0; margin: 0 0.12em; }
+.cap .k { -webkit-text-stroke: 0; background: #e3262f; padding: 0 0.16em; border-radius: 6px; text-shadow: none; }
+.cap.top { top: 230px; font-size: 80px; }
+#mos { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(9, 120px); grid-template-rows: repeat(16, 120px); pointer-events: none; }
+#mos i { display: block; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1080" data-height="1920" data-fps="30">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="caps"></div>
+  <div id="mos"></div>
+</div>
+<script>
+// Beat clock shared by the captions (GSAP) and the 3D scene (hf-seek). Times in seconds.
+window.BEATS = [[0, 3.6], [3.6, 7.2], [7.2, 11], [11, 14.8], [14.8, 18.8], [18.8, 22.6], [22.6, 26.6], [26.6, 30]];
+// [start, end, words, top?]: a word wrapped in * gets the red box
+const CAPS = [
+  [0.15, 1.15, "69 *applications.*"], [1.15, 2.3, "20 *interviews.*"], [2.3, 3.6, "1 *job.*"],
+  [3.7, 5.3, "his job got *cut.*"], [5.3, 7.2, "so he built an *AI agent.*"],
+  [7.3, 9.1, "feed it your *CV.*"], [9.1, 11, "it learns your *profile.*"],
+  [11.1, 14.8, "it *scrapes* the job boards."],
+  [14.9, 16.9, "scores *every* post"], [16.9, 18.8, "against *you.*"],
+  [18.9, 20.7, "tailors your *CV*"], [20.7, 22.6, "+ a *cover letter.*"],
+  [22.7, 26.6, "then a *mock interview.*"],
+  [26.7, 30, "comment *JOBS*"],
+];
+const MOSAIC_AT = [7.2, 14.8, 22.6];
+const PAL = ["#f4b400", "#2ad1a3", "#e8622c", "#2b2b33", "#14121c", "#7a5cff", "#f4b400", "#e8622c"];
+function rnd(i) { let x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+
+function build() {
+  const caps = document.getElementById("caps"), mos = document.getElementById("mos");
+  CAPS.forEach(([a, b, txt, top], n) => {
+    const d = document.createElement("div");
+    d.className = "cap" + (top ? " top" : "");
+    d.innerHTML = txt.split(" ").map((w) => w.startsWith("*") || w.endsWith("*")
+      ? `<span class="w k">${w.replace(/\*/g, "")}</span>` : `<span class="w">${w}</span>`).join(" ")
+      .replace(/<span class="w">(\*?)/g, '<span class="w">');
+    d.dataset.a = a; d.dataset.b = b;
+    caps.appendChild(d);
+  });
+  for (let i = 0; i < 144; i++) {
+    const c = document.createElement("i");
+    c.style.background = PAL[Math.floor(rnd(i + 7) * PAL.length)];
+    mos.appendChild(c);
+  }
+  const tl = gsap.timeline({ paused: true });
+  document.querySelectorAll(".cap").forEach((d) => {
+    const a = +d.dataset.a, b = +d.dataset.b;
+    tl.set(d, { opacity: 1 }, a).set(d, { opacity: 0 }, b);
+    d.querySelectorAll(".w").forEach((w, k) => {
+      tl.fromTo(w, { opacity: 0, scale: 1.6, y: 10 }, { opacity: 1, scale: 1, y: 0, duration: 0.14, ease: "power4.out" }, a + k * 0.09);
+    });
+  });
+  // pixel-block wipe: squares fill in over 0.16s before the cut and clear 0.16s after it
+  const cells = mos.querySelectorAll("i");
+  MOSAIC_AT.forEach((T, m) => {
+    cells.forEach((c, i) => {
+      tl.set(c, { opacity: 1 }, T - 0.18 + rnd(i * 3 + m) * 0.16);
+      tl.set(c, { opacity: 0 }, T + 0.02 + rnd(i * 5 + m + 1) * 0.16);
+    });
+  });
+  tl.set({}, {}, 30);
+  window.__timelines["main"] = tl;
+}
+document.fonts.ready.then(build);
+</script>
+<script type="module">
+// Voxel dioramas for each beat, drawn from HyperFrames time (hf-seek) only, so any frame renders the same.
+import * as THREE from "three";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+const W = 1080, H = 1920, B = window.BEATS;
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("gl"), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.95;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x05040a);
+scene.fog = new THREE.FogExp2(0x05040a, 0.011);
+const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 600);
+const composer = new EffectComposer(renderer);
+composer.setSize(W, H);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), 0.7, 0.5, 0.82);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ss = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const outBack = (x) => { const c = 1.9; x = clamp(x); return 1 + (c + 1) * (x - 1) ** 3 + c * (x - 1) ** 2; };
+const lerp = (a, b, k) => a + (b - a) * k;
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1, ...o });
+const glow = (color, k = 1.6) => new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: k, roughness: 0.4 });
+function cube(w, h, d, m) { return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); }
+
+function canvasTex(w, h, draw) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const g = c.getContext("2d"); draw(g, w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  t.userData = { c, g, draw };
+  return t;
+}
+function plane(w, h, tex, o = {}) {
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, ...o }));
+}
+function rrect(g, x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
+
+// ---- shared stage: neon grid floor, stars, dust, lights ------------------------------------------
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x0a0910, roughness: 0.35, metalness: 0.6 });
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), floorMat);
+floor.rotation.x = -Math.PI / 2; scene.add(floor);
+const gridPts = [];
+for (let k = -150; k <= 150; k += 4) { gridPts.push(-150, 0.02, k, 150, 0.02, k, k, 0.02, -150, k, 0.02, 150); }
+const gridGeo = new THREE.BufferGeometry(); gridGeo.setAttribute("position", new THREE.Float32BufferAttribute(gridPts, 3));
+const gridMat = new THREE.LineBasicMaterial({ color: 0xff6a2a, transparent: true, opacity: 0.9 });
+scene.add(new THREE.LineSegments(gridGeo, gridMat));
+const starGeo = new THREE.BufferGeometry(), sp = [];
+for (let i = 0; i < 900; i++) { const a = rnd(i) * Math.PI * 2, r = 160 + rnd(i + 1) * 120; sp.push(Math.cos(a) * r, 8 + rnd(i + 2) * 150, Math.sin(a) * r - 60); }
+starGeo.setAttribute("position", new THREE.Float32BufferAttribute(sp, 3));
+scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.9, fog: false })));
+const dustGeo = new THREE.BufferGeometry(); dustGeo.setAttribute("position", new THREE.Float32BufferAttribute(new Float32Array(240 * 3), 3));
+const dustMat = new THREE.PointsMaterial({ color: 0xffc27a, size: 0.35, transparent: true, opacity: 0.8 });
+scene.add(new THREE.Points(dustGeo, dustMat));
+scene.add(new THREE.HemisphereLight(0x8a90ff, 0x1a0d05, 0.35));
+const key = new THREE.SpotLight(0xffffff, 260, 120, 0.5, 0.7, 1.6); key.position.set(0, 40, 14); scene.add(key, key.target);
+const rim = new THREE.PointLight(0xff6a2a, 300, 80, 1.6); rim.position.set(-14, 10, -10); scene.add(rim);
+// fake volumetric beam: an open cone that fades from top to bottom
+const beamTex = canvasTex(8, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "rgba(255,255,255,0.35)"); gr.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+function beam(color, r = 9, h = 42) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(1.2, r, h, 40, 1, true),
+    new THREE.MeshBasicMaterial({ map: beamTex, color, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.FrontSide, opacity: 0.13 }));
+  m.position.y = h / 2; return m;
+}
+const ring = (color, r) => { const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.12, 8, 64), glow(color, 2.4)); m.rotation.x = Math.PI / 2; return m; };
+
+// ---- Claude's mascot, as voxels --------------------------------------------------------------------
+const ORANGE = 0xd97757;
+const clawd = new THREE.Group();
+const cbody = new THREE.Group(); clawd.add(cbody);
+const orangeMat = std(ORANGE, { emissive: ORANGE, emissiveIntensity: 0.28, roughness: 0.55 });
+const torso = cube(6, 3.6, 3, orangeMat); torso.position.y = 3.2; cbody.add(torso);
+const eyeMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 });
+const eyes = [-1.3, 1.3].map((x) => { const e = cube(0.62, 1.2, 0.2, eyeMat); e.position.set(x, 3.6, 1.55); cbody.add(e); return e; });
+const arms = [-1, 1].map((s) => { const a = new THREE.Group(); a.position.set(s * 3, 3.0, 0); const m = cube(1.2, 1.0, 1.2, orangeMat); m.position.x = s * 0.6; a.add(m); cbody.add(a); return a; });
+const legs = [-2.3, -0.8, 0.8, 2.3].map((x) => { const l = cube(0.8, 1.4, 1.2, orangeMat); l.position.set(x, 0.7, 0); cbody.add(l); return l; });
+scene.add(clawd);
+// pose: { p:[x,y,z], ry, hop, wave, tap, look, s }
+function poseClawd(t, o) {
+  clawd.position.set(o.p[0], o.p[1] + (o.hop || 0), o.p[2]);
+  clawd.rotation.y = o.ry || 0;
+  clawd.scale.setScalar(o.s || 1);
+  const sq = o.squash || 0;
+  cbody.scale.set(1 + sq * 0.12, 1 - sq * 0.18, 1 + sq * 0.12);
+  cbody.rotation.x = (o.look || 0) + 0.03 * Math.sin(t * 2.3);
+  cbody.rotation.z = 0.035 * Math.sin(t * 1.7);
+  torso.position.y = 3.2 + 0.12 * Math.sin(t * 4.2);
+  const blink = (t * 1000 % 3100) < 110 ? 0.12 : 1;
+  eyes.forEach((e) => (e.scale.y = blink));
+  arms[0].rotation.z = 0.3 * Math.sin(t * 6) * (o.tap || 0) - (o.waveL || 0);
+  arms[1].rotation.z = -(o.wave ? 1.9 + 0.5 * Math.sin(t * 14) : 0) - 0.3 * Math.sin(t * 6 + 1) * (o.tap || 0);
+  legs.forEach((l, i) => (l.position.y = 0.7 + Math.max(0, Math.sin(t * 9 + i * 1.6)) * 0.35 * (o.walk || 0)));
+  orangeMat.emissiveIntensity = 0.28 + (o.glow || 0);
+}
+
+// ---- 5x7 voxel letters --------------------------------------------------------------------------
+const FONT = {
+  "6": ["01110", "10000", "10000", "11110", "10001", "10001", "01110"], "9": ["01110", "10001", "10001", "01111", "00001", "00001", "01110"],
+  "1": ["00100", "01100", "00100", "00100", "00100", "00100", "01110"], "J": ["00111", "00010", "00010", "00010", "10010", "10010", "01100"],
+  "O": ["01110", "10001", "10001", "10001", "10001", "10001", "01110"], "B": ["11110", "10001", "10001", "11110", "10001", "10001", "11110"],
+  "S": ["01111", "10000", "10000", "01110", "00001", "00001", "11110"], " ": ["00000", "00000", "00000", "00000", "00000", "00000", "00000"],
+};
+function voxelWord(word, size, mat) {
+  const cubes = [], g = new THREE.Group(), geo = new THREE.BoxGeometry(size * 0.92, size * 0.92, size * 0.92);
+  const wch = 6 * size, x0 = -((word.length * wch) - size) / 2;
+  [...word].forEach((ch, li) => FONT[ch].forEach((row, r) => [...row].forEach((v, c) => {
+    if (v !== "1") return;
+    const m = new THREE.Mesh(geo, mat);
+    m.userData.home = new THREE.Vector3(x0 + li * wch + c * size, (6 - r) * size + size / 2, 0);
+    m.userData.li = li; m.userData.i = cubes.length;
+    m.position.copy(m.userData.home); g.add(m); cubes.push(m);
+  })));
+  g.userData.cubes = cubes; return g;
+}
+
+// ---- props ----------------------------------------------------------------------------------------
+const pageTex = canvasTex(256, 340, (g, w, h) => {
+  g.fillStyle = "#f4f1ea"; g.fillRect(0, 0, w, h); g.fillStyle = "#c9c3b6";
+  for (let y = 40; y < h - 20; y += 26) g.fillRect(24, y, (y * 37) % 90 + 120, 9);
+  g.fillStyle = "#e8622c"; g.fillRect(24, 16, 90, 14);
+});
+const pageMat = new THREE.MeshStandardMaterial({ map: pageTex, side: THREE.DoubleSide, roughness: 0.8 });
+const pageGeo = new THREE.PlaneGeometry(2.4, 3.2);
+function docTex(head, sub, accent) {
+  return canvasTex(512, 660, (g, w, h) => {
+    g.fillStyle = "#f6f3ec"; g.fillRect(0, 0, w, h);
+    g.fillStyle = accent; g.fillRect(0, 0, w, 120);
+    g.fillStyle = "#fff"; g.font = "900 76px Inter"; g.fillText(head, 36, 92);
+    g.fillStyle = "#1a1a1a"; g.font = "800 30px Inter"; g.fillText(sub, 36, 178);
+    g.fillStyle = "#cfc9bc"; for (let y = 220; y < h - 30; y += 44) g.fillRect(36, y, 180 + (y * 53) % 250, 16);
+  });
+}
+function cardTex(title, i) {
+  return canvasTex(400, 250, (g, w, h) => {
+    rrect(g, 0, 0, w, h, 22); g.fillStyle = "#151520"; g.fill();
+    g.lineWidth = 6; g.strokeStyle = ["#2ad1a3", "#f4b400", "#7a5cff", "#e8622c"][i % 4]; g.stroke();
+    g.fillStyle = "#8f8aa6"; g.font = "700 26px 'JetBrains Mono'"; g.fillText("JOB POST", 28, 48);
+    g.fillStyle = "#fff"; g.font = "900 40px Inter"; g.fillText(title, 28, 104);
+    g.fillStyle = "#3a3850"; for (let k = 0; k < 3; k++) g.fillRect(28, 140 + k * 30, 300 - k * 60, 14);
+  });
+}
+const TITLES = ["Data Scientist", "ML Engineer", "Geophysicist", "AI Engineer", "Data Analyst", "Python Dev", "GIS Analyst", "Researcher"];
+const cardTexes = TITLES.map(cardTex);
+function jobCard(i) { const m = cube(5.2, 3.25, 0.25, [0, 0, 0, 0, 0, 0].map((_, f) => f === 4 ? new THREE.MeshBasicMaterial({ map: cardTexes[i % 8] }) : std(0x151520))); return m; }
+function bubble(text, w = 8.5) {
+  const t = canvasTex(1024, 300, (g, cw, ch) => {
+    rrect(g, 8, 8, cw - 16, ch - 76, 40); g.fillStyle = "#fff"; g.fill(); g.lineWidth = 10; g.strokeStyle = "#111"; g.stroke();
+    g.beginPath(); g.moveTo(cw / 2 - 40, ch - 72); g.lineTo(cw / 2, ch - 8); g.lineTo(cw / 2 + 40, ch - 72); g.fill(); g.stroke();
+    g.fillStyle = "#111"; g.font = "900 64px Inter"; g.textAlign = "center"; g.fillText(text, cw / 2, 140);
+  });
+  return plane(w, w * 300 / 1024, t, { color: 0xbdbdbd });
+}
+function monitor(screenTex) {
+  const g = new THREE.Group();
+  const frame = cube(9, 6, 0.6, std(0x2a2a33)); frame.position.y = 4.6; g.add(frame);
+  const scr = plane(8.2, 5.2, screenTex, { transparent: false, toneMapped: false }); scr.position.set(0, 4.6, 0.31); g.add(scr);
+  const neck = cube(0.8, 1.6, 0.6, std(0x2a2a33)); neck.position.y = 0.8; g.add(neck);
+  return g;
+}
+
+// ---- sets, one per beat -----------------------------------------------------------------------------
+const sets = [];
+function makeSet(color, setup, update, cams) { const g = new THREE.Group(); scene.add(g); const s = { g, color, cams, update }; setup(g, s); sets.push(s); }
+
+// 0: papers rain, 69 becomes 1 JOB
+makeSet(0xff6a2a, (g, s) => {
+  s.pages = [];
+  for (let i = 0; i < 69; i++) { const m = new THREE.Mesh(pageGeo, pageMat); g.add(m); const a = rnd(i) * Math.PI * 2, r = 5 + rnd(i + 9) * 15;
+    s.pages.push({ m, x: Math.cos(a) * r, z: Math.sin(a) * r - 2, t0: 0.05 + i * 0.03, rz: rnd(i + 4) * 6 }); }
+  s.w69 = voxelWord("69", 1.1, glow(0xff6a2a, 1.3)); s.w69.position.set(0, 2, -14); g.add(s.w69);
+  s.w1 = voxelWord("1 JOB", 0.95, glow(0x2ad1a3, 1.5)); s.w1.position.set(0, 2, -14); g.add(s.w1);
+  s.b = beam(0xffd2a0, 11); s.b.position.set(0, 0, 3); g.add(s.b);
+}, (s, u, t) => {
+  s.pages.forEach((p, i) => { const k = clamp((u - p.t0) / 0.75);
+    p.m.position.set(p.x + Math.sin(u * 3 + i) * (1 - k) * 2, lerp(34, 0.05 + (i % 5) * 0.02, k * k), p.z);
+    p.m.rotation.set(-Math.PI / 2 + (1 - k) * Math.sin(u * 7 + i) * 1.2, 0, p.rz + (1 - k) * u * 2); p.m.visible = u >= p.t0; });
+  const boom = 2.25;
+  s.w69.userData.cubes.forEach((c, i) => { const h = c.userData.home, d = Math.max(0, u - boom);
+    c.position.set(h.x + (rnd(i) - 0.5) * 30 * d, h.y + 14 * d - 22 * d * d + rnd(i + 3) * 8 * d, h.z + (rnd(i + 5) - 0.2) * 20 * d);
+    c.rotation.set(d * 6 * rnd(i), d * 5, 0); c.visible = u < boom + 1.2; });
+  s.w1.userData.cubes.forEach((c, i) => { const h = c.userData.home, k = outBack((u - boom - 0.15 - c.userData.li * 0.07 - rnd(i) * 0.12) / 0.35);
+    c.position.set(h.x, h.y + (1 - k) * 22, h.z); c.visible = u > boom + 0.1; });
+  poseClawd(t, { p: [0, 0, 5], look: -0.25 * ss(0, 1.5, u) + 0.25 * ss(2.2, 2.6, u), hop: u > 2.3 && u < 2.8 ? Math.sin((u - 2.3) / 0.5 * Math.PI) * 2.4 : 0, wave: u > 2.8 });
+}, [[0, [0, 30, 56], [0, 6, 0]], [2.1, [0, 10, 36], [0, 5, -4]], [3.6, [3, 8, 32], [0, 5, -5]]]);
+
+// 1: the agent at its desk, a printer spitting out applications
+const termTex = canvasTex(820, 520, () => {});
+const TERM = [[0.1, "> /setup", "#9fe870"], [0.5, "profile ready", "#8f8aa6"], [0.9, "> /scrape", "#9fe870"], [1.3, "scanning job boards...", "#8f8aa6"],
+  [1.8, "> /apply", "#9fe870"], [2.2, "tailoring CV...", "#8f8aa6"], [2.6, "writing cover letter...", "#8f8aa6"], [3.0, "application sent", "#f4b400"]];
+function drawTerm(u) {
+  const { g, c } = termTex.userData; g.fillStyle = "#0c0b14"; g.fillRect(0, 0, c.width, c.height);
+  g.font = "700 40px 'JetBrains Mono'";
+  TERM.forEach(([tt, line, col], i) => { if (u < tt) return; const n = Math.floor(clamp((u - tt) / 0.3) * line.length);
+    g.fillStyle = col; g.fillText(line.slice(0, n), 36, 70 + i * 58); });
+  if (Math.floor(u * 3) % 2) { g.fillStyle = "#9fe870"; g.fillRect(36, 470, 22, 40); }
+  termTex.needsUpdate = true;
+}
+makeSet(0x26d9c4, (g, s) => {
+  const desk = cube(16, 0.8, 7, std(0x3a2a20)); desk.position.set(0, 4.4, 0); g.add(desk);
+  [[-7, -3], [7, -3], [-7, 3], [7, 3]].forEach(([x, z]) => { const l = cube(0.7, 4.4, 0.7, std(0x2a1d16)); l.position.set(x, 2.2, z); g.add(l); });
+  s.mon = monitor(termTex); s.mon.position.set(-4, 4.8, 1); s.mon.rotation.y = 0.85; g.add(s.mon);
+  const printer = cube(4, 2, 3, std(0x777788)); printer.position.set(5.5, 5.8, 0); g.add(printer);
+  const slot = cube(2.6, 0.2, 0.3, glow(0x26d9c4, 2)); slot.position.set(5.5, 6.5, 1.5); g.add(slot);
+  s.out = []; for (let i = 0; i < 14; i++) { const m = new THREE.Mesh(pageGeo, pageMat); g.add(m); s.out.push(m); }
+  s.b = beam(0x9ff5ea, 12, 46); s.b.position.set(0, 0, 0); g.add(s.b);
+  const ml = new THREE.PointLight(0x26d9c4, 220, 30, 1.6); ml.position.set(-3, 9, 6); g.add(ml);
+}, (s, u, t) => {
+  drawTerm(u);
+  s.out.forEach((m, i) => { const t0 = 1.9 + i * 0.12, k = clamp((u - t0) / 0.5); m.visible = u > t0;
+    m.position.set(5.5 + k * 3.5, 6.6 + Math.sin(k * Math.PI) * 3 - k * 1.2 + i * 0.03, 1.6 + k * 2.5); m.rotation.set(-Math.PI / 2 * k, 0, k * 0.4 + rnd(i) * 0.3); });
+  poseClawd(t, { p: [1, 1.6, -4.2], ry: -0.35, tap: 1 });
+}, [[0, [5, 14, 36], [-1, 6, 0]], [3.6, [-2, 11, 27], [-1, 6, 0]]]);
+
+// 2: feed it your CV, it becomes a profile
+const cvTex = docTex("CV", "YOUR EXPERIENCE", "#e8622c");
+const profTex = canvasTex(700, 460, (g, w, h) => {
+  rrect(g, 6, 6, w - 12, h - 12, 30); g.fillStyle = "rgba(20,14,40,0.92)"; g.fill(); g.lineWidth = 8; g.strokeStyle = "#9b5cff"; g.stroke();
+  g.fillStyle = "#fff"; g.font = "900 58px Inter"; g.fillText("YOUR PROFILE", 40, 92);
+  ["skills", "experience", "goals", "location"].forEach((c, i) => { const x = 40 + (i % 2) * 320, y = 150 + Math.floor(i / 2) * 120;
+    rrect(g, x, y, 290, 90, 45); g.fillStyle = ["#2ad1a3", "#f4b400", "#e8622c", "#7a5cff"][i]; g.fill();
+    g.fillStyle = "#111"; g.font = "800 40px Inter"; g.fillText(c, x + 30, y + 60); });
+});
+makeSet(0x9b5cff, (g, s) => {
+  s.cv = plane(9, 11.6, cvTex, { side: THREE.DoubleSide }); g.add(s.cv);
+  s.prof = plane(13, 8.5, profTex, { toneMapped: false, color: 0xd0d0d0 }); s.prof.position.set(0, 14, 0); g.add(s.prof);
+  s.rings = [0, 1, 2].map(() => { const r = ring(0x9b5cff, 1); g.add(r); return r; });
+  s.b = beam(0xc7a6ff, 10); g.add(s.b);
+}, (s, u, t) => {
+  const fall = outBack((u - 0.1) / 0.9), eat = ss(1.7, 2.3, u);
+  s.cv.position.set(lerp(0, 0, eat), lerp(lerp(32, 11, fall), 3.4, eat), lerp(3, 2, eat));
+  s.cv.rotation.set(0, Math.sin(u * 1.4) * 0.25 * (1 - eat) + eat * 6, Math.sin(u * 2) * 0.05);
+  s.cv.scale.setScalar(Math.max(0.001, 1 - eat)); s.cv.visible = eat < 1;
+  s.rings.forEach((r, i) => { const k = clamp((u - 2.3 - i * 0.18) / 0.9); r.scale.setScalar(1 + k * 16); r.material.opacity = 1 - k; r.material.transparent = true; r.visible = k > 0 && k < 1; r.position.y = 0.2; });
+  const pk = outBack((u - 2.55) / 0.35); s.prof.scale.setScalar(Math.max(0.001, pk)); s.prof.position.y = 14 + Math.sin(u * 2) * 0.4; s.prof.visible = u > 2.55;
+  poseClawd(t, { p: [0, 0, 2], look: -0.3 * ss(0, 1, u) * (1 - eat), squash: u > 2.2 && u < 2.5 ? 1 : 0, glow: 1.4 * Math.max(0, 1 - Math.abs(u - 2.4) / 0.5), hop: u > 2.45 && u < 2.9 ? Math.sin((u - 2.45) / 0.45 * Math.PI) * 1.6 : 0 });
+}, [[0, [0, 8, 34], [0, 9, 0]], [2.0, [0, 6, 22], [0, 5, 0]], [3.8, [-6, 10, 26], [0, 8, 0]]]);
+
+// 3: job boards stream posts into a stack
+const towerTex = (label) => canvasTex(512, 128, (g, w, h) => { g.fillStyle = "#f4b400"; g.font = "900 72px Inter"; g.textAlign = "center"; g.fillText(label, w / 2, 92); });
+makeSet(0xffb000, (g, s) => {
+  s.towers = [[-15, -16, "LINKEDIN"], [0, -24, "JOB BOARD"], [15, -16, "JOB BOARD"]].map(([x, z, l]) => {
+    const tw = new THREE.Group(); tw.position.set(x, 0, z);
+    const body = cube(6, 20, 6, std(0x16141f)); body.position.y = 10; tw.add(body);
+    for (let k = 0; k < 6; k++) { const win = cube(6.1, 0.4, 6.1, glow(0xffb000, 1.2)); win.position.y = 3 + k * 3; tw.add(win); }
+    const top = cube(3, 1.2, 3, glow(0xfff1c4, 3)); top.position.y = 20.8; tw.add(top);
+    const lab = plane(10, 2.5, towerTex(l), { toneMapped: false }); lab.position.set(0, 24.5, 0); tw.add(lab);
+    g.add(tw); return tw; });
+  s.cards = []; for (let i = 0; i < 12; i++) { const c = jobCard(i); g.add(c); s.cards.push(c); }
+}, (s, u, t) => {
+  s.cards.forEach((c, i) => { const tw = s.towers[i % 3].position, t0 = 0.3 + i * 0.22, k = ss(t0, t0 + 0.8, u);
+    const end = new THREE.Vector3(7.5, 0.3 + i * 0.32, 3);
+    const p0 = new THREE.Vector3(tw.x, 21, tw.z), mid = new THREE.Vector3((tw.x + end.x) / 2, 30, (tw.z + end.z) / 2);
+    c.position.set(lerp(lerp(p0.x, mid.x, k), lerp(mid.x, end.x, k), k), lerp(lerp(p0.y, mid.y, k), lerp(mid.y, end.y, k), k), lerp(lerp(p0.z, mid.z, k), lerp(mid.z, end.z, k), k));
+    c.rotation.set(-Math.PI / 2 * k + (1 - k) * Math.sin(u * 4 + i), (1 - k) * u * 3, rnd(i) * 0.3 * k); c.visible = u > t0; });
+  poseClawd(t, { p: [-1, 0, 4], ry: 0.6 * Math.sin(u * 2.2), look: -0.2, hop: Math.max(0, Math.sin(u * 7)) * 0.4 });
+}, [[0, [0, 34, 46], [0, 12, -10]], [3.8, [10, 12, 26], [2, 6, -2]]]);
+
+// 4: conveyor, each post gets a score; good ones rise, bad ones drop
+const SCORES = [0.92, 0.3, 0.78, 0.18, 0.86, 0.42, 0.95];
+makeSet(0x26d9c4, (g, s) => {
+  const belt = cube(70, 1, 5, std(0x1b1a24)); belt.position.set(0, 2, 0); g.add(belt);
+  s.stripes = []; for (let k = 0; k < 24; k++) { const st = cube(0.4, 0.05, 5.02, glow(0x26d9c4, 1)); st.position.set(-35 + k * 3, 2.52, 0); g.add(st); s.stripes.push(st); }
+  s.items = SCORES.map((sc, i) => { const c = jobCard(i); c.rotation.x = -0.15; g.add(c);
+    const bar = new THREE.Group(); const bg = cube(5, 0.55, 0.3, std(0x2a2838)); bar.add(bg);
+    const fill = cube(5, 0.6, 0.35, glow(sc > 0.6 ? 0x2ad1a3 : 0xe3262f, 2)); fill.position.z = 0.05; bar.add(fill); g.add(bar);
+    return { c, bar, fill, sc, t0: 0.2 + i * 0.5 }; });
+  const ped = cube(8, 7, 5, std(0x1b1a24)); ped.position.set(0, 3.5, -7); g.add(ped);
+  s.shelf = cube(9, 0.4, 4, glow(0x2ad1a3, 0.8)); s.shelf.position.set(18, 15, -4); g.add(s.shelf);
+}, (s, u, t) => {
+  s.stripes.forEach((st, k) => (st.position.x = ((-35 + k * 3 + u * 8) % 72 + 72) % 72 - 36));
+  s.items.forEach((it, i) => {
+    const x = (u - it.t0) * 9 - 14, past = Math.max(0, x - 2), good = it.sc > 0.6;
+    let y = 4.5, z = 0;
+    if (past > 0) { if (good) { const k = ss(0, 10, past); y = lerp(4.5, 17, k); z = lerp(0, -4, k); } else { y = 4.5 - 0.09 * past * past; } }
+    it.c.position.set(Math.min(x, good ? lerp(x, 18, ss(0, 10, past)) : x), y, z); it.c.visible = x > -26 && y > -6;
+    if (!good && past > 0) it.c.rotation.set(-0.15 + past * 0.4, 0, past * 0.3);
+    const k = clamp((x + 1) / 3) * it.sc; it.fill.scale.x = Math.max(0.01, k); it.fill.position.x = -2.5 + 2.5 * Math.max(0.01, k);
+    it.bar.position.set(it.c.position.x, it.c.position.y + 2.5, it.c.position.z); it.bar.visible = it.c.visible && x > -1;
+  });
+  const near = s.items.some((it) => Math.abs((u - it.t0) * 9 - 14 + 1) < 0.6);
+  poseClawd(t, { p: [0, 7, -7], squash: near ? 0.8 : 0, tap: 0.4 });
+}, [[0, [-14, 14, 34], [0, 7, -3]], [4.0, [8, 13, 32], [2, 8, -3]]]);
+
+// 5: tailor the CV, then print a cover letter
+const cv2 = docTex("CV", "TAILORED FOR THIS JOB", "#e8622c"), cover = docTex("COVER", "LETTER", "#2ad1a3");
+makeSet(0xff6a2a, (g, s) => {
+  s.page = cube(10, 13, 0.3, std(0xf6f3ec)); s.page.position.set(2, 7.5, 0); s.page.scale.setScalar(0.85); g.add(s.page);
+  const head = plane(10, 2.4, canvasTex(512, 124, (gg, w, h) => { gg.fillStyle = "#e8622c"; gg.fillRect(0, 0, w, h); gg.fillStyle = "#fff"; gg.font = "900 80px Inter"; gg.fillText("CV", 30, 92); }), { transparent: false });
+  head.position.set(2, 12.8, 0.17); g.add(head);
+  s.bars = [0, 1, 2, 3, 4, 5].map((k) => { const b = cube(4 + rnd(k) * 3.5, 0.7, 0.2, std(0xbdb6a6)); b.position.set(2 - 3.6 + b.geometry.parameters.width / 2, 10 - k * 1.5, 0.25); g.add(b); return b; });
+  s.hl = new THREE.MeshStandardMaterial({ color: 0xff7a3a, emissive: 0xff7a3a, emissiveIntensity: 1.6 });
+  s.cover = plane(8, 10.3, cover, { side: THREE.DoubleSide }); g.add(s.cover);
+}, (s, u, t) => {
+  // two pairs of lines swap places, then the matching lines light up
+  const sw = ss(0.4, 1.0, u), sw2 = ss(1.0, 1.6, u);
+  s.bars.forEach((b, k) => {
+    let row = k; if (k === 1) row = lerp(1, 4, sw); if (k === 4) row = lerp(4, 1, sw); if (k === 2) row = lerp(2, 5, sw2); if (k === 5) row = lerp(5, 2, sw2);
+    b.position.y = 10 - row * 1.5; b.position.z = 0.25 + Math.sin(Math.PI * (k === 1 || k === 4 ? sw : k === 2 || k === 5 ? sw2 : 0)) * 2;
+    b.material = u > 1.8 + k * 0.08 && k % 2 === 0 ? s.hl : b.material; });
+  const ck = ss(2.2, 3.0, u); s.cover.position.set(lerp(2, 6.5, ck), lerp(7, 5.5, ck), lerp(-0.5, 5, ck)); s.cover.rotation.y = lerp(0, -0.5, ck); s.cover.visible = u > 2.2;
+  poseClawd(t, { p: [-4.2, 0, 5], ry: 0.45, wave: u > 0.3 && u < 1.8, glow: u > 1.8 ? 0.5 : 0, hop: u > 3.0 && u < 3.4 ? Math.sin((u - 3) / 0.4 * Math.PI) * 1.4 : 0 });
+}, [[0, [0, 10, 44], [0, 7, 0]], [3.8, [-1, 9, 38], [0, 6.5, 0]]]);
+
+// 6: mock interview, Claude asks, the candidate answers
+makeSet(0x3d7bff, (g, s) => {
+  const table = cube(9, 0.6, 5, std(0x3a2a20)); table.position.set(0, 4, 0); g.add(table);
+  const tleg = cube(1, 4, 1, std(0x2a1d16)); tleg.position.set(0, 2, 0); g.add(tleg);
+  const human = new THREE.Group();
+  const skin = std(0xc98f68), hoodie = std(0x22242c), pants = std(0x2c3550), hair = std(0x1b120c);
+  const hb = cube(3, 3.6, 2, hoodie); hb.position.y = 5.6; human.add(hb);
+  const hh = cube(2.4, 2.4, 2.4, skin); hh.position.y = 8.6; human.add(hh);
+  const hr = cube(2.5, 0.8, 2.5, hair); hr.position.y = 9.9; human.add(hr);
+  [-0.55, 0.55].forEach((x) => { const e = cube(0.32, 0.4, 0.1, eyeMat); e.position.set(x, 8.8, 1.22); human.add(e); });
+  [-0.8, 0.8].forEach((x) => { const l = cube(1.2, 3.8, 1.4, pants); l.position.set(x, 1.9, 0); human.add(l); });
+  human.position.set(-4.5, 0, 0); human.rotation.y = 0.5; g.add(human); s.human = human;
+  s.q1 = bubble("WHY THIS ROLE?"); s.a1 = bubble("BECAUSE..."); s.q2 = bubble("GOOD. NOW SHORTER.");
+  s.q1.position.set(3, 11.5, 2); s.a1.position.set(-3, 14, 2); s.q2.position.set(3, 11.5, 2); g.add(s.q1, s.a1, s.q2);
+  s.b = beam(0x9fbcff, 13, 44); g.add(s.b);
+}, (s, u, t) => {
+  const pop = (m, a, b) => { const k = outBack((u - a) / 0.25); m.scale.setScalar(Math.max(0.001, k)); m.visible = u > a && u < b; };
+  pop(s.q1, 0.3, 1.5); pop(s.a1, 1.5, 2.6); pop(s.q2, 2.6, 9);
+  s.human.children[1].rotation.x = u > 1.5 && u < 2.6 ? 0.08 * Math.sin(u * 16) : 0;
+  poseClawd(t, { p: [4.5, 0, 0], ry: -0.28, s: 1, hop: (u > 0.3 && u < 0.6) || (u > 2.6 && u < 2.9) ? 0.6 : 0, waveL: u > 2.6 ? 0.8 : 0 });
+}, [[0, [0, 12, 44], [0, 8, 0]], [2.5, [1, 12, 40], [0, 8, 0]], [2.65, [4, 9, 32], [3, 8, 0]], [4, [4, 9, 30], [3, 8, 0]]]);
+
+// 7: COMMENT JOBS
+makeSet(0xff6a2a, (g, s) => {
+  s.word = voxelWord("JOBS", 1.3, glow(0xff6a2a, 1.6)); s.word.position.set(0, 3, -10); g.add(s.word);
+  s.rings = [0, 1].map(() => { const r = ring(0xffb000, 1); r.material.transparent = true; g.add(r); return r; });
+  s.burst = []; for (let i = 0; i < 60; i++) { const c = cube(0.5, 0.5, 0.5, glow([0xf4b400, 0x2ad1a3, 0xe8622c, 0x7a5cff][i % 4], 2)); g.add(c); s.burst.push(c); }
+  s.b = beam(0xffd2a0, 14, 50); s.b.position.set(0, 0, -6); g.add(s.b);
+}, (s, u, t) => {
+  s.word.userData.cubes.forEach((c, i) => { const h = c.userData.home, k = outBack((u - 0.1 - c.userData.li * 0.12 - rnd(i) * 0.1) / 0.32);
+    c.position.set(h.x, h.y + (1 - k) * 26, h.z); c.visible = u > 0.05; });
+  s.burst.forEach((c, i) => { const d = Math.max(0, u - 0.75), a = rnd(i) * Math.PI * 2;
+    c.position.set(Math.cos(a) * d * (8 + rnd(i + 1) * 10), 4 + d * (14 + rnd(i + 2) * 10) - 16 * d * d, Math.sin(a) * d * 8 - 2); c.rotation.set(d * 5, d * 4, 0); c.visible = u > 0.75 && c.position.y > 0; });
+  s.rings.forEach((r, i) => { const k = clamp((u - 0.75 - i * 0.2) / 1.0); r.scale.setScalar(1 + k * 20); r.material.opacity = 1 - k; r.visible = k > 0 && k < 1; r.position.set(0, 0.2, -2); });
+  poseClawd(t, { p: [0, 0, 4], hop: Math.abs(Math.sin(u * 5.5)) * 2.2 * ss(0.6, 0.9, u), squash: Math.abs(Math.sin(u * 5.5)) < 0.2 && u > 0.7 ? 0.7 : 0, wave: u > 1.2, glow: 0.3 });
+}, [[0, [0, 3, 30], [0, 9, -6]], [1.0, [0, 8, 40], [0, 7, -6]], [3.4, [0, 9, 36], [0, 7, -6]]]);
+
+// ---- frame ---------------------------------------------------------------------------------------
+function camAt(cams, u) {
+  let i = 0; while (i < cams.length - 1 && u > cams[i + 1][0]) i++;
+  const a = cams[i], b = cams[Math.min(i + 1, cams.length - 1)];
+  const k = b === a ? 0 : ss(a[0], b[0], u);
+  const ease = (x) => 1 - (1 - x) ** 3, e = b[0] - a[0] < 0.3 ? 1 * (u >= b[0] ? 1 : 0) : ease(clamp((u - a[0]) / (b[0] - a[0])));
+  return [a[1].map((v, j) => lerp(v, b[1][j], e)), a[2].map((v, j) => lerp(v, b[2][j], e))];
+}
+const dustPos = dustGeo.attributes.position.array;
+function renderAt(t) {
+  let i = B.findIndex(([a, b]) => t >= a && t < b); if (i < 0) i = B.length - 1;
+  const u = t - B[i][0], s = sets[i];
+  sets.forEach((x, k) => (x.g.visible = k === i));
+  gridMat.color.setHex(s.color); rim.color.setHex(s.color); dustMat.color.setHex(s.color);
+  s.update(s, u, t);
+  const [p, l] = camAt(s.cams, u);
+  camera.position.set(p[0] + Math.sin(t * 0.7) * 0.25, p[1] + Math.sin(t * 0.9) * 0.18, p[2]);
+  camera.lookAt(l[0], l[1], l[2]);
+  key.target.position.set(l[0], 0, l[2]);
+  for (let k = 0; k < 240; k++) { dustPos[k * 3] = (rnd(k) - 0.5) * 60 + Math.sin(t * 0.3 + k) * 2; dustPos[k * 3 + 1] = ((rnd(k + 1) * 30 + t * (0.4 + rnd(k + 2))) % 30); dustPos[k * 3 + 2] = (rnd(k + 3) - 0.6) * 50; }
+  dustGeo.attributes.position.needsUpdate = true;
+  composer.render();
+}
+
+window.__hf = window.__hf || {};
+window.__hf.buildReady = window.__hf.buildReady || {};
+window.__hf.buildReady.scene = document.fonts.ready.then(() => Promise.all([document.fonts.load("900 40px Inter"), document.fonts.load("700 40px 'JetBrains Mono'")])).then(() => {
+  // canvas textures drawn before the fonts landed are redrawn now
+  scene.traverse((o) => { const m = o.material; [].concat(m || []).forEach((mm) => { const tx = mm.map; if (tx && tx.userData && tx.userData.draw) { tx.userData.draw(tx.userData.g, tx.userData.c.width, tx.userData.c.height); tx.needsUpdate = true; } }); });
+  renderer.compile(scene, camera);
+  renderAt(window.__hfThreeTime || 0);
+});
+window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+</script>
+</body>
+</html>

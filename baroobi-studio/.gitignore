@@ -22,3 +22,5 @@ assets/character/pixel/
 assets/character/voxel/
 assets/people/
 assets/shots/
+renders/.*hf-transaction*/
+renders/work-*/

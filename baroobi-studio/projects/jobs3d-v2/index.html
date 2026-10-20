@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>jobs3d-v2</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/" } }
+</script>
+<style>
+@font-face { font-family: "Inter"; src: url("assets/fonts/Inter.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono.woff2") format("woff2"); font-weight: 100 800; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0d0b0a; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+.cap { position: absolute; left: 80px; right: 80px; top: 300px; text-align: center; font: 900 86px/1.1 "Inter";
+  letter-spacing: -0.025em; text-transform: uppercase; color: #fff; opacity: 0;
+  text-shadow: 0 4px 22px rgba(0,0,0,.55); }
+.cap .w { display: inline-block; opacity: 0; margin: 0 0.1em; }
+.cap .k { background: #e3262f; padding: 0.02em 0.18em; border-radius: 12px; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1080" data-height="1920" data-fps="30">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="caps"></div>
+</div>
+<script>
+// One beat clock for the captions (GSAP) and the 3D scene (hf-seek). Seconds.
+window.BEATS = [[0, 5], [5, 8], [8, 11.5], [11.5, 16.5], [16.5, 20], [20, 23.5], [23.5, 27], [27, 30]];
+// [start, end, words]: words wrapped in * get the red box
+const CAPS = [
+  [0.2, 2.2, "69 *applications.*"], [2.2, 3.6, "20 *interviews.*"], [3.6, 5, "1 *job.*"],
+  [5.1, 6.5, "his job got *cut.*"], [6.5, 8, "so he built an *AI agent.*"],
+  [8.1, 9.8, "feed it your *CV.*"], [9.8, 11.5, "it learns your *profile.*"],
+  [11.6, 16.5, "it *scrapes* the job boards."],
+  [16.6, 18.3, "scores *every* post"], [18.3, 20, "against *you.*"],
+  [20.1, 21.8, "tailors your *CV*"], [21.8, 23.5, "+ a *cover letter.*"],
+  [23.6, 27, "then a *mock interview.*"],
+  [27.1, 30, "comment *JOBS*"],
+];
+function build() {
+  const caps = document.getElementById("caps");
+  CAPS.forEach(([a, b, txt]) => {
+    const d = document.createElement("div");
+    d.className = "cap";
+    d.innerHTML = txt.split(" ").map((w) => /\*/.test(w) ? `<span class="w k">${w.replace(/\*/g, "")}</span>` : `<span class="w">${w}</span>`).join(" ");
+    d.dataset.a = a; d.dataset.b = b;
+    caps.appendChild(d);
+  });
+  const tl = gsap.timeline({ paused: true });
+  document.querySelectorAll(".cap").forEach((d) => {
+    const a = +d.dataset.a, b = +d.dataset.b;
+    tl.set(d, { opacity: 1 }, a).set(d, { opacity: 0 }, b);
+    d.querySelectorAll(".w").forEach((w, k) => {
+      tl.fromTo(w, { opacity: 0, scale: 0.7, y: 14 }, { opacity: 1, scale: 1, y: 0, duration: 0.22, ease: "back.out(2.2)" }, a + k * 0.07);
+    });
+  });
+  tl.set({}, {}, 30);
+  window.__timelines["main"] = tl;
+}
+document.fonts.ready.then(build);
+</script>
+<script type="module">
+// Clean studio dioramas around Claude's mascot. Every frame is a pure function of HyperFrames time (hf-seek).
+import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+const W = 1080, H = 1920, B = window.BEATS;
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("gl"), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.setPixelRatio(1);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.92;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.32;
+const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 400);
+const composer = new EffectComposer(renderer);
+composer.setSize(W, H);
+composer.addPass(new RenderPass(scene, camera));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), 0.22, 0.5, 0.98));
+composer.addPass(new OutputPass());
+
+// ---- math -----------------------------------------------------------------------------------------
+const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const io = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2; };
+const ss = (a, b, x) => io((x - a) / (b - a));
+const back = (x) => { x = clamp(x); const c = 1.7; return 1 + (c + 1) * (x - 1) ** 3 + c * (x - 1) ** 2; };
+const vlerp = (a, b, k) => a.map((v, i) => lerp(v, b[i], k));
+
+// ---- materials and builders --------------------------------------------------------------------------
+const phys = (color, o = {}) => new THREE.MeshPhysicalMaterial({ color, roughness: 0.42, clearcoat: 0.6, clearcoatRoughness: 0.25, ...o });
+const matte = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.75, ...o });
+function rbox(w, h, d, r, m, seg = 4) {
+  const mesh = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, seg, Math.min(r, w / 2, h / 2, d / 2)), m);
+  mesh.castShadow = true; mesh.receiveShadow = true; return mesh;
+}
+function tex(w, h, draw) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const g = c.getContext("2d"); draw(g, w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  t.userData = { c, g, draw }; return t;
+}
+function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
+// a rounded panel with a texture on its front face only
+function panel(w, h, d, t, frame = 0x1d1b22, o = {}) {
+  const g = new THREE.Group();
+  g.add(rbox(w, h, d, Math.min(0.35, d / 2), phys(frame, { roughness: 0.35 })));
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.3, h - 0.3), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5, emissive: 0xffffff, emissiveMap: t, emissiveIntensity: o.glow ?? 0.55, transparent: !!o.alpha }));
+  face.material.color.setScalar(o.tint ?? 0.86); face.position.z = d / 2 + 0.01; g.add(face); g.userData.face = face; return g;
+}
+
+// ---- stage: seamless studio floor + backdrop, soft key light ---------------------------------------
+const bgTex = tex(4, 512, () => {});
+function setBackdrop(top, bottom) {
+  const { g, c } = bgTex.userData; const gr = g.createLinearGradient(0, 0, 0, c.height);
+  gr.addColorStop(0, top); gr.addColorStop(0.62, bottom); gr.addColorStop(1, bottom);
+  g.fillStyle = gr; g.fillRect(0, 0, c.width, c.height); bgTex.needsUpdate = true;
+}
+scene.background = bgTex;
+scene.fog = new THREE.Fog(0x120f0d, 45, 120);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x1a1613, roughness: 0.92 });
+const floor = new THREE.Mesh(new THREE.CircleGeometry(160, 96), floorMat);
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const key = new THREE.DirectionalLight(0xfff1e2, 1.8); key.position.set(10, 26, 16);
+key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.03;
+Object.assign(key.shadow.camera, { left: -26, right: 26, top: 26, bottom: -26, near: 1, far: 80 }); key.shadow.radius = 4;
+scene.add(key, key.target);
+const pool = new THREE.SpotLight(0xffe2c4, 340, 70, 0.62, 1, 1.8); pool.position.set(0, 34, 6); scene.add(pool, pool.target);
+const rim = new THREE.PointLight(0xff7a3d, 260, 60, 1.6); rim.position.set(-12, 12, -10); scene.add(rim);
+scene.add(new THREE.HemisphereLight(0xcfd6ff, 0x1a120c, 0.35));
+
+// ---- landing ripples: thin rings that spread on the floor and fade ---------------------------------
+const ringGeo = new THREE.RingGeometry(0.94, 1, 96);
+const ripples = Array.from({ length: 6 }, () => {
+  const m = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xffe6d0, transparent: true, depthWrite: false, toneMapped: false }));
+  m.rotation.x = -Math.PI / 2; m.visible = false; scene.add(m); return m;
+});
+// events: [[time, x, z, color?]] in beat time; two rings per landing, the second slightly late
+function drawRipples(events, u, color = 0xffd9bf) {
+  let n = 0;
+  ripples.forEach((r) => (r.visible = false));
+  events.forEach(([t0, x, z, c]) => [0, 0.12].forEach((lag, j) => {
+    const k = (u - t0 - lag) / 0.75;
+    if (k <= 0 || k >= 1 || n >= ripples.length) return;
+    const r = ripples[n++]; r.visible = true;
+    r.position.set(x, 0.02 + j * 0.005, z); r.scale.setScalar(1.2 + io(k) * (j ? 4.5 : 6.5));
+    r.material.color.setHex(c || color); r.material.opacity = (1 - k) * (j ? 0.5 : 0.85);
+  }));
+}
+
+// ---- Claude's mascot, rounded and glossy -----------------------------------------------------------------
+const ORANGE = 0xd97757;
+function makeClawd(scale = 1) {
+  const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
+  const mat = phys(ORANGE, { roughness: 0.38, clearcoat: 0.8, emissive: ORANGE, emissiveIntensity: 0 });
+  const eyeMat = phys(0x15110f, { roughness: 0.15, clearcoat: 1 });
+  const torso = rbox(6, 3.6, 3, 0.55, mat, 5); torso.position.y = 3.3; body.add(torso);
+  const eyes = [-1.3, 1.3].map((x) => { const e = rbox(0.58, 1.15, 0.3, 0.14, eyeMat); e.position.set(x, 3.7, 1.42); body.add(e); return e; });
+  const arms = [-1, 1].map((s) => { const p = new THREE.Group(); p.position.set(s * 2.9, 3.05, 0); const a = rbox(1.35, 1.05, 1.25, 0.32, mat); a.position.x = s * 0.62; p.add(a); body.add(p); return p; });
+  const legs = [-2.2, -0.75, 0.75, 2.2].map((x) => { const l = rbox(0.9, 1.6, 1.15, 0.28, mat); l.position.set(x, 0.8, 0); body.add(l); return l; });
+  root.scale.setScalar(scale); scene.add(root);
+  return { root, body, torso, eyes, arms, legs, mat };
+}
+// jumps: [[t0, height, airtime]] in beat time; returns lift and squash (positive = squashed)
+function jumpState(jumps, u) {
+  let y = 0, sq = 0;
+  jumps.forEach(([t0, h, air]) => {
+    const a = u - t0;
+    if (a > -0.16 && a <= 0) sq += 0.55 * Math.sin(Math.PI * (a + 0.16) / 0.16);            // crouch
+    if (a > 0 && a < air) { const k = a / air; y += h * 4 * k * (1 - k); sq -= 0.28 * (1 - Math.min(1, k * 2.2)); }
+    if (a >= air && a < air + 0.42) { const k = (a - air) / 0.42; sq += 0.7 * Math.exp(-5 * k) * Math.cos(k * 9); }
+  });
+  return { y, sq };
+}
+function poseClawd(C, t, o) {
+  const { y, sq } = jumpState(o.jumps || [], o.u ?? 0);
+  const walk = o.walk || 0, ph = (o.phase ?? t) * 11;
+  C.root.position.set(o.p[0], o.p[1] + y + walk * Math.abs(Math.sin(ph)) * 0.25, o.p[2]);
+  C.root.rotation.y = o.ry || 0;
+  C.body.scale.set(1 + sq * 0.16, 1 - sq * 0.22, 1 + sq * 0.16);
+  C.body.rotation.x = (o.look || 0) + 0.025 * Math.sin(t * 2.1);
+  C.body.rotation.z = (o.tilt || 0) + 0.02 * Math.sin(t * 1.6) + walk * 0.06 * Math.sin(ph);
+  C.torso.position.y = 3.3 + 0.08 * Math.sin(t * 3.4);
+  const bl = ((t + (o.blinkOff || 0)) * 1000) % 3300 < 120 ? 0.1 : 1;
+  C.eyes.forEach((e) => (e.scale.y = bl));
+  C.arms[0].rotation.z = (o.armL || 0) + 0.25 * Math.sin(t * 7) * (o.tap || 0) + walk * 0.35 * Math.sin(ph);
+  C.arms[1].rotation.z = -(o.wave ? 2.0 + 0.45 * Math.sin(t * 13) : 0) - (o.armR || 0) - 0.25 * Math.sin(t * 7 + 1.4) * (o.tap || 0) - walk * 0.35 * Math.sin(ph);
+  C.legs.forEach((l, i) => (l.position.y = 0.8 + Math.max(0, Math.sin(ph + (i % 2) * Math.PI)) * 0.55 * walk));
+  C.mat.emissiveIntensity = o.glow || 0;
+}
+const clawd = makeClawd();
+
+// ---- 3D type -----------------------------------------------------------------------------------------
+let FONT;
+function text3d(str, size, m, depth = size * 0.28) {
+  const geo = new TextGeometry(str, { font: FONT, size, depth, curveSegments: 10, bevelEnabled: true, bevelThickness: size * 0.05, bevelSize: size * 0.035, bevelSegments: 6 });
+  geo.computeBoundingBox(); const bb = geo.boundingBox;
+  geo.translate(-(bb.max.x + bb.min.x) / 2, -bb.min.y, -(bb.max.z + bb.min.z) / 2);
+  const mesh = new THREE.Mesh(geo, m); mesh.castShadow = true; mesh.receiveShadow = true; return mesh;
+}
+
+// ---- shared textures -------------------------------------------------------------------------------------
+const paperTex = tex(512, 680, (g, w, h) => {
+  g.fillStyle = "#f7f4ee"; g.fillRect(0, 0, w, h);
+  g.fillStyle = "#1c1c1c"; g.font = "800 34px Inter"; g.fillText("Application", 40, 70);
+  g.fillStyle = "#e3262f"; g.fillRect(40, 92, 70, 6);
+  g.fillStyle = "#cfcabf"; for (let y = 140; y < h - 40; y += 34) g.fillRect(40, y, 260 + ((y * 37) % 150), 11);
+});
+function docTex(head, sub, accent) {
+  return tex(800, 1040, (g, w, h) => {
+    g.fillStyle = "#f7f4ee"; g.fillRect(0, 0, w, h);
+    g.fillStyle = accent; g.fillRect(0, 0, w, 170);
+    g.fillStyle = "#fff"; g.font = "900 110px Inter"; g.fillText(head, 56, 130);
+    g.fillStyle = "#1c1c1c"; g.font = "800 44px Inter"; g.fillText(sub, 56, 260);
+    g.fillStyle = "#d3cec3"; for (let y = 320; y < h - 50; y += 62) g.fillRect(56, y, 360 + ((y * 53) % 300), 20);
+  });
+}
+const TITLES = ["Data Scientist", "ML Engineer", "Geophysicist", "AI Engineer", "Data Analyst", "Python Developer", "GIS Analyst", "Research Engineer"];
+const cardTexes = TITLES.map((title, i) => tex(640, 400, (g, w, h) => {
+  g.fillStyle = "#fbfaf7"; g.fillRect(0, 0, w, h);
+  rr(g, 36, 36, 84, 84, 20); g.fillStyle = ["#2ab397", "#e3a21a", "#7a5cff", "#e8622c"][i % 4]; g.fill();
+  g.fillStyle = "#8a857c"; g.font = "700 30px Inter"; g.fillText("Job post", 144, 70);
+  g.fillStyle = "#151515"; g.font = "900 46px Inter"; g.fillText(title, 144, 116);
+  g.fillStyle = "#dcd7cd"; [0, 1, 2].forEach((k) => { rr(g, 36, 190 + k * 54, 520 - k * 120, 20, 10); g.fill(); });
+}));
+const cardGeo = new RoundedBoxGeometry(5.2, 3.25, 0.18, 3, 0.09);
+const cardSide = phys(0xf2efe9, { roughness: 0.5, clearcoat: 0.2 });
+const cardFronts = cardTexes.map((t) => new THREE.MeshStandardMaterial({ map: t, roughness: 0.55 }));
+function jobCard(i) {
+  const g = new THREE.Group();
+  const b = new THREE.Mesh(cardGeo, cardSide); b.castShadow = true; g.add(b);
+  const f = new THREE.Mesh(new THREE.PlaneGeometry(5.0, 3.05), cardFronts[i % 8].clone()); f.position.z = 0.1; g.add(f);
+  g.userData.front = f; return g;
+}
+function bubbleTex(text) {
+  return tex(1100, 300, (g, w, h) => {
+    g.shadowColor = "rgba(0,0,0,0.25)"; g.shadowBlur = 24;
+    rr(g, 20, 20, w - 40, h - 90, 60); g.fillStyle = "#ffffff"; g.fill();
+    g.beginPath(); g.moveTo(w / 2 - 34, h - 72); g.lineTo(w / 2, h - 22); g.lineTo(w / 2 + 34, h - 72); g.fill();
+    g.shadowBlur = 0; g.fillStyle = "#141414"; g.font = "800 74px Inter"; g.textAlign = "center"; g.fillText(text, w / 2, 150);
+  });
+}
+function bubble(text, w = 8.8) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, w * 300 / 1100), new THREE.MeshBasicMaterial({ map: bubbleTex(text), transparent: true, toneMapped: false, color: 0xe8e8e8 }));
+  return m;
+}
+
+// ---- sets --------------------------------------------------------------------------------------------------
+const sets = [];
+function makeSet(look, setup, update, cams) { const g = new THREE.Group(); scene.add(g); const s = { g, look, cams, update }; setup(g, s); sets.push(s); }
+// look: [backdrop top, backdrop bottom, rim colour]
+const WARM = ["#2a211c", "#120f0d", 0xff7a3d];
+
+function buildSets() {
+  // 0: 69 papers rain down, the count drops 69 -> 20 -> 1
+  makeSet(WARM, (g, s) => {
+    s.papers = [];
+    const pg = new THREE.PlaneGeometry(2.3, 3.05, 6, 8);
+    const pos = pg.attributes.position; for (let i = 0; i < pos.count; i++) pos.setZ(i, 0.12 * Math.sin(pos.getX(i) * 1.2) + 0.05 * pos.getY(i) ** 2 * 0.1);
+    pg.computeVertexNormals();
+    const pm = new THREE.MeshStandardMaterial({ map: paperTex, side: THREE.DoubleSide, roughness: 0.85, color: 0xd6d1c8 });
+    for (let i = 0; i < 69; i++) {
+      const m = new THREE.Mesh(pg, pm); m.castShadow = true; m.receiveShadow = true; g.add(m);
+      const a = rnd(i) * Math.PI * 2, r = 4.8 + rnd(i + 9) ** 0.7 * 11;
+      s.papers.push({ m, x: Math.cos(a) * r, z: Math.sin(a) * r * 0.8 - 1.5, t0: 0.08 + rnd(i + 3) * 1.9, rz: rnd(i + 4) * 6.28, sway: 0.6 + rnd(i + 5) });
+    }
+    const white = phys(0xf4efe7, { roughness: 0.22, clearcoat: 1 });
+    const gold = phys(0xf0b54a, { roughness: 0.18, metalness: 0.75, clearcoat: 1, emissive: 0x6b3d00, emissiveIntensity: 0.35 });
+    s.n69 = text3d("69", 5.2, white); s.n20 = text3d("20", 5.2, white); s.n1 = text3d("1", 5.6, gold);
+    [s.n69, s.n20, s.n1].forEach((m) => { m.position.set(0, 7.2, -9); g.add(m); });
+  }, (s, u, t) => {
+    s.papers.forEach((p, i) => {
+      const k = clamp((u - p.t0) / 1.0), e = k * k;
+      p.m.visible = u >= p.t0;
+      const sw = Math.sin(u * 4 * p.sway + i) * (1 - k);
+      p.m.position.set(p.x + sw * 1.4, lerp(30, 0.04 + (i % 7) * 0.012, e), p.z + Math.cos(u * 3 + i) * (1 - k) * 0.8);
+      p.m.rotation.set(-Math.PI / 2 + sw * 0.9 * (1 - k) + (1 - k) * 0.4, 0, p.rz + (1 - k) * 1.5);
+    });
+    // number swaps: old one sinks and shrinks, new one rises with overshoot
+    const show = (m, a, b) => { const kin = back((u - a) / 0.4), kout = io((u - b) / 0.22);
+      m.visible = u > a && u < b + 0.22; m.scale.setScalar(Math.max(0.001, kin * (1 - kout))); m.rotation.y = 0.22 * Math.sin(t * 0.8); m.position.y = 7.2 + 0.25 * Math.sin(t * 1.3); };
+    show(s.n69, 0.15, 2.15); show(s.n20, 2.25, 3.55); show(s.n1, 3.65, 99);
+    const jumps = [[2.25, 1.1, 0.38], [3.7, 3.4, 0.62]];
+    poseClawd(clawd, t, { u, p: [0, 0, 3.5], jumps, look: -0.22 * ss(0, 0.8, u) * (1 - ss(1.8, 2.2, u)), tilt: 0.06 * Math.sin(u * 2.6) * (1 - ss(1.8, 2.2, u)), wave: u > 4.35 });
+    drawRipples([[2.25 + 0.38, 0, 3.5], [3.7 + 0.62, 0, 3.5, 0xffd27a]], u);
+  }, [[0, [0, 12, 42], [0, 6.5, -2]], [5, [0, 8.5, 32], [0, 6, -2]]]);
+
+  // 1: the agent at work, commands on a floating screen
+  const termTex = tex(1200, 760, () => {});
+  const TERM = [[0.05, "> /setup", "#9fe870"], [0.35, "  profile ready", "#9b968d"], [0.75, "> /scrape", "#9fe870"], [1.05, "  scanning job boards", "#9b968d"],
+    [1.5, "> /apply", "#9fe870"], [1.8, "  tailoring CV", "#9b968d"], [2.1, "  writing cover letter", "#9b968d"], [2.45, "  application sent", "#f0b54a"]];
+  function drawTerm(u) {
+    const { g, c } = termTex.userData;
+    g.fillStyle = "#121117"; g.fillRect(0, 0, c.width, c.height);
+    g.fillStyle = "#1d1b24"; g.fillRect(0, 0, c.width, 74);
+    ["#ff5f57", "#febc2e", "#28c840"].forEach((col, i) => { g.beginPath(); g.arc(44 + i * 40, 37, 12, 0, 7); g.fillStyle = col; g.fill(); });
+    g.fillStyle = "#8a857c"; g.font = "700 30px Inter"; g.fillText("Claude Code · job search", 180, 48);
+    g.font = "700 46px 'JetBrains Mono'";
+    TERM.forEach(([tt, line, col], i) => { if (u < tt) return; const n = Math.floor(clamp((u - tt) / 0.25) * line.length);
+      g.fillStyle = col; g.fillText(line.slice(0, n), 50, 150 + i * 74); });
+    termTex.needsUpdate = true;
+  }
+  makeSet(["#1d2524", "#0c100f", 0x3fd6c0], (g, s) => {
+    const table = rbox(5.6, 0.45, 4, 0.2, phys(0x2b2622, { roughness: 0.5 })); table.position.set(3.4, 3.2, 2.2); g.add(table);
+    const stem = rbox(0.9, 3, 0.9, 0.3, phys(0x1e1b18)); stem.position.set(3.4, 1.5, 2.2); g.add(stem);
+    const lap = new THREE.Group(); lap.position.set(3.4, 3.45, 2.3); lap.rotation.y = -1.0;
+    lap.add(Object.assign(rbox(4.4, 0.22, 3, 0.1, phys(0xb9bcc2, { metalness: 0.6, roughness: 0.3 })), {}));
+    const lid = rbox(4.4, 2.9, 0.16, 0.1, phys(0xb9bcc2, { metalness: 0.6, roughness: 0.3 })); lid.position.set(0, 1.4, -1.45); lid.rotation.x = -0.18; lap.add(lid);
+    g.add(lap);
+    s.term = panel(9, 5.7, 0.3, termTex, 0x1b1a20, { glow: 0.7, tint: 1 }); s.term.position.set(0, 9.3, -5); g.add(s.term);
+  }, (s, u, t) => {
+    drawTerm(u);
+    s.term.position.y = 9.3 + 0.15 * Math.sin(t * 1.3);
+    poseClawd(clawd, t, { u, p: [-2.4, 0, 1.6], ry: 0.55, tap: 1, look: 0.06 });
+    drawRipples([], u);
+  }, [[0, [5, 10, 33], [0.4, 6.5, -1]], [3, [-3, 9.5, 31], [0.4, 6.5, -1]]]);
+
+  // 2: feed it your CV, it becomes a profile
+  const cvTex = docTex("CV", "Your experience", "#e8622c");
+  const profTex = tex(900, 600, (g, w, h) => {
+    g.fillStyle = "#fbfaf7"; g.fillRect(0, 0, w, h);
+    g.fillStyle = "#151515"; g.font = "900 70px Inter"; g.fillText("Your profile", 56, 110);
+    [["Skills", "#2ab397"], ["Experience", "#e3a21a"], ["Goals", "#e8622c"], ["Location", "#7a5cff"]].forEach(([c, col], i) => {
+      const x = 56 + (i % 2) * 400, y = 180 + Math.floor(i / 2) * 170; rr(g, x, y, 370, 130, 65); g.fillStyle = col; g.fill();
+      g.fillStyle = "#fff"; g.font = "800 50px Inter"; g.fillText(c, x + 40, y + 83); });
+  });
+  makeSet(["#231d2c", "#0f0d12", 0xa77bff], (g, s) => {
+    s.cv = panel(7.6, 9.9, 0.16, cvTex, 0xf2efe9, { glow: 0.05 }); g.add(s.cv);
+    s.prof = panel(8.4, 5.6, 0.25, profTex, 0xf2efe9, { glow: 0.04 }); g.add(s.prof);
+  }, (s, u, t) => {
+    const fall = io((u - 0.05) / 1.1), suck = ss(1.75, 2.2, u);
+    s.cv.position.set(lerp(0, 0, suck), lerp(lerp(28, 9.5, fall), 3.5, suck), lerp(4.5, 2, suck));
+    s.cv.rotation.set(0.08 * Math.sin(u * 1.8) * (1 - suck), 0.3 * Math.sin(u * 1.2) * (1 - fall * 0.7) + suck * 4, 0.05 * Math.sin(u * 2.2));
+    s.cv.scale.setScalar(Math.max(0.001, 1 - suck)); s.cv.visible = suck < 1;
+    const pk = back((u - 2.45) / 0.45);
+    s.prof.visible = u > 2.45; s.prof.scale.setScalar(Math.max(0.001, pk));
+    s.prof.position.set(0, lerp(4, 10.4, io((u - 2.45) / 0.6)) + 0.15 * Math.sin(t * 1.4), -2.5); s.prof.rotation.y = 0.12 * Math.sin(t * 0.9);
+    const jumps = [[2.25, 1.6, 0.45]];
+    poseClawd(clawd, t, { u, p: [0, 0, 2.2], jumps, look: -0.28 * ss(0, 0.9, u) * (1 - suck), glow: 0.9 * Math.max(0, 1 - Math.abs(u - 2.15) / 0.35) });
+    drawRipples([[2.25 + 0.45, 0, 2.2, 0xd9c2ff]], u);
+  }, [[0, [0, 9, 33], [0, 7.4, 0]], [3.5, [4, 9, 30], [0, 7.4, 0]]]);
+
+  // 3: he walks board to board, each board's listings peel off into a stack
+  const boardTex = (name) => tex(1000, 720, (g, w, h) => {
+    g.fillStyle = "#fbfaf7"; g.fillRect(0, 0, w, h);
+    g.fillStyle = "#ece8e1"; g.fillRect(0, 0, w, 80);
+    ["#ff5f57", "#febc2e", "#28c840"].forEach((col, i) => { g.beginPath(); g.arc(44 + i * 38, 40, 11, 0, 7); g.fillStyle = col; g.fill(); });
+    rr(g, 170, 20, 640, 40, 20); g.fillStyle = "#fff"; g.fill();
+    g.fillStyle = "#151515"; g.font = "900 54px Inter"; g.fillText(name, 44, 160);
+    for (let r = 0; r < 5; r++) { const y = 200 + r * 100; rr(g, 44, y, w - 88, 84, 16); g.fillStyle = "#f1eee8"; g.fill();
+      rr(g, 64, y + 18, 48, 48, 12); g.fillStyle = ["#2ab397", "#e3a21a", "#7a5cff", "#e8622c", "#2ab397"][r]; g.fill();
+      g.fillStyle = "#151515"; g.font = "800 34px Inter"; g.fillText(TITLES[(r + name.length) % 8], 134, y + 54); }
+  });
+  const BOARDS = [{ name: "LinkedIn", p: [-6.6, 5.6, -2.5], ry: 0.55, stand: [-4.2, 0, 0.6] },
+                  { name: "Job board", p: [0, 6.2, -8], ry: 0, stand: [0, 0, -4.2] },
+                  { name: "Job board", p: [6.6, 5.6, -2.5], ry: -0.55, stand: [4.2, 0, 0.6] }];
+  // walk legs, then a scan at each board
+  const PATH = [[0, [0, 0, 5]], [0.7, BOARDS[0].stand], [1.45, BOARDS[0].stand], [2.05, BOARDS[1].stand], [2.8, BOARDS[1].stand], [3.4, BOARDS[2].stand], [4.15, BOARDS[2].stand], [4.65, [0, 0, 5]]];
+  const SCANS = [0.72, 2.07, 3.42];
+  function pathAt(u) {
+    let i = 0; while (i < PATH.length - 1 && u > PATH[i + 1][0]) i++;
+    const a = PATH[i], b = PATH[Math.min(i + 1, PATH.length - 1)];
+    const k = b === a ? 0 : io((u - a[0]) / (b[0] - a[0]));
+    const moving = a[1] !== b[1] && u > a[0] && u < b[0];
+    return { p: vlerp(a[1], b[1], k), moving, dir: [b[1][0] - a[1][0], b[1][2] - a[1][2]] };
+  }
+  makeSet(["#2a2416", "#110f0a", 0xf0b54a], (g, s) => {
+    s.boards = BOARDS.map((b) => { const p = panel(7.6, 5.5, 0.3, boardTex(b.name), 0x1d1b22, { glow: 0.18 });
+      p.position.set(...b.p); p.rotation.y = b.ry; g.add(p);
+      const scan = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 0.12), new THREE.MeshBasicMaterial({ color: 0xf0b54a, toneMapped: false }));
+      scan.position.z = 0.2; p.add(scan); p.userData.scan = scan; return p; });
+    s.tray = rbox(6.4, 0.3, 4.2, 0.14, phys(0x2b2622)); s.tray.position.set(0, 0.15, 8.2); g.add(s.tray);
+    s.cards = []; for (let i = 0; i < 15; i++) { const c = jobCard(i); c.scale.setScalar(0.62); g.add(c); s.cards.push(c); }
+  }, (s, u, t) => {
+    s.g.updateMatrixWorld(true);
+    const { p, moving, dir } = pathAt(u);
+    // face where he is walking; at a board, face the board; otherwise face the camera
+    let ry = 0;
+    if (moving) ry = Math.atan2(dir[0], dir[1]);
+    else SCANS.forEach((t0, b) => { if (u > t0 - 0.1 && u < t0 + 0.8) ry = Math.atan2(BOARDS[b].p[0] - p[0], BOARDS[b].p[2] - p[2]); });
+    s.boards.forEach((bd, b) => { const k = clamp((u - SCANS[b]) / 0.7); const sc = bd.userData.scan;
+      sc.visible = k > 0 && k < 1; sc.position.y = lerp(1.6, -2.4, k); });
+    s.cards.forEach((c, i) => {
+      const b = Math.floor(i / 5), r = i % 5, bd = s.boards[b];
+      const t0 = SCANS[b] + 0.12 + r * 0.12, k = io((u - t0) / 0.8);
+      const from = new THREE.Vector3(0, 1.2 - r * 0.8, 0.3).applyMatrix4(bd.matrixWorld);
+      const to = new THREE.Vector3(0, 0.45 + i * 0.13, 8.2);
+      const mid = from.clone().lerp(to, 0.5); mid.y += 6;
+      const a = from.clone().lerp(mid, k), bb = mid.clone().lerp(to, k);
+      c.position.copy(a.lerp(bb, k)); c.visible = u > t0;
+      c.rotation.set(lerp(0, -Math.PI / 2, k), lerp(bd.rotation.y, 0, k) + (1 - k) * 0.3 * Math.sin(u * 5 + i), rnd(i) * 0.25 * k);
+    });
+    poseClawd(clawd, t, { u, p, ry, walk: moving ? 1 : 0, phase: u * 1.15, look: moving ? 0 : -0.12,
+      jumps: [[4.62, 1.3, 0.4]], wave: u > 4.75 });
+    drawRipples([[4.62 + 0.4, 0, 5]], u);
+    s.camFollow = p;
+  }, null);
+
+  // 4: posts slide in, each gets a score; strong matches lift to a shortlist
+  const SC = [0.92, 0.34, 0.81, 0.22, 0.9];
+  makeSet(["#17251f", "#0a100d", 0x45d39b], (g, s) => {
+    s.items = SC.map((sc, i) => { const c = jobCard(i + 2); g.add(c);
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.62, 0.86, 64, 1, Math.PI / 2, 0.01), new THREE.MeshBasicMaterial({ color: sc > 0.6 ? 0x45d39b : 0xe3262f, toneMapped: false, side: THREE.DoubleSide }));
+      const ringBg = new THREE.Mesh(new THREE.RingGeometry(0.62, 0.86, 64), new THREE.MeshBasicMaterial({ color: 0x2c2a27, side: THREE.DoubleSide }));
+      g.add(ringBg, ring); return { c, ring, ringBg, sc, t0: 0.05 + i * 0.68 }; });
+  }, (s, u, t) => {
+    let good = 0;
+    s.items.forEach((it, i) => {
+      const a = u - it.t0, inK = io(a / 0.2), good_ = it.sc > 0.6;
+      const outA = a - 0.45, outK = io(outA / 0.3);
+      let x = lerp(-9, -0.9, inK), y = 6.2, z = 3, ry = 0.3, sc = 1, rx = -0.08;
+      if (outA > 0) { if (good_) { x = lerp(-0.9, 5, outK); y = lerp(6.2, 19, outK); z = lerp(3, -3, outK); rx = lerp(-0.08, -Math.PI / 2, outK); ry = lerp(0.3, 0, outK); sc = lerp(1, 0.8, outK); }
+                      else { x = lerp(-0.9, -2.2 + i * 0.3, outK); y = lerp(6.2, 0.12 + i * 0.03, outK * outK); z = lerp(3, 4.6, outK); rx = lerp(-0.08, -Math.PI / 2, outK); ry = lerp(0.3, rnd(i) - 0.5, outK); } }
+      if (good_ && outA > 0.3) good++;
+      it.c.position.set(x, y, z); it.c.rotation.set(rx, ry, 0); it.c.scale.setScalar(sc); it.c.visible = a > 0 && !(good_ && outK >= 1);
+      it.c.userData.front.material.color.setScalar(!good_ && outA > 0 ? lerp(1, 0.35, outK) : 1);
+      const fill = clamp((a - 0.14) / 0.28) * it.sc;
+      it.ring.geometry.dispose(); it.ring.geometry = new THREE.RingGeometry(0.62, 0.86, 64, 1, Math.PI / 2 - Math.max(0.01, fill * Math.PI * 2), Math.max(0.01, fill * Math.PI * 2));
+      [it.ring, it.ringBg].forEach((r, j) => { r.position.set(x, y + 2.75 * sc, z + 0.3 + (j ? 0 : 0.06)); r.scale.setScalar(sc); r.visible = a > 0.12 && outA < 0.08; });
+    });
+    const nod = s.items.reduce((m, it) => Math.max(m, Math.exp(-((u - it.t0 - 0.42) ** 2) / 0.004)), 0);
+    const jumps = s.items.filter((it) => it.sc > 0.6).map((it) => [it.t0 + 0.45, 0.7, 0.3]);
+    poseClawd(clawd, t, { u, p: [4.2, 0, -1], ry: -0.5, jumps, look: 0.06 + nod * 0.15 });
+    drawRipples(jumps.map(([a, , air]) => [a + air, 4.2, -1, 0xb9f3d9]), u);
+  }, [[0, [1.8, 9, 34], [1.6, 5.6, 0]], [3.5, [0.6, 9, 31], [1.6, 5.6, 0]]]);
+
+  // 5: the CV rewrites itself for the post, then a cover letter slides out
+  const cvHead = tex(800, 200, (g, w, h) => { g.fillStyle = "#e8622c"; g.fillRect(0, 0, w, h); g.fillStyle = "#fff"; g.font = "900 120px Inter"; g.fillText("CV", 50, 150); });
+  const coverTex = docTex("Cover", "Letter", "#2ab397");
+  makeSet(["#2a1f1a", "#120e0c", 0xff7a3d], (g, s) => {
+    s.page = new THREE.Group(); s.page.position.set(1.6, 5.4, -0.5); g.add(s.page);
+    s.page.add(rbox(7.6, 9.9, 0.2, 0.1, phys(0xf7f4ee, { roughness: 0.6, clearcoat: 0.1 })));
+    const hd = new THREE.Mesh(new THREE.PlaneGeometry(7.4, 1.85), new THREE.MeshStandardMaterial({ map: cvHead, roughness: 0.6 })); hd.position.set(0, 3.9, 0.11); s.page.add(hd);
+    s.grey = phys(0xcfcabf, { roughness: 0.6 }); s.hot = phys(0xff8a4c, { roughness: 0.35, emissive: 0xff6a2a, emissiveIntensity: 0.6 });
+    s.bars = [0, 1, 2, 3, 4, 5].map((k) => { const w = 3.4 + rnd(k + 2) * 2.4; const b = rbox(w, 0.42, 0.14, 0.07, s.grey); b.userData.w = w; s.page.add(b); return b; });
+    s.cover = panel(6.4, 8.3, 0.16, coverTex, 0xf2efe9, { glow: 0.05 }); g.add(s.cover);
+  }, (s, u, t) => {
+    const sw = ss(0.35, 0.95, u), sw2 = ss(0.95, 1.55, u);
+    s.bars.forEach((b, k) => {
+      let row = k, lift = 0;
+      if (k === 1 || k === 4) { row = k === 1 ? lerp(1, 4, sw) : lerp(4, 1, sw); lift = Math.sin(Math.PI * sw); }
+      if (k === 2 || k === 5) { row = k === 2 ? lerp(2, 5, sw2) : lerp(5, 2, sw2); lift = Math.sin(Math.PI * sw2); }
+      b.position.set(-3.4 + b.userData.w / 2, 2.2 - row * 1.05, 0.18 + lift * 1.2);
+      b.material = u > 1.75 + k * 0.07 && k % 2 === 0 ? s.hot : s.grey;
+    });
+    const ck = io((u - 2.1) / 0.75);
+    s.cover.visible = u > 2.1; s.cover.position.set(lerp(1.6, 7.2, ck), lerp(5.2, 4.6, ck), lerp(-0.8, 2.6, ck)); s.cover.rotation.y = lerp(0, -0.42, ck);
+    const jumps = [[2.95, 1.2, 0.4]];
+    poseClawd(clawd, t, { u, p: [-3.9, 0, 3.6], ry: 0.4, jumps, armR: u > 0.3 && u < 1.8 ? 1.2 + 0.15 * Math.sin(t * 6) : 0, glow: u > 1.75 && u < 2.3 ? 0.35 : 0 });
+    drawRipples([[2.95 + 0.4, -3.9, 3.6]], u);
+  }, [[0, [-0.5, 9, 36], [-0.5, 6, 0]], [3.5, [-2, 8.5, 32], [-0.6, 5.8, 0]]]);
+
+  // 6: mock interview: Claude asks, the candidate answers
+  makeSet(["#1b2030", "#0b0d13", 0x6f8cff], (g, s) => {
+    const table = rbox(6, 0.4, 3.6, 0.18, phys(0x2b2622)); table.position.set(0, 3.1, 0.4); g.add(table);
+    const stem = rbox(0.8, 2.9, 0.8, 0.25, phys(0x1e1b18)); stem.position.set(0, 1.45, 0.4); g.add(stem);
+    const human = new THREE.Group(); human.position.set(-5, 0, 0); human.rotation.y = 0.55; g.add(human);
+    const hood = phys(0x2c2f3a, { roughness: 0.7, clearcoat: 0 }), skin = phys(0xc99173, { roughness: 0.6, clearcoat: 0.1 }), jeans = phys(0x34405e, { roughness: 0.8, clearcoat: 0 }), hair = phys(0x1c140f, { roughness: 0.7 });
+    const torso = rbox(3.1, 3.8, 1.9, 0.5, hood); torso.position.y = 5.7; human.add(torso);
+    const head = new THREE.Group(); head.position.y = 8.7; human.add(head); s.head = head;
+    head.add(rbox(2.3, 2.4, 2.2, 0.55, skin));
+    const hr = rbox(2.4, 0.8, 2.3, 0.35, hair); hr.position.y = 1.05; head.add(hr);
+    [-0.5, 0.5].forEach((x) => { const e = rbox(0.28, 0.38, 0.12, 0.06, phys(0x15110f, { roughness: 0.2, clearcoat: 1 })); e.position.set(x, 0.15, 1.1); head.add(e); });
+    [-0.8, 0.8].forEach((x) => { const l = rbox(1.25, 3.8, 1.5, 0.35, jeans); l.position.set(x, 1.9, 0); human.add(l); });
+    [-1, 1].forEach((sx) => { const a = rbox(0.9, 3.2, 1, 0.35, hood); a.position.set(sx * 2.05, 5.6, 0); human.add(a); });
+    s.q1 = bubble("Why this role?"); s.a1 = bubble("Because..."); s.q2 = bubble("Good. Now shorter.", 9.6);
+    s.q1.position.set(3.2, 11.6, 1.5); s.a1.position.set(-4.2, 13.2, 1.5); s.q2.position.set(3.2, 11.6, 1.5); g.add(s.q1, s.a1, s.q2);
+  }, (s, u, t) => {
+    const pop = (m, a, b) => { const k = back((u - a) / 0.32), o = io((u - b) / 0.15); m.visible = u > a && u < b + 0.15; m.scale.setScalar(Math.max(0.001, k * (1 - o))); m.position.y += 0; m.lookAt(camera.position); };
+    pop(s.q1, 0.25, 1.45); pop(s.a1, 1.5, 2.55); pop(s.q2, 2.6, 9);
+    s.head.rotation.x = u > 1.5 && u < 2.55 ? 0.06 * Math.sin(u * 15) : 0.02 * Math.sin(t * 1.5);
+    s.head.rotation.y = 0.15 * Math.sin(t * 0.7);
+    const jumps = [[0.22, 0.6, 0.28], [2.58, 0.9, 0.32]];
+    poseClawd(clawd, t, { u, p: [4.6, 0, 0], ry: -0.4, jumps, armL: u > 2.6 ? 0.9 : 0 });
+    drawRipples(jumps.map(([a, , air]) => [a + air, 4.6, 0, 0xc6d1ff]), u);
+  }, [[0, [0, 11, 40], [0, 7.5, 0]], [2.4, [0.5, 11, 37], [0, 7.5, 0]], [3.5, [3.2, 9, 27], [2.8, 7.2, 0]]]);
+
+  // 7: COMMENT JOBS
+  makeSet(WARM, (g, s) => {
+    const m = phys(0xd97757, { roughness: 0.3, clearcoat: 1, emissive: 0x5a1c00, emissiveIntensity: 0.25 });
+    s.letters = [..."JOBS"].map((ch, i) => { const l = text3d(ch, 3.4, m); l.userData.x = (i - 1.5) * 3.5; g.add(l); return l; });
+    const plinth = rbox(16, 0.6, 3.6, 0.25, phys(0x2b2622)); plinth.position.set(0, 5.3, -9); g.add(plinth);
+  }, (s, u, t) => {
+    const lands = [];
+    s.letters.forEach((l, i) => { const t0 = 0.1 + i * 0.16, k = clamp((u - t0) / 0.42);
+      const y = k < 1 ? 22 * (1 - k * k) : 0, bounce = k >= 1 ? Math.abs(Math.sin((u - t0 - 0.42) * 12)) * Math.exp(-(u - t0 - 0.42) * 7) * 0.9 : 0;
+      l.position.set(l.userData.x, 5.6 + y + bounce, -9); l.visible = u > t0; l.rotation.y = 0.12 * Math.sin(t * 0.8 + i);
+      lands.push([t0 + 0.42, l.userData.x, -5, 0xffc9a6]); });
+    const jumps = [[0.95, 2.2, 0.5], [1.8, 1.4, 0.4]];
+    poseClawd(clawd, t, { u, p: [0, 0, 3.5], jumps, wave: u > 2.3 });
+    drawRipples(jumps.map(([a, , air]) => [a + air, 0, 3.5]), u);
+  }, [[0, [0, 9, 30], [0, 6.5, -3]], [3, [0, 12, 36], [0, 6.5, -3]]]);
+}
+
+// ---- frame -----------------------------------------------------------------------------------------------------
+function camAt(cams, u) {
+  let i = 0; while (i < cams.length - 1 && u > cams[i + 1][0]) i++;
+  const a = cams[i], b = cams[Math.min(i + 1, cams.length - 1)];
+  const k = b === a ? 0 : io((u - a[0]) / (b[0] - a[0]));
+  return [vlerp(a[1], b[1], k), vlerp(a[2], b[2], k)];
+}
+function renderAt(t) {
+  let i = B.findIndex(([a, b]) => t >= a && t < b); if (i < 0) i = B.length - 1;
+  const u = t - B[i][0], s = sets[i];
+  sets.forEach((x, k) => (x.g.visible = k === i));
+  setBackdrop(s.look[0], s.look[1]); rim.color.setHex(s.look[2]);
+  scene.fog.color.set(s.look[1]); floorMat.color.set(s.look[1]).offsetHSL(0, 0, 0.035);
+  s.update(s, u, t);
+  let p, l;
+  if (s.cams) [p, l] = camAt(s.cams, u);
+  else { const f = s.camFollow; p = [f[0] * 0.55, 10.5, 30 + f[2] * 0.3]; l = [f[0] * 0.75, 5.5, f[2] * 0.5 - 1]; }
+  camera.position.set(p[0] + Math.sin(t * 0.6) * 0.12, p[1] + Math.sin(t * 0.8) * 0.08, p[2]);
+  camera.lookAt(l[0], l[1], l[2]);
+  pool.target.position.set(l[0], 0, l[2]); key.target.position.set(l[0], 0, l[2]);
+  composer.render();
+}
+
+window.__hf = window.__hf || {};
+window.__hf.buildReady = window.__hf.buildReady || {};
+window.__hf.buildReady.scene = (async () => {
+  await document.fonts.ready;
+  await Promise.all([document.fonts.load("900 40px Inter"), document.fonts.load("800 40px Inter"), document.fonts.load("700 40px 'JetBrains Mono'")]);
+  FONT = await new FontLoader().loadAsync("assets/helvetiker_bold.typeface.json");
+  buildSets();
+  // canvas textures drawn before the fonts were ready are redrawn now
+  scene.traverse((o) => [].concat(o.material || []).forEach((m) => { const tx = m.map; if (tx && tx.userData && tx.userData.draw) { tx.userData.draw(tx.userData.g, tx.userData.c.width, tx.userData.c.height); tx.needsUpdate = true; } }));
+  renderer.compile(scene, camera);
+  renderAt(window.__hfThreeTime || 0);
+})();
+window.addEventListener("hf-seek", (e) => { if (sets.length) renderAt(e.detail.time); });
+</script>
+</body>
+</html>

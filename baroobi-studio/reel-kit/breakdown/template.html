@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a director's shot list. Sticky control bar, chapter bands, one row-card per scene (still left, notes right). */
+:root {
+  color-scheme: dark;
+  --bg: #131416; --panel: #1b1d20; --raised: #24272b; --line: #33373d;
+  --fg: #ecedee; --muted: #a3a8af; --faint: #7b8088;
+  --accent: #e08a3a; --accent-soft: rgba(224, 138, 58, .14); --ok: #7fcf9a;
+  --display: "Sora", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  /* badge hues: semantic per scene type, separate from the accent */
+  --t-broll: #6aa7ff; --t-headline: #f2c94c; --t-card: #c9a7ff; --t-box: #e08a3a; --t-stack: #ff7eb6;
+  --t-caption: #9fd3c7; --t-transition: #b8b8b8; --t-sfx: #7fcf9a; --t-talk: #f29e8a;
+  --t-split: #8fd0ff; --t-overlay: #ffd59a; --t-3d: #f0a3a3;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1060px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 120px; }
+header { display: grid; gap: 6px; margin-bottom: 14px; }
+.eyebrow { font: 600 11.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+h1 { margin: 0; font: 700 clamp(24px, 4.2vw, 34px)/1.15 var(--display); text-wrap: balance; }
+.meta { color: var(--muted); font-size: 14px; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: rgba(19, 20, 22, .94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 10px max(16px, env(safe-area-inset-left, 0px));
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.count { font: 600 14px/1 var(--mono); font-variant-numeric: tabular-nums; }
+.count b { color: var(--accent); }
+.status { font: 500 12.5px/1 var(--mono); color: var(--ok); }
+.status.saving { color: var(--muted); }
+.tabs { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.tab { background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font: 500 13px var(--body); cursor: pointer; }
+.tab[aria-pressed="true"] { background: var(--raised); color: var(--fg); border-color: #555b63; }
+.tab:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.chapter { margin: 30px 0 12px; display: flex; align-items: baseline; gap: 12px; }
+.chapter h2 { margin: 0; font: 700 13px/1 var(--mono); letter-spacing: .16em; color: var(--fg); }
+.chapter span { font: 500 12px var(--mono); color: var(--faint); }
+.chapter::after { content: ""; flex: 1; height: 1px; background: var(--line); align-self: center; }
+.list { display: grid; gap: 12px; }
+.scene { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.scene.has-note { border-color: rgba(224, 138, 58, .55); }
+.thumb { width: 132px; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 8px; overflow: hidden; border: 0; padding: 0; background: #000; cursor: zoom-in; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.body { display: grid; gap: 8px; min-width: 0; align-content: start; }
+.row1 { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.ts { font: 600 13px/1 var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); background: var(--raised); padding: 5px 8px; border-radius: 6px; }
+.title { font: 600 16px/1.3 var(--display); margin: 0; }
+.badge { font: 600 11px/1 var(--mono); letter-spacing: .08em; padding: 5px 8px; border-radius: 5px; color: #111; }
+.typesel { margin-left: auto; background: var(--raised); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; font: 500 12px var(--mono); }
+.built { margin: 0; color: var(--muted); font-size: 14px; max-width: 72ch; }
+.said { margin: 0; font-size: 14px; }
+.said b { font: 600 12px var(--mono); color: var(--faint); letter-spacing: .04em; margin-right: 4px; }
+.said i { color: var(--faint); }
+.dir { display: grid; gap: 4px; }
+.dir label { font: 600 11px/1 var(--mono); letter-spacing: .12em; color: var(--accent); }
+.dir textarea { width: 100%; min-height: 54px; resize: vertical; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: 14px/1.45 var(--body); }
+.dir textarea::placeholder { color: var(--faint); }
+.foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: rgba(19, 20, 22, .96); border-top: 1px solid var(--line);
+  padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.copy { background: var(--accent); color: #1a1208; border: 0; border-radius: 10px; padding: 11px 20px; font: 700 14px var(--body); cursor: pointer; }
+.copied { font: 500 13px var(--mono); color: var(--muted); }
+textarea.fallback { width: min(680px, 100%); min-height: 90px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; font: 13px var(--mono); }
+.lb { position: fixed; inset: 0; z-index: 20; background: rgba(8, 8, 9, .93); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); cursor: zoom-out; }
+.lb img { height: min(88vh, 900px); max-width: 92vw; aspect-ratio: 9 / 16; object-fit: contain; border-radius: 10px; }
+.lb p { margin: 10px 0 0; color: var(--muted); font: 500 13px var(--mono); text-align: center; }
+@media (max-width: 560px) { .scene { grid-template-columns: 92px minmax(0, 1fr); gap: 12px; } .thumb { width: 92px; } .typesel { margin-left: 0; } .tabs { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Video breakdown sheet</div>
+    <h1 id="name"></h1>
+    <div class="meta" id="meta"></div>
+  </header>
+  <div class="bar" role="region" aria-label="Progress and filters">
+    <span class="count" id="count"></span>
+    <span class="status" id="status" aria-live="polite">All changes saved</span>
+    <div class="tabs" role="group" aria-label="Filter scenes">
+      <button class="tab" type="button" data-f="all" aria-pressed="true">All scenes</button>
+      <button class="tab" type="button" data-f="dir" aria-pressed="false">With direction</button>
+      <button class="tab" type="button" data-f="todo" aria-pressed="false">Not directed yet</button>
+    </div>
+  </div>
+  <main id="list"></main>
+</div>
+<div class="foot">
+  <button class="copy" id="copy" type="button">Copy directions</button>
+  <span class="copied" id="copied" aria-live="polite"></span>
+</div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Enlarged still"><figure style="margin:0"><img id="lbimg" alt=""><p id="lbcap"></p></figure></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const TYPES = ["B-ROLL", "HEADLINE", "CARD", "BOX REVEAL", "STACK", "CAPTION", "TRANSITION", "SFX", "TALKING HEAD", "SPLIT", "OVERLAY", "3D"];
+const HUE = { "B-ROLL": "--t-broll", "HEADLINE": "--t-headline", "CARD": "--t-card", "BOX REVEAL": "--t-box", "STACK": "--t-stack", "CAPTION": "--t-caption", "TRANSITION": "--t-transition", "SFX": "--t-sfx", "TALKING HEAD": "--t-talk", "SPLIT": "--t-split", "OVERLAY": "--t-overlay", "3D": "--t-3d" };
+const KEY = "breakdown:" + DATA.name;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const mmss = (t) => { const s = Math.floor(t + 1e-6); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+const range = (s) => mmss(s.a) + "-" + mmss(Math.max(s.b, s.a));
+let state = {}, filter = "all";
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+const get = (id) => state[id] || {};
+const noteOf = (id) => (get(id).note || "").trim();
+const typeOf = (s) => get(s.id).type || s.type;
+
+function save() {
+  $("status").textContent = "Saving…"; $("status").classList.add("saving");
+  let ok = true;
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { ok = false; }
+  setTimeout(() => { $("status").textContent = ok ? "All changes saved" : "Not saved: this browser blocks storage. Copy your directions before closing."; $("status").classList.remove("saving"); }, 250);
+}
+
+function render() {
+  $("name").textContent = DATA.name;
+  $("meta").textContent = `${DATA.file} · ${mmss(DATA.duration)} long · ${DATA.scenes.length} scenes from the render`;
+  let html = "", ch = null;
+  for (const s of DATA.scenes) {
+    if (s.chapter !== ch) {
+      if (ch !== null) html += "</div>";
+      ch = s.chapter;
+      const n = DATA.scenes.filter((x) => x.chapter === ch).length;
+      html += `<div class="chapter" data-ch="${esc(ch)}"><h2>${esc(ch)}</h2><span>${n} ${n === 1 ? "scene" : "scenes"}</span></div><div class="list">`;
+    }
+    const t = typeOf(s);
+    html += `<article class="scene" id="${s.id}" data-id="${s.id}">
+      <button class="thumb" type="button" aria-label="Enlarge still for ${esc(s.title)}"><img src="${s.img}" alt="Frame at ${mmss(s.at)}" loading="lazy"></button>
+      <div class="body">
+        <div class="row1">
+          <span class="ts">${range(s)}</span>
+          <span class="badge" style="background:var(${HUE[t]})">${esc(t)}</span>
+          <select class="typesel" id="type-${s.id}" aria-label="Scene type">${TYPES.map((x) => `<option${x === t ? " selected" : ""}>${x}</option>`).join("")}</select>
+        </div>
+        <h3 class="title">${esc(s.title)}</h3>
+        <p class="built">${esc(s.built)}</p>
+        <p class="said"><b>You say ·</b>${s.said ? "“" + esc(s.said) + "”" : "<i>(no voice)</i>"}</p>
+        <div class="dir"><label for="note-${s.id}">YOUR DIRECTION</label>
+          <textarea id="note-${s.id}" placeholder="Keep as is, or say what to change">${esc(get(s.id).note || "")}</textarea></div>
+      </div></article>`;
+  }
+  html += "</div>";
+  $("list").innerHTML = html;
+  wire(); paint();
+}
+
+function paint() {
+  const done = DATA.scenes.filter((s) => noteOf(s.id)).length;
+  $("count").innerHTML = `<b>${done}</b> of ${DATA.scenes.length} scenes directed`;
+  for (const el of document.querySelectorAll(".scene")) {
+    const has = !!noteOf(el.dataset.id);
+    el.classList.toggle("has-note", has);
+    el.hidden = (filter === "dir" && !has) || (filter === "todo" && has);
+  }
+  for (const c of document.querySelectorAll(".chapter")) {
+    const list = c.nextElementSibling; const any = [...list.children].some((x) => !x.hidden);
+    c.hidden = !any; list.hidden = !any;
+  }
+}
+
+function wire() {
+  for (const el of document.querySelectorAll(".scene")) {
+    const id = el.dataset.id, s = DATA.scenes.find((x) => x.id === id);
+    let t = null;
+    const ta = el.querySelector("textarea");
+    ta.addEventListener("input", () => { state[id] = { ...get(id), note: ta.value }; clearTimeout(t); $("status").textContent = "Saving…"; $("status").classList.add("saving"); t = setTimeout(() => { save(); paint(); }, 400); });
+    el.querySelector("select").addEventListener("change", (e) => {
+      state[id] = { ...get(id), type: e.target.value }; save();
+      const b = el.querySelector(".badge"); b.textContent = e.target.value; b.style.background = `var(${HUE[e.target.value]})`;
+    });
+    el.querySelector(".thumb").addEventListener("click", () => { $("lbimg").src = s.img; $("lbcap").textContent = `${range(s)} · ${s.title}`; $("lb").hidden = false; });
+  }
+}
+$("lb").addEventListener("click", () => { $("lb").hidden = true; });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("lb").hidden = true; });
+for (const b of document.querySelectorAll(".tab")) b.addEventListener("click", () => {
+  filter = b.dataset.f; for (const x of document.querySelectorAll(".tab")) x.setAttribute("aria-pressed", x === b ? "true" : "false"); paint();
+});
+
+$("copy").addEventListener("click", () => {
+  const lines = DATA.scenes.filter((s) => noteOf(s.id)).map((s) => `[${range(s)}] ${s.title} (${typeOf(s)}) → ${noteOf(s.id).replace(/\s+/g, " ")}`);
+  const text = lines.join("\n");
+  if (!text) { $("copied").textContent = "No directions yet. Write a note on a scene first."; return; }
+  const fallback = () => {
+    let ta = document.querySelector("textarea.fallback");
+    if (!ta) { ta = document.createElement("textarea"); ta.className = "fallback"; ta.readOnly = true; ta.setAttribute("aria-label", "Directions to copy"); $("copy").parentElement.appendChild(ta); }
+    ta.value = text; ta.focus(); ta.select();
+    $("copied").textContent = "Copy blocked here. The text is selected: press Ctrl/Cmd+C.";
+  };
+  try { navigator.clipboard.writeText(text).then(() => { $("copied").textContent = `Copied ${lines.length} direction${lines.length === 1 ? "" : "s"}.`; }, fallback); } catch (e) { fallback(); }
+});
+render();
+</script>
+
+</body></html>

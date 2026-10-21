@@ -1,5 +1,5 @@
-// Claude's mascot as a soft vinyl-toy model: an inflated pillow body, inset glossy eyes with catchlights,
-// two-part pincers and capsule legs with feet. Everything is built in code so poses stay seekable.
+// Claude's mascot as a soft vinyl-toy model of the Claude Code logo glyph: a chunky block body, glossy eye
+// slits with catchlights, square stub arms and four thin legs. Built in code so poses stay seekable.
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
@@ -63,47 +63,36 @@ export function makeClawd(scene) {
   });
   const skinDark = skin.clone(); skinDark.color = ORANGE.clone().multiplyScalar(0.8);
   const gloss = new THREE.MeshPhysicalMaterial({ color: 0x0d0a09, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.03, metalness: 0 });
-  const socket = new THREE.MeshPhysicalMaterial({ color: ORANGE.clone().multiplyScalar(0.55), roughness: 0.7, sheen: 0.4, sheenColor: new THREE.Color(0x8a3a20) });
   const spark = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
   const mesh = (geo, m) => { const o = new THREE.Mesh(geo, m); o.castShadow = true; o.receiveShadow = true; return o; };
 
+  // proportions follow the Claude Code logo glyph ( ▐▛███▜▌ / ▝▜█████▛▘ /  ▘▘ ▝▝ ): a 6x4 block, two tall eye
+  // slits near the top corners, a square stub arm each side at mid height, four thin legs split two and two
   const root = new THREE.Group(), body = new THREE.Group(); root.add(body);
-  const torso = mesh(bakeShade(pillow(6, 3.7, 3.1, 0.78, [0.1, 0.12, 0.26]), -1.85, 1.85), skin);
-  torso.position.y = 3.35; body.add(torso);
-  const seamMat = new THREE.MeshPhysicalMaterial({ color: ORANGE.clone().multiplyScalar(0.62), roughness: 0.6 });
-  const seam = new THREE.Mesh(new THREE.TorusGeometry(1, 0.035, 8, 96), seamMat); seam.rotation.x = Math.PI / 2; seam.scale.set(3.08, 1.6, 1); seam.position.set(0, 3.35, 0); body.add(seam);
-  seam.visible = false;
+  const torso = mesh(bakeShade(pillow(6, 4, 3, 0.34, [0.05, 0.05, 0.08], 12), -2, 2, 0.7), skin);
+  torso.position.y = 3; body.add(torso);
 
-  // eyes sit in shallow sockets, with a fixed catchlight so they read as alive from any angle
-  const eyes = [-1.28, 1.28].map((x) => {
-    const g = new THREE.Group(); g.position.set(x, 3.78, 1.68); body.add(g);
-    const so = mesh(new THREE.CapsuleGeometry(0.42, 0.62, 8, 28), socket); so.scale.set(1, 1, 0.22); so.position.z = -0.06; g.add(so);
-    const e = mesh(new THREE.CapsuleGeometry(0.31, 0.56, 10, 32), gloss); e.scale.set(1, 1, 0.5); g.add(e);
-    const s1 = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 12), spark); s1.position.set(-0.11, 0.3, 0.16); g.add(s1);
-    const s2 = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 8), spark); s2.position.set(0.1, 0.12, 0.16); g.add(s2);
+  // eyes: glossy dark slits set just proud of the face, with a small catchlight so they read as alive
+  const eyes = [-1.75, 1.75].map((x) => {
+    const g = new THREE.Group(); g.position.set(x, 3.5, 1.5); body.add(g);
+    const e = mesh(new RoundedBoxGeometry(0.52, 1.02, 0.16, 4, 0.07), gloss); g.add(e);
+    const s1 = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 12), spark); s1.position.set(-0.1, 0.32, 0.09); g.add(s1);
+    const s2 = new THREE.Mesh(new THREE.SphereGeometry(0.03, 12, 8), spark); s2.position.set(0.09, 0.18, 0.09); g.add(s2);
     g.userData = { e, s1, s2 }; return g;
   });
 
-  // arms end in pincers: a mitt with an upper and lower jaw on a hinge
+  // arms: one square stub each side, hinged at the body edge
   const arms = [-1, 1].map((side) => {
-    const shoulder = new THREE.Group(); shoulder.position.set(side * 2.95, 3.1, 0.1); body.add(shoulder);
-    const upper = mesh(bakeShade(pillow(1.4, 1.05, 1.2, 0.42, [0.04, 0.04, 0.06], 6), -0.5, 0.5, 0.75), skin);
-    upper.position.x = side * 0.62; shoulder.add(upper);
-    const hinge = new THREE.Group(); hinge.position.set(side * 1.28, 0.02, 0.05); shoulder.add(hinge);
-    const knuckle = mesh(new THREE.SphereGeometry(0.42, 32, 20), skinDark); knuckle.position.copy(hinge.position); knuckle.scale.set(1, 0.95, 1.05); shoulder.add(knuckle);
-    const jawGeo = bakeShade(pillow(1.1, 0.5, 0.95, 0.22, [0.03, 0.04, 0.04], 8), -0.25, 0.25, 0.78);
-    const top = mesh(jawGeo, skin), bot = mesh(jawGeo, skinDark);
-    const jt = new THREE.Group(), jb = new THREE.Group(); hinge.add(jt, jb);
-    top.position.set(side * 0.5, 0.27, 0); bot.position.set(side * 0.44, -0.25, 0); bot.scale.set(0.86, 0.85, 0.92);
-    jt.add(top); jb.add(bot);
-    shoulder.userData = { jt, jb, side }; return shoulder;
+    const shoulder = new THREE.Group(); shoulder.position.set(side * 3, 2.5, 0); body.add(shoulder);
+    const stub = mesh(bakeShade(pillow(1.1, 1, 1, 0.2, [0.02, 0.02, 0.02], 6), -0.5, 0.5, 0.75), skin);
+    stub.position.x = side * 0.5; shoulder.add(stub);
+    shoulder.userData = { side }; return shoulder;
   });
 
-  // capsule legs with rounded feet
-  const legs = [-2.15, -0.72, 0.72, 2.15].map((x, i) => {
-    const g = new THREE.Group(); g.position.set(x, 1.62, i % 2 ? 0.12 : -0.12); body.add(g);
-    const leg = mesh(bakeShade(new THREE.CapsuleGeometry(0.4, 0.86, 8, 24), -0.85, 0.6, 0.55), skin); leg.position.y = -0.55; g.add(leg);
-    const foot = mesh(bakeShade(new THREE.SphereGeometry(0.5, 28, 18), -0.5, 0.3, 0.6), skinDark); foot.scale.set(1.05, 0.55, 1.25); foot.position.set(0, -1.32, 0.12); g.add(foot);
+  // legs: four thin short posts, two under each half with a gap in the middle
+  const legs = [-2.25, -1.25, 1.25, 2.25].map((x) => {
+    const g = new THREE.Group(); g.position.set(x, 1, 0); body.add(g);
+    const leg = mesh(bakeShade(new RoundedBoxGeometry(0.5, 1.08, 0.8, 4, 0.12), -0.54, 0.4, 0.55), skinDark); leg.position.y = -0.5; g.add(leg);
     return g;
   });
 
@@ -132,18 +121,17 @@ export function pose(C, t, o) {
   C.body.scale.set(1 + sq * 0.15, 1 - sq * 0.21, 1 + sq * 0.15);
   C.body.rotation.x = (o.look || 0) + 0.02 * Math.sin(t * 2.0);
   C.body.rotation.z = (o.tilt || 0) + 0.018 * Math.sin(t * 1.5) + walk * 0.05 * Math.sin(ph);
-  C.torso.position.y = 3.35 + 0.07 * Math.sin(t * 3.1);
+  C.torso.position.y = 3 + 0.06 * Math.sin(t * 3.1);
   C.torso.scale.set(1 + 0.008 * Math.sin(t * 3.1), 1 - 0.008 * Math.sin(t * 3.1), 1);
   // blinks every few seconds, eyes squeeze shut rather than vanish
   const bt = ((t + (o.blinkOff || 0)) % 3.4), bl = bt < 0.14 ? Math.max(0.08, Math.abs(bt - 0.07) / 0.07) : 1;
-  C.eyes.forEach((g) => { g.userData.e.scale.y = bl; g.userData.s1.visible = g.userData.s2.visible = bl > 0.5; g.position.y = 3.78 + (o.lookUp || 0) * 0.12; });
+  C.eyes.forEach((g) => { g.userData.e.scale.y = bl; g.userData.s1.visible = g.userData.s2.visible = bl > 0.5; g.position.y = 3.5 + 0.06 * Math.sin(t * 3.1) + (o.lookUp || 0) * 0.1; });
   C.arms.forEach((s) => {
-    const { jt, jb, side } = s.userData, L = side < 0;
+    const { side } = s.userData, L = side < 0;
     const lift = (L ? o.armL : o.armR) || 0, wave = !L && o.wave ? 1.9 + 0.4 * Math.sin(t * 12) : 0;
-    s.rotation.z = side * (-(lift + wave) + 0.22 * Math.sin(t * 7 + (L ? 0 : 1.3)) * (o.tap || 0) + walk * 0.3 * Math.sin(ph + (L ? 0 : Math.PI)));
-    const open = (o.snap ? Math.max(0, Math.sin(t * 7)) ** 2 : 0) * 0.5 + 0.1;
-    jt.rotation.z = side * open; jb.rotation.z = -side * open * 0.8;
+    s.rotation.z = side * (-(lift + wave) + 0.22 * Math.sin(t * 7 + (L ? 0 : 1.3)) * (o.tap || 0) + walk * 0.3 * Math.sin(ph + (L ? 0 : Math.PI)))
+      + (o.snap ? side * 0.12 * Math.sin(t * 5) : 0);
   });
-  C.legs.forEach((l, i) => { const k = Math.max(0, Math.sin(ph + (i % 2) * Math.PI)) * walk; l.position.y = 1.62 + k * 0.5; l.rotation.x = -k * 0.35; });
+  C.legs.forEach((l, i) => { const k = Math.max(0, Math.sin(ph + (i % 2) * Math.PI)) * walk; l.position.y = 1 + k * 0.45; l.rotation.x = -k * 0.35; });
   C.skin.emissiveIntensity = o.glow || 0; C.skinDark.emissiveIntensity = (o.glow || 0) * 0.8;
 }

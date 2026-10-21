@@ -12,15 +12,16 @@ out_dir/edl.json     the source ranges that were kept, for notes like "put back 
 import argparse, json, os, subprocess, sys
 
 
-def transcribe(path, model):
+def transcribe(path, model, dur):
     from faster_whisper import WhisperModel
     m = WhisperModel(model, device="cpu", compute_type="int8")
-    segs, _ = m.transcribe(path, word_timestamps=True, vad_filter=True, beam_size=5)
-    words = []
-    for s in segs:
-        for w in s.words or []:
-            if w.word.strip():
-                words.append({"w": w.word.strip(), "s": round(w.start, 3), "e": round(w.end, 3)})
+    for vad in (True, False):
+        # the voice-activity filter sometimes drops fast, loud phone takes; fall back to no filter if it kept too little
+        segs, _ = m.transcribe(path, word_timestamps=True, vad_filter=vad, beam_size=5)
+        words = [{"w": w.word.strip(), "s": round(w.start, 3), "e": round(w.end, 3)}
+                 for s in segs for w in (s.words or []) if w.word.strip()]
+        if len(words) >= 0.8 * dur:
+            break
     return words
 
 
@@ -54,7 +55,7 @@ def main():
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     w, h, dur = probe(a.raw)
-    words = transcribe(a.raw, a.model)
+    words = transcribe(a.raw, a.model, dur)
     if not words:
         sys.exit("no speech found")
     ranges = keep_ranges(words, a.gap, a.pad, dur)

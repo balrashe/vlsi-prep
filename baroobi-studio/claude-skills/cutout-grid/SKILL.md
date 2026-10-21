@@ -9,7 +9,7 @@ Style copied from @iamajene's AI Editing Pack, adapted to the user's brand. Spec
 Reference measurements: `~/editing-refs/ajene/DesQj6ro0HP/STYLE.md`. If the status says a reference is needed, ask the user for 2-3 reels in this style, study them (frames every 0.5 s with ffmpeg, measure positions, sizes, colours, pacing) and update this file before the first real edit.
 
 ## Before the first edit
-1. Check `~/.claude/skills/reel-kit/brand.local.json`. If it is missing, interview the user **one question at a time**: brand colours, fonts, how they film (phone or camera, framing, vertical or horizontal), where their raw files and B-roll live. Save the answers to `brand.local.json` (same keys as `brand.json`).
+1. Check `~/.claude/skills/reel-kit/brand.local.json` (filled on 2026-10-21; ask which Drive folder holds the raw files if it still says "to confirm"). If it is missing, interview the user **one question at a time**: brand colours, fonts, how they film (phone or camera, framing, vertical or horizontal), where their raw files and B-roll live. Save the answers to `brand.local.json` (same keys as `brand.json`).
 2. Ask for 2 or 3 reference videos of this style and adapt the spec below to them.
 3. First time on a machine: run `~/.claude/skills/reel-kit/setup.sh` (ffmpeg, yt-dlp, local Whisper).
 
@@ -22,6 +22,7 @@ Reference measurements: `~/editing-refs/ajene/DesQj6ro0HP/STYLE.md`. If the stat
 6. **Final**: render only after the user explicitly approves: `~/.claude/skills/reel-kit/final.sh <project> <out.mp4> [fps]`.
 
 ## Shared look
+- **Brand first**: `brand.local.json` holds the user's brand from the interview (2026-10-21): his orange `#e08a3a` kept, baroobi's own reel fonts (Montserrat Bold captions, one word at a time, ~64 px; white rounded title box radius 18 with black Montserrat Bold; Montserrat Black card names), iPhone selfie vertical footage, raw files on Google Drive. His layouts and motion stay; colours and type come from the brand file.
 - Captions: white `#ffffff` sentence case, Inter 600 (his look: SF Pro / Inter family), 1-3 words per phrase, hard on and hard off (no fade), soft shadow, no box. Lowercase run about 40-52 px tall on 1080x1920. `lib.phrases()` + `lib.caption_html()` do this.
 - Accent word: one word per phrase in italic serif (Instrument Serif Italic) in the accent colour, about 1.15x the caption size.
 - Hook title: line 1 white bold sans with soft shadow, line 2 black text in a solid white box (no radius, ~24 px side padding), top of frame (y ~107-400).

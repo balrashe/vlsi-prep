@@ -1,0 +1,15 @@
+{
+ "_note": "baroobi brand, from the brand interview 2026-10-21: his orange kept, baroobi's own reel fonts, iPhone selfie vertical, raw files on Google Drive.",
+ "accent": "#e08a3a",
+ "fonts": {
+  "caption": ["Montserrat", "Montserrat.woff2", 700],
+  "accent": ["Montserrat", "Montserrat.woff2", 800],
+  "title": ["Montserrat", "Montserrat-ExtraBoldItalic.woff2", 800, "italic"],
+  "card": ["Montserrat", "Montserrat.woff2", 900]
+ },
+ "caption_words": 1,
+ "caption_size": 64,
+ "title_box": {"bg": "#ffffff", "fg": "#000000", "radius": 18},
+ "filming": "iPhone front camera, vertical 9:16, chest-up, phone light; often an unfinished basement backdrop",
+ "raw_files": "Google Drive (folder name still to confirm)"
+}

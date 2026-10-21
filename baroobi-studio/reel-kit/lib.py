@@ -6,9 +6,13 @@ E = html.escape
 
 
 def brand(path=None):
+    """His measured defaults, overlaid by the user's brand.local.json (from the interview), then by `path`."""
     b = json.load(open(os.path.join(KIT, "brand.json")))
-    if path and os.path.exists(path):
-        over = json.load(open(path))
+    local = os.path.join(KIT, "brand.local.json")
+    for over_path in [local, path]:
+        if not over_path or not os.path.exists(over_path):
+            continue
+        over = json.load(open(over_path))
         for k, v in over.items():
             b[k] = {**b[k], **v} if isinstance(v, dict) and isinstance(b.get(k), dict) else v
     return b
@@ -17,14 +21,19 @@ def brand(path=None):
 def font_css(b, proj):
     """Copy the brand fonts into the project and declare them."""
     os.makedirs(os.path.join(proj, "assets", "fonts"), exist_ok=True)
-    css = []
+    css, seen = [], set()
+    variable = {"Inter.woff2", "Montserrat.woff2"}      # variable fonts: one face covers every weight
     for role, spec in b["fonts"].items():
         fam, file, weight = spec[0], spec[1], spec[2]
         style = spec[3] if len(spec) > 3 else "normal"
         src = file if os.path.isabs(file) else os.path.join(KIT, "fonts", file)
+        if (fam, src, style) in seen:
+            continue
+        seen.add((fam, src, style))
         shutil.copy(src, os.path.join(proj, "assets", "fonts", os.path.basename(src)))
+        w = "100 900" if os.path.basename(src) in variable else weight
         css.append(f'@font-face {{ font-family: "{fam}"; src: url("assets/fonts/{os.path.basename(src)}") format("woff2"); '
-                   f'font-weight: {weight if role != "caption" else "100 900"}; font-style: {style}; }}')
+                   f'font-weight: {w}; font-style: {style}; }}')
     return "\n".join(css)
 
 

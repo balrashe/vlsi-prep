@@ -9,7 +9,7 @@ Style copied from @iamajene's AI Editing Pack, adapted to the user's brand. Spec
 Reference measurements: `~/editing-refs/ajene/DesQj6ro0HP/STYLE.md`. If the status says a reference is needed, ask the user for 2-3 reels in this style, study them (frames every 0.5 s with ffmpeg, measure positions, sizes, colours, pacing) and update this file before the first real edit.
 
 ## Before the first edit
-1. Check `~/.claude/skills/reel-kit/brand.local.json`. If it is missing, interview the user **one question at a time**: brand colours, fonts, how they film (phone or camera, framing, vertical or horizontal), where their raw files and B-roll live. Save the answers to `brand.local.json` (same keys as `brand.json`).
+1. Check `~/.claude/skills/reel-kit/brand.local.json` (filled on 2026-10-21; ask which Drive folder holds the raw files if it still says "to confirm"). If it is missing, interview the user **one question at a time**: brand colours, fonts, how they film (phone or camera, framing, vertical or horizontal), where their raw files and B-roll live. Save the answers to `brand.local.json` (same keys as `brand.json`).
 2. Ask for 2 or 3 reference videos of this style and adapt the spec below to them.
 3. First time on a machine: run `~/.claude/skills/reel-kit/setup.sh` (ffmpeg, yt-dlp, local Whisper).
 

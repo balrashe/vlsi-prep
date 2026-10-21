@@ -62,15 +62,17 @@ def main(spec_path, proj):
         cards.append(f'<div class="card" data-layout-allow-overlap id="c{k}" data-at="{it["at"]}" data-hold="{it["hold"]:.2f}" data-tier="{t}" '
                      f'data-sx="{sx:.1f}" data-sy="{sy:.1f}">{logo}<div class="nm">{lib.E(it["name"].upper())}</div>{sub}</div>')
 
-    caps = lib.caption_html(lib.phrases(words), sp.get("accent", []))
+    caps = lib.caption_html(lib.phrases(words, b.get("caption_words", 3)), sp.get("accent", []))
+    condensed = F["card"][0] in ("Anton", "Bebas Neue", "Oswald")   # condensed faces get his wide stretch
+    cs = b.get("caption_size", 54); acc_italic = len(F["accent"]) > 3 and F["accent"][3] == "italic"
     title = "".join(f'<div>{lib.E(l)}</div>' for l in sp.get("title", []))
     css = lib.font_css(b, proj) + f"""
 #talk {{ position: absolute; inset: 0; width: {W}px; height: {H}px; object-fit: cover; }}
 .title {{ position: absolute; left: 60px; right: 60px; top: 188px; text-align: center; font: {F['title'][3] if len(F['title']) > 3 else 'normal'} {F['title'][2]} 64px/60px "{F['title'][0]}";
   text-transform: uppercase; letter-spacing: -0.01em; color: {b['accent']}; text-shadow: 0 4px 14px rgba(0,0,0,.45); }}
-.cap {{ position: absolute; left: 40px; right: 40px; top: 920px; text-align: center; font: {F['caption'][2]} 54px/1 "{F['caption'][0]}";
+.cap {{ position: absolute; left: 40px; right: 40px; top: 920px; text-align: center; font: {F['caption'][2]} {cs}px/1 "{F['caption'][0]}";
   letter-spacing: -0.02em; color: {b['caption_color']}; opacity: 0; text-shadow: 0 2px 10px rgba(0,0,0,.35); white-space: nowrap; }}
-.cap .acc {{ font: {F['accent'][3] if len(F['accent']) > 3 else 'normal'} {F['accent'][2]} 62px/1 "{F['accent'][0]}"; color: {b['accent']}; letter-spacing: 0; }}
+.cap .acc {{ font: {F['accent'][3] if len(F['accent']) > 3 else 'normal'} {F['accent'][2]} {round(cs * (1.15 if acc_italic else 1))}px/1 "{F['accent'][0]}"; color: {b['accent']}; letter-spacing: 0; }}
 #table {{ position: absolute; left: {TABLE['x']}px; top: {TABLE['y']}px; width: {TABLE['w']}px; height: {TABLE['h']}px; background: #020202; }}
 .row {{ position: absolute; left: {TABLE['border']}px; right: {TABLE['border']}px; height: {ROW_H}px; display: flex; gap: 4px; }}
 .lab {{ width: {LABEL_W}px; height: {ROW_H}px; display: flex; align-items: center; justify-content: center; font: 800 30px "{F['caption'][0]}"; color: #111; }}
@@ -79,8 +81,8 @@ def main(spec_path, proj):
   border: 2px solid #f4f4f4; background: radial-gradient(ellipse 70% 80% at 50% 30%, #12306a 0%, #071027 55%, #03060f 100%);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; overflow: hidden; }}
 .card .logo {{ width: 124px; height: 124px; object-fit: contain; }}
-.card .mono {{ width: 124px; height: 124px; border-radius: 50%; background: {b['accent']}; color: #fff; display: flex; align-items: center; justify-content: center; font: 400 84px "{F['card'][0]}"; }}
-.card .nm {{ font: 400 78px/0.95 "{F['card'][0]}"; color: {b['card_name_color']}; letter-spacing: 0.02em; text-align: center; padding: 0 20px; transform: scaleX(1.18); }}
+.card .mono {{ width: 124px; height: 124px; border-radius: 50%; background: {b['accent']}; color: #fff; display: flex; align-items: center; justify-content: center; font: {F['card'][2]} 84px "{F['card'][0]}"; }}
+.card .nm {{ font: {F['card'][2]} {78 if condensed else 66}px/0.95 "{F['card'][0]}"; color: {b['card_name_color']}; letter-spacing: {'0.02em' if condensed else '-0.01em'}; text-align: center; padding: 0 20px; text-transform: uppercase;{' transform: scaleX(1.18);' if condensed else ''} }}
 .card .sub {{ font: 600 28px "{F['caption'][0]}"; color: #cfd6e6; }}"""
     body = f"""<video id="talk" src="assets/talk.mp4" data-start="0" data-duration="{dur:.3f}" data-track-index="0" playsinline data-has-audio="true"></video>
 <div class="title" id="title">{title}</div>

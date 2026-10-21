@@ -68,6 +68,14 @@ Always call `S.shadow(C)` after posing. Add `S.ripples([[landTime, x, z]], u)` f
    - The composition is `data-fps="60"`.
    - Software WebGL renders slowly: expect roughly 10-20 min per 5 s at 60 fps on a CPU-only container, so run it in the background.
 
+## Using the clips in a talking-head reel
+
+Baraa chose 3D over the 2D pixel style in Style Lab round 5 (2026-10-21), so these clips are the animation layer of the baroobi split reels.
+
+- **Size:** render at 900x440 for the 960x469 top card (shown at 1.067x), or at 1080x1920 for full-screen beats.
+- **Black first frame:** the HyperFrames render's first frame is black. Patch every clip before compositing:
+  `ffmpeg -i clip.mp4 -vf "trim=start_frame=1,setpts=PTS-STARTPTS,tpad=start=1:start_mode=clone" clip_fixed.mp4`.
+
 ## Gotchas learned building this
 
 - **Stage sweep:** the cyc must be `DoubleSide`, or the floor turns into a black void.

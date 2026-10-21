@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>mascot-reel</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.js",
+               "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.181.2/examples/jsm/" } }
+</script>
+<style>
+@font-face { font-family: "Montserrat"; src: url("assets/fonts/Montserrat.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Inter"; src: url("assets/fonts/Inter.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono.woff2") format("woff2"); font-weight: 100 800; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #15110f; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+#vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 80% 60% at 50% 55%, rgba(0,0,0,0) 55%, rgba(0,0,0,.4) 100%); }
+/* captions sit at the top, clear of the mascot; keyword in the brand accent box */
+.cap { position: absolute; left: 80px; right: 80px; top: 300px; text-align: center; font: 800 86px/1.1 "Montserrat";
+  letter-spacing: -0.02em; text-transform: uppercase; color: #fff; opacity: 0; text-shadow: 0 4px 22px rgba(0,0,0,.55); }
+.cap .w { display: inline-block; opacity: 0; margin: 0 0.1em; }
+.cap .k { background: #e08a3a; padding: 0.02em 0.18em; border-radius: 14px; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="__DURATION__" data-width="1080" data-height="1920" data-fps="60">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="vig"></div>
+  <div id="caps"></div>
+</div>
+<script>
+// ===== EDIT: beat clock (seconds) and captions. [start, end, words]; *word* gets the accent box =====
+window.BEATS = [[0, 5], [5, 9], [9, 12]];
+const CAPS = [
+  [0.2, 2.2, "69 *applications.*"], [2.2, 3.6, "20 *interviews.*"], [3.6, 5, "1 *job.*"],
+  [5.1, 9, "an *AI agent* did it all."],
+  [9.1, 12, "comment *JOBS*"],
+];
+// ===== end edit =====
+function build() {
+  const caps = document.getElementById("caps");
+  CAPS.forEach(([a, b, txt]) => {
+    const d = document.createElement("div"); d.className = "cap"; d.dataset.a = a; d.dataset.b = b;
+    d.innerHTML = txt.split(" ").map((w) => /\*/.test(w) ? `<span class="w k">${w.replace(/\*/g, "")}</span>` : `<span class="w">${w}</span>`).join(" ");
+    caps.appendChild(d);
+  });
+  const tl = gsap.timeline({ paused: true });
+  document.querySelectorAll(".cap").forEach((d) => {
+    tl.set(d, { opacity: 1 }, +d.dataset.a).set(d, { opacity: 0 }, +d.dataset.b);
+    d.querySelectorAll(".w").forEach((w, k) => tl.fromTo(w, { opacity: 0, scale: 0.7, y: 14 }, { opacity: 1, scale: 1, y: 0, duration: 0.22, ease: "back.out(2.2)" }, +d.dataset.a + k * 0.07));
+  });
+  tl.set({}, {}, window.BEATS[window.BEATS.length - 1][1]);
+  window.__timelines["main"] = tl;
+}
+document.fonts.ready.then(build);
+</script>
+<script type="module">
+import * as THREE from "three";
+import { createStage, ss, io } from "./assets/stage.js";
+import { makeClawd, pose } from "./assets/clawd.js";
+import * as R from "./assets/recipes.js";
+
+const S = createStage({ canvas: document.getElementById("gl") });
+const C = makeClawd(S.scene);
+const B = window.BEATS;
+const beats = [];
+// beat(look, setup(group) -> update(u, t)); one idea per beat, hard cut between beats
+const beat = (look, setup) => { const g = new THREE.Group(); S.scene.add(g); beats.push({ g, look, update: setup(g) }); };
+
+async function build() {
+  await R.loadFont();
+
+  // ===== EDIT: one beat() per idea =====
+  // 1: papers rain, the count drops 69 -> 20 -> 1, he hops on each change and lands with ripples
+  beat("warm", (g) => {
+    const rain = R.papers(g, 69, { window: [0.05, 2.0] });
+    const n = [["69", R.MAT.white()], ["20", R.MAT.white()], ["1", R.MAT.gold()]].map(([s, m]) => { const o = R.text3d(s, 6, m); o.position.set(0, 8, -19); g.add(o); return o; });
+    const jumps = [[2.25, 1.2, 0.4], [3.7, 3.2, 0.62]];
+    return (u, t) => {
+      rain(u, t);
+      R.hold3d(n[0], u, t, 0.15, 2.15, 8); R.hold3d(n[1], u, t, 2.25, 3.55, 8); R.hold3d(n[2], u, t, 3.65, 99, 8);
+      pose(C, t, { u, p: [0, 0, 0], jumps, look: -0.12, lookUp: 0.3, wave: u > 4.4 });
+      S.ripples(jumps.map(([a, , air]) => [a + air, 0, 0]), u);
+      S.camera([[0, [-6, 7, 46], [0, 6, -3]], [5, [4, 7.5, 38], [0, 6, -3]]], u, t);
+    };
+  });
+  // 2: the agent at work: a floating terminal types the commands while he taps
+  beat("teal", (g) => {
+    const term = R.panel(10, 6.3, R.terminalDraw([[0.1, "> /setup", "#9fe870"], [0.6, "  profile ready", "#9b968d"], [1.2, "> /scrape", "#9fe870"],
+      [1.7, "  scanning job boards", "#9b968d"], [2.3, "> /apply", "#9fe870"], [2.8, "  application sent", "#f0b54a"]]), { live: true, glow: 0.7 });
+    term.position.set(0, 9, -6); g.add(term);
+    return (u, t) => {
+      term.userData.update(u); term.position.y = 9 + 0.15 * Math.sin(t * 1.3);
+      pose(C, t, { u, p: [0, 0, 1], tap: 1, look: 0.04 });
+      S.camera([[0, [7, 7, 42], [0, 6, -2]], [4, [-5, 7, 39], [0, 6, -2]]], u, t);
+    };
+  });
+  // 3: call to action: 3D letters drop onto a plinth, he jumps twice
+  beat("warm", (g) => {
+    const m = R.MAT.orange();
+    const letters = [..."JOBS"].map((ch, i) => { const l = R.text3d(ch, 3.4, m); l.userData.x = (i - 1.5) * 3.5; g.add(l); return l; });
+    const plinth = R.rbox(16, 0.6, 3.6, 0.25, R.phys(0x2b2622)); plinth.position.set(0, 5.3, -9); g.add(plinth);
+    const jumps = [[0.95, 2.2, 0.5], [1.8, 1.4, 0.4]];
+    return (u, t) => {
+      letters.forEach((l, i) => { const t0 = 0.1 + i * 0.16, k = Math.min(1, Math.max(0, (u - t0) / 0.42));
+        const bounce = k >= 1 ? Math.abs(Math.sin((u - t0 - 0.42) * 12)) * Math.exp(-(u - t0 - 0.42) * 7) * 0.9 : 0;
+        l.position.set(l.userData.x, 5.6 + (k < 1 ? 22 * (1 - k * k) : 0) + bounce, -9); l.visible = u > t0; l.rotation.y = 0.12 * Math.sin(t * 0.8 + i); });
+      pose(C, t, { u, p: [0, 0, 3.5], jumps, wave: u > 2.3 });
+      S.ripples(jumps.map(([a, , air]) => [a + air, 0, 3.5]), u);
+      S.camera([[0, [0, 9, 40], [0, 6, -3]], [3, [0, 11, 46], [0, 6, -3]]], u, t);
+    };
+  });
+  // ===== end edit =====
+}
+
+function renderAt(t) {
+  let i = B.findIndex(([a, b]) => t >= a && t < b); if (i < 0) i = B.length - 1;
+  const bt = beats[i], u = t - B[i][0];
+  beats.forEach((x, k) => (x.g.visible = k === i));
+  S.look(bt.look);
+  bt.update(u, t);
+  S.shadow(C);
+  S.render();
+}
+window.__hf = window.__hf || {};
+window.__hf.buildReady = window.__hf.buildReady || {};
+window.__hf.buildReady.scene = (async () => {
+  await document.fonts.ready;
+  await Promise.all(["800 40px Inter", "700 40px 'JetBrains Mono'"].map((f) => document.fonts.load(f)));
+  await build();
+  S.renderer.compile(S.scene, S.camera);
+  renderAt(window.__hfThreeTime || 0);
+})();
+window.addEventListener("hf-seek", (e) => { if (beats.length) renderAt(e.detail.time); });
+</script>
+</body>
+</html>
